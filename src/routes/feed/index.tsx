@@ -216,7 +216,7 @@ function FeedPage() {
 
   if (isLoading && !data) {
     return (
-      <div className="animate-fade-in max-w-3xl mx-auto">
+      <div className="animate-fade-in">
         <PageHeader
           title="Community Feed"
           subtitle="See what's happening on TransJakarta routes and stops."
@@ -246,115 +246,113 @@ function FeedPage() {
 
   return (
     <div className="animate-fade-in">
-      <div className="max-w-3xl mx-auto">
-        <PageHeader
-          title="Community Feed"
-          subtitle="See what's happening on TransJakarta routes and stops. Share updates and help fellow commuters."
-          actions={
-            isAuthenticated && (
-              <Link to="/reports/new">
-                <Button variant="accent">
-                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                  </svg>
-                  New Report
-                </Button>
-              </Link>
-            )
-          }
-        >
-          <div className="space-y-4">
-            <form onSubmit={handleSearch} className="flex gap-3">
-              <Input
-                type="text"
-                placeholder="Search reports..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                className="flex-1"
-              />
-              <Button type="submit" variant="accent">
-                Search
-              </Button>
-            </form>
-            
-            <div className="flex flex-wrap gap-2">
-              <FilterSelect
-                label="Type"
-                value={typeFilter}
-                onChange={(value) => {
-                  setTypeFilter(value as string);
-                  setPage(1);
-                }}
-                options={[
-                  { value: 'all', label: 'All Types' },
-                  ...REPORT_TYPES.map(type => ({ value: type.value, label: type.label })),
-                ]}
-              />
-              <FilterSelect
-                label="Status"
-                value={statusFilter}
-                onChange={(value) => {
-                  setStatusFilter(value as string);
-                  setPage(1);
-                }}
-                options={[
-                  { value: 'all', label: 'All Statuses' },
-                  ...REPORT_STATUSES.map(status => ({ value: status.value, label: status.label })),
-                ]}
-              />
-            </div>
-          </div>
-        </PageHeader>
-
-        {data && data.data.length > 0 ? (
-          <>
-            <div className="space-y-4 mb-8">
-              {data.data.map((report, index) => (
-                <div key={report.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-stagger-1">
-                  <ReportCard report={report} />
-                </div>
-              ))}
-            </div>
-
-            <div className="flex justify-center items-center gap-4 pb-8">
-              <Button
-                variant="outline"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                ← Previous
-              </Button>
-              <span className="text-slate-600 text-sm font-medium px-4">
-                Page {page} of {data.total_pages}
-              </span>
-              <Button
-                variant="outline"
-                onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))}
-                disabled={page >= data.total_pages}
-              >
-                Next →
-              </Button>
-            </div>
-          </>
-        ) : (
-          <Card static>
-            <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-                <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+      <PageHeader
+        title="Community Feed"
+        subtitle="See what's happening on TransJakarta routes and stops. Share updates and help fellow commuters."
+        actions={
+          isAuthenticated && (
+            <Link to="/reports/new">
+              <Button variant="accent">
+                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
+                New Report
+              </Button>
+            </Link>
+          )
+        }
+      >
+        <div className="space-y-4">
+          <form onSubmit={handleSearch} className="flex gap-3">
+            <Input
+              type="text"
+              placeholder="Search reports..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="flex-1"
+            />
+            <Button type="submit" variant="accent">
+              Search
+            </Button>
+          </form>
+          
+          <div className="flex flex-wrap gap-2">
+            <FilterSelect
+              label="Type"
+              value={typeFilter}
+              onChange={(value) => {
+                setTypeFilter(value as string);
+                setPage(1);
+              }}
+              options={[
+                { value: 'all', label: 'All Types' },
+                ...REPORT_TYPES.map(type => ({ value: type.value, label: type.label })),
+              ]}
+            />
+            <FilterSelect
+              label="Status"
+              value={statusFilter}
+              onChange={(value) => {
+                setStatusFilter(value as string);
+                setPage(1);
+              }}
+              options={[
+                { value: 'all', label: 'All Statuses' },
+                ...REPORT_STATUSES.map(status => ({ value: status.value, label: status.label })),
+              ]}
+            />
+          </div>
+        </div>
+      </PageHeader>
+
+      {data && data.data.length > 0 ? (
+        <>
+          <div className="space-y-4 mb-8">
+            {data.data.map((report, index) => (
+              <div key={report.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-stagger-1">
+                <ReportCard report={report} />
               </div>
-              <p className="text-slate-600 font-display text-lg">No reports yet</p>
-              <p className="text-slate-500 text-sm mt-2 mb-6">Be the first to share something!</p>
-              {isAuthenticated && (
-                <Link to="/reports/new">
-                  <Button variant="accent">Create Report</Button>
-                </Link>
-              )}
+            ))}
+          </div>
+
+          <div className="flex justify-center items-center gap-4 pb-8">
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page === 1}
+            >
+              ← Previous
+            </Button>
+            <span className="text-slate-600 text-sm font-medium px-4">
+              Page {page} of {data.total_pages}
+            </span>
+            <Button
+              variant="outline"
+              onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))}
+              disabled={page >= data.total_pages}
+            >
+              Next →
+            </Button>
+          </div>
+        </>
+      ) : (
+        <Card static>
+          <div className="text-center py-12">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
+              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+              </svg>
             </div>
-          </Card>
-        )}
-      </div>
+            <p className="text-slate-600 font-display text-lg">No reports yet</p>
+            <p className="text-slate-500 text-sm mt-2 mb-6">Be the first to share something!</p>
+            {isAuthenticated && (
+              <Link to="/reports/new">
+                <Button variant="accent">Create Report</Button>
+              </Link>
+            )}
+          </div>
+        </Card>
+      )}
     </div>
   );
 }
