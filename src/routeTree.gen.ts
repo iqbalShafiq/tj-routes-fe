@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as ThemeShowcaseRouteImport } from './routes/theme-showcase'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles/index'
 import { Route as StopsIndexRouteImport } from './routes/stops/index'
@@ -29,6 +30,11 @@ import { Route as AdminRoutesRouteImport } from './routes/admin/routes'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminBulkUploadRouteImport } from './routes/admin/bulk-upload'
 
+const ThemeShowcaseRoute = ThemeShowcaseRouteImport.update({
+  id: '/theme-showcase',
+  path: '/theme-showcase',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
@@ -127,6 +133,7 @@ const AdminBulkUploadRoute = AdminBulkUploadRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/theme-showcase': typeof ThemeShowcaseRoute
   '/admin/bulk-upload': typeof AdminBulkUploadRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/routes': typeof AdminRoutesRoute
@@ -148,6 +155,7 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/theme-showcase': typeof ThemeShowcaseRoute
   '/admin/bulk-upload': typeof AdminBulkUploadRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/routes': typeof AdminRoutesRoute
@@ -170,6 +178,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/theme-showcase': typeof ThemeShowcaseRoute
   '/admin/bulk-upload': typeof AdminBulkUploadRoute
   '/admin/reports': typeof AdminReportsRoute
   '/admin/routes': typeof AdminRoutesRoute
@@ -193,6 +202,7 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/theme-showcase'
     | '/admin/bulk-upload'
     | '/admin/reports'
     | '/admin/routes'
@@ -214,6 +224,7 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/theme-showcase'
     | '/admin/bulk-upload'
     | '/admin/reports'
     | '/admin/routes'
@@ -235,6 +246,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/theme-showcase'
     | '/admin/bulk-upload'
     | '/admin/reports'
     | '/admin/routes'
@@ -257,6 +269,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ThemeShowcaseRoute: typeof ThemeShowcaseRoute
   AdminBulkUploadRoute: typeof AdminBulkUploadRoute
   AdminReportsRoute: typeof AdminReportsRoute
   AdminRoutesRoute: typeof AdminRoutesRoute
@@ -279,6 +292,13 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/theme-showcase': {
+      id: '/theme-showcase'
+      path: '/theme-showcase'
+      fullPath: '/theme-showcase'
+      preLoaderRoute: typeof ThemeShowcaseRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -417,6 +437,7 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ThemeShowcaseRoute: ThemeShowcaseRoute,
   AdminBulkUploadRoute: AdminBulkUploadRoute,
   AdminReportsRoute: AdminReportsRoute,
   AdminRoutesRoute: AdminRoutesRoute,

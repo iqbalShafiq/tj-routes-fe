@@ -173,13 +173,18 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             className={`
               ${borderless 
                 ? 'border-none bg-transparent shadow-none focus:ring-0 focus:outline-none' 
-                : 'input-refined'
+                : `input-offset-shadow
+                    w-full px-4 py-3
+                    border-2 border-slate-200 bg-white
+                    text-slate-900 placeholder:text-slate-400
+                    transition-all duration-200
+                    focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
+                    hover:border-slate-300`
               }
-              w-full
               text-left
               flex items-center justify-between
               cursor-pointer
-              ${currentSize.button}
+              ${!borderless ? currentSize.button : currentSize.button}
               ${error && !borderless ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : ''}
               ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
               ${isOpen && !borderless ? 'ring-2 ring-amber-500/20 border-amber-500' : ''}
@@ -206,7 +211,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-auto card-chamfered-sm dropdown-scrollbar"
+              className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-auto dropdown-scrollbar"
               role="listbox"
             >
               {options.length === 0 ? (

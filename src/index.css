@@ -267,6 +267,256 @@
   .nav-link:hover::after {
     width: 100%;
   }
+
+  /* ============================================
+     BORDER STYLE OPTIONS FOR THEME SHOWCASE
+     ============================================ */
+
+  /* 1. Asymmetric Rounded - Different radius per corner */
+  .card-asymmetric {
+    @apply rounded-tl-xl rounded-tr-lg rounded-bl-lg rounded-br-xl;
+  }
+
+  .button-asymmetric {
+    @apply rounded-tl-lg rounded-tr-md rounded-bl-md rounded-br-lg;
+  }
+
+  .input-asymmetric {
+    @apply rounded-tl-lg rounded-tr-md rounded-bl-md rounded-br-lg;
+  }
+
+  /* 2. Soft Rounded with Depth - Standard rounded with inner shadow */
+  .card-soft-rounded {
+    @apply rounded-xl;
+    box-shadow: 
+      0 4px 6px -1px rgb(0 0 0 / 0.1),
+      0 2px 4px -2px rgb(0 0 0 / 0.1),
+      inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .button-soft-rounded {
+    @apply rounded-lg;
+    box-shadow: 
+      0 2px 4px -1px rgb(0 0 0 / 0.1),
+      inset 0 1px 1px 0 rgb(255 255 255 / 0.1);
+  }
+
+  .input-soft-rounded {
+    @apply rounded-lg;
+    box-shadow: 
+      inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  .card-soft-rounded:hover {
+    box-shadow: 
+      0 10px 15px -3px rgb(0 0 0 / 0.1),
+      0 4px 6px -4px rgb(0 0 0 / 0.1),
+      inset 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  }
+
+  /* 3. Minimal Squared - Very subtle rounding */
+  .card-minimal {
+    @apply rounded-sm;
+  }
+
+  .button-minimal {
+    @apply rounded;
+  }
+
+  .input-minimal {
+    @apply rounded;
+  }
+
+  /* 4. Rounded with Accent Border - Standard rounded with colored top border */
+  .card-accent-border {
+    @apply rounded-xl border-t-4 border-t-amber-500;
+  }
+
+  .button-accent-border {
+    @apply rounded-lg border-t-2 border-t-amber-400;
+  }
+
+  .input-accent-border {
+    @apply rounded-lg border-t-2 border-t-amber-400;
+  }
+
+  .card-accent-border:hover {
+    @apply border-t-amber-600;
+  }
+
+  .button-accent-border:hover {
+    @apply border-t-amber-500;
+  }
+
+  .input-accent-border:focus {
+    @apply border-t-amber-500;
+  }
+
+  /* 5. Rounded with Notch - Rounded with decorative notch at top-left */
+  .card-notched {
+    @apply rounded-xl relative;
+  }
+
+  .card-notched::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 24px;
+    height: 24px;
+    background: white;
+    border-radius: 0 0 12px 0;
+    border-right: 2px solid rgb(255 152 0 / 0.3);
+    border-bottom: 2px solid rgb(255 152 0 / 0.3);
+  }
+
+  .button-notched {
+    @apply rounded-lg relative;
+  }
+
+  .button-notched::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    background: inherit;
+    border-radius: 0 0 8px 0;
+    border-right: 1px solid rgb(255 255 255 / 0.3);
+    border-bottom: 1px solid rgb(255 255 255 / 0.3);
+  }
+
+  .input-notched {
+    @apply rounded-lg relative;
+  }
+
+  .input-notched::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 16px;
+    height: 16px;
+    background: white;
+    border-radius: 0 0 8px 0;
+    border-right: 1px solid rgb(255 152 0 / 0.2);
+    border-bottom: 1px solid rgb(255 152 0 / 0.2);
+  }
+
+  .card-notched:hover::before {
+    border-right-color: rgb(255 152 0 / 0.5);
+    border-bottom-color: rgb(255 152 0 / 0.5);
+  }
+
+  /* 6. Rounded with Gradient Border - Standard rounded with gradient border */
+  .card-gradient-border {
+    @apply rounded-xl relative;
+    background: white;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+  }
+
+  .card-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgb(255 152 0 / 0.4), rgb(255 152 0 / 0.1), transparent);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .button-gradient-border {
+    @apply rounded-lg relative;
+    border: 1.5px solid transparent;
+  }
+
+  .button-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -1.5px;
+    border-radius: inherit;
+    padding: 1.5px;
+    background: linear-gradient(135deg, rgb(255 255 255 / 0.5), transparent);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .input-gradient-border {
+    @apply rounded-lg relative;
+    border: 2px solid transparent;
+  }
+
+  .input-gradient-border::before {
+    content: '';
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    padding: 2px;
+    background: linear-gradient(135deg, rgb(255 152 0 / 0.3), transparent);
+    -webkit-mask: 
+      linear-gradient(#fff 0 0) content-box, 
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  .card-gradient-border:hover::before {
+    background: linear-gradient(135deg, rgb(255 152 0 / 0.6), rgb(255 152 0 / 0.3), transparent);
+  }
+
+  .input-gradient-border:focus::before {
+    background: linear-gradient(135deg, rgb(255 152 0 / 0.5), transparent);
+  }
+
+  /* 7. Rounded with Offset Shadow - Standard rounded with directional shadow */
+  .card-offset-shadow {
+    @apply rounded-xl;
+    box-shadow: 4px 4px 12px -2px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(226 232 240);
+  }
+
+  .button-offset-shadow {
+    @apply rounded-lg;
+    box-shadow: 2px 2px 6px -1px rgb(0 0 0 / 0.15);
+  }
+
+  .input-offset-shadow {
+    @apply rounded-lg;
+    box-shadow: 2px 2px 4px -1px rgb(0 0 0 / 0.1);
+  }
+
+  .card-offset-shadow:hover {
+    box-shadow: 6px 6px 16px -2px rgb(0 0 0 / 0.2), 0 0 0 1px rgb(255 152 0 / 0.3);
+    transform: translate(-1px, -1px);
+  }
+
+  .button-offset-shadow:hover {
+    box-shadow: 3px 3px 8px -1px rgb(0 0 0 / 0.2);
+    transform: translate(-1px, -1px);
+  }
+
+  .button-offset-shadow:active {
+    box-shadow: 1px 1px 3px -1px rgb(0 0 0 / 0.15);
+    transform: translate(0, 0);
+  }
+
+  .input-offset-shadow:focus {
+    box-shadow: 3px 3px 6px -1px rgb(0 0 0 / 0.15), 0 0 0 2px rgb(255 152 0 / 0.2);
+  }
 }
 
 @layer utilities {

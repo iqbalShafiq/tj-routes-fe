@@ -34,7 +34,13 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
             multiple={multiple}
             onChange={handleChange}
             className={`
-              input-refined
+              input-offset-shadow
+              w-full px-4 py-3
+              border-2 border-slate-200 bg-white
+              text-slate-900 placeholder:text-slate-400
+              transition-all duration-200
+              focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
+              hover:border-slate-300
               file:mr-4 file:py-2 file:px-4
               file:rounded-lg file:border-0
               file:text-sm file:font-medium

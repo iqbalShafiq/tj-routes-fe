@@ -11,29 +11,22 @@ interface CardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const sizeClasses: Record<CardSize, string> = {
-  sm: 'p-4 card-chamfered-sm',
-  md: 'p-6 card-chamfered',
-  lg: 'p-8 card-chamfered-lg',
+  sm: 'p-4',
+  md: 'p-6',
+  lg: 'p-8',
 };
 
 export const Card = ({ className = '', children, size = 'md', static: isStatic, ...props }: CardProps) => {
   return (
     <div
       className={`
-        relative bg-white shadow-md border border-slate-200 transition-all duration-300
+        card-offset-shadow
+        relative bg-white transition-all duration-300
         ${sizeClasses[size]}
-        ${!isStatic ? 'hover:shadow-lg hover:-translate-y-0.5 hover:border-amber-200' : ''}
         ${className}
       `}
       {...props}
     >
-      {/* Decorative corner accent */}
-      <div 
-        className="absolute top-0 left-0 w-6 h-6 pointer-events-none z-10"
-        style={{
-          background: 'linear-gradient(135deg, rgb(255 152 0 / 0.15) 50%, transparent 50%)',
-        }}
-      />
       <div className="relative z-0">
         {children}
       </div>
