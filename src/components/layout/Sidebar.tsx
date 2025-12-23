@@ -219,15 +219,15 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
           to={item.path}
           onClick={handleNavClick}
           className={`
-            flex items-center px-3 py-3 rounded-lg transition-all duration-200 w-full
+            flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 w-full
             ${!isMobile && !isExpanded ? 'justify-center gap-0' : 'gap-3'}
             ${isActive
-              ? 'bg-amber-50 text-amber-700 font-medium'
+              ? 'bg-amber-50 text-amber-600 font-medium'
               : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900'
             }
           `}
         >
-          <span className={`flex-shrink-0 ${isActive ? 'text-amber-600' : ''}`}>
+          <span className={`flex-shrink-0 ${isActive ? 'text-amber-600' : 'text-slate-600'}`}>
             {item.icon}
           </span>
           <span
@@ -312,6 +312,11 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
         {/* Navigation */}
         <nav className="flex-1 py-4 px-3 overflow-y-auto sidebar-scrollbar">
           {/* User Navigation */}
+          {(isMobile || isExpanded) && (
+            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">
+              MAIN MENU
+            </p>
+          )}
           <ul className="space-y-1">
             {visibleUserItems.map(renderNavItem)}
           </ul>
@@ -322,8 +327,8 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
               <div className={`my-4 ${!isMobile && !isExpanded ? 'mx-2' : 'mx-0'}`}>
                 <div className="border-t border-slate-200" />
                 {(isMobile || isExpanded) && (
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-4 mb-2 px-3">
-                    Admin
+                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-4 mb-3 px-3">
+                    ADMIN
                   </p>
                 )}
               </div>
@@ -344,31 +349,42 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
             <>
               <div
                 className={`
-                  flex items-center cursor-pointer rounded-lg transition-colors p-2
+                  flex items-center cursor-pointer rounded-lg transition-colors p-3 bg-slate-50
                   ${!isMobile && !isExpanded ? 'justify-center gap-0' : 'gap-3'}
-                  hover:bg-slate-50
-                  ${showUserMenu ? 'bg-slate-50' : ''}
+                  hover:bg-slate-100
+                  ${showUserMenu ? 'bg-slate-100' : ''}
                 `}
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 onMouseEnter={() => !isMobile && setShowUserMenu(true)}
               >
-                <div className={`w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                   isAdmin 
-                    ? 'bg-gradient-to-br from-amber-400 to-amber-600 text-white' 
-                    : 'bg-slate-200 text-slate-600'
+                    ? 'bg-amber-500 text-white' 
+                    : 'bg-slate-300 text-slate-700'
                 }`}>
-                  <span className="font-medium text-sm">
+                  <span className="font-bold text-sm">
                     {user?.username?.charAt(0).toUpperCase() || 'U'}
+                    {user?.username?.charAt(1)?.toUpperCase() || ''}
                   </span>
                 </div>
                 <div className={`flex-1 min-w-0 ${!isMobile && !isExpanded ? 'hidden' : ''}`}>
-                  <span className="text-sm font-medium text-slate-900 truncate block">
-                    {user?.username}
+                  <span className="text-sm font-bold text-slate-900 truncate block">
+                    {user?.username || 'User'}
                   </span>
-                  <span className={`text-xs ${isAdmin ? 'text-amber-600' : 'text-slate-500'}`}>
-                    {isAdmin ? 'Admin' : user?.level || 'User'}
+                  <span className="text-xs text-slate-500">
+                    {isAdmin ? 'Administrator' : user?.level || 'User'}
                   </span>
                 </div>
+                {(isMobile || isExpanded) && (
+                  <svg 
+                    className="w-5 h-5 text-slate-600 flex-shrink-0" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                )}
               </div>
 
               {/* Popover menu */}
