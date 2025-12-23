@@ -1,0 +1,386 @@
+import { useState } from 'react';
+import { createFileRoute, Link, redirect } from '@tanstack/react-router';
+import { useReport, useComments, useCreateComment, useReactToReport, useReactToComment } from '../../lib/hooks/useReports';
+import { useAuth } from '../../lib/hooks/useAuth';
+import { authApi } from '../../lib/api/auth';
+import { Card } from '../../components/ui/Card';
+import { Button } from '../../components/ui/Button';
+import { Input } from '../../components/ui/Input';
+import { Textarea } from '../../components/ui/Textarea';
+import { Loading } from '../../components/ui/Loading';
+import { PageHeader } from '../../components/layout';
+import { format, formatDistanceToNow } from 'date-fns';
+import type { Comment } from '../../lib/api/comments';
+import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
+
+export const Route = createFileRoute('/feed/$reportId')({
+  beforeLoad: async () => {
+    if (!authApi.isAuthenticated()) {
+      throw redirect({ to: '/auth/login' });
+    }
+  },
+  component: ReportDetailPage,
+});
+
+function CommentItem({ 
+  comment, 
+  reportId,
+  depth = 0 
+}: { 
+  comment: Comment; 
+  reportId: string;
+  depth?: number;
+}) {
+  const { isAuthenticated } = useAuth();
+  const [showReplyForm, setShowReplyForm] = useState(false);
+  const [replyContent, setReplyContent] = useState('');
+  const createComment = useCreateComment();
+  const reactMutation = useReactToComment();
+
+  const handleReply = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!replyContent.trim()) return;
+    
+    createComment.mutate(
+      { reportId, data: { content: replyContent, parent_id: comment.id } },
+      {
+        onSuccess: () => {
+          setReplyContent('');
+          setShowReplyForm(false);
+        },
+      }
+    );
+  };
+
+  const handleReaction = (type: 'upvote' | 'downvote') => {
+    if (!isAuthenticated) return;
+    reactMutation.mutate({ commentId: comment.id, type, reportId });
+  };
+
+  return (
+    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-slate-100 pl-4' : ''}`}>
+      <div className="py-4">
+        <div className="flex items-start gap-3">
+          <div className="w-8 h-8 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+            {comment.user?.username?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-1">
+              <Link 
+                to="/profile/$userId" 
+                params={{ userId: String(comment.user_id) }}
+                className="font-medium text-slate-900 hover:text-amber-600 text-sm"
+              >
+                {comment.user?.username || 'Anonymous'}
+              </Link>
+              <span className="text-xs text-slate-400">
+                {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
+              </span>
+            </div>
+            <p className="text-slate-700 text-sm">{comment.content}</p>
+            
+            <div className="flex items-center gap-4 mt-2">
+              <button
+                onClick={() => handleReaction('upvote')}
+                disabled={!isAuthenticated}
+                className="flex items-center gap-1 text-xs text-slate-500 hover:text-emerald-600 disabled:opacity-50"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+                </svg>
+                {comment.upvotes}
+              </button>
+              <button
+                onClick={() => handleReaction('downvote')}
+                disabled={!isAuthenticated}
+                className="flex items-center gap-1 text-xs text-slate-500 hover:text-red-600 disabled:opacity-50"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                </svg>
+                {comment.downvotes}
+              </button>
+              {depth < 2 && isAuthenticated && (
+                <button
+                  onClick={() => setShowReplyForm(!showReplyForm)}
+                  className="text-xs text-slate-500 hover:text-amber-600"
+                >
+                  Reply
+                </button>
+              )}
+            </div>
+
+            {showReplyForm && (
+              <form onSubmit={handleReply} className="mt-3 flex gap-2">
+                <Input
+                  type="text"
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  placeholder="Write a reply..."
+                  className="flex-1 text-sm"
+                />
+                <Button type="submit" size="sm" variant="accent" disabled={createComment.isPending}>
+                  Reply
+                </Button>
+              </form>
+            )}
+          </div>
+        </div>
+      </div>
+      
+      {/* Nested replies */}
+      {comment.replies && comment.replies.length > 0 && (
+        <div>
+          {comment.replies.map((reply) => (
+            <CommentItem key={reply.id} comment={reply} reportId={reportId} depth={depth + 1} />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function ReportDetailPage() {
+  const { reportId } = Route.useParams();
+  const { isAuthenticated } = useAuth();
+  const [newComment, setNewComment] = useState('');
+  
+  const { data: report, isLoading: reportLoading, error: reportError } = useReport(reportId);
+  const { data: comments, isLoading: commentsLoading } = useComments(reportId);
+  const createComment = useCreateComment();
+  const reactMutation = useReactToReport();
+
+  const handleSubmitComment = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newComment.trim()) return;
+    
+    createComment.mutate(
+      { reportId, data: { content: newComment } },
+      {
+        onSuccess: () => setNewComment(''),
+      }
+    );
+  };
+
+  const handleReaction = (type: 'upvote' | 'downvote') => {
+    if (!isAuthenticated) return;
+    reactMutation.mutate({ reportId, type });
+  };
+
+  if (reportLoading) {
+    return <Loading />;
+  }
+
+  if (reportError || !report) {
+    return (
+      <div className="text-center py-20 animate-fade-in">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 mb-4 card-chamfered">
+          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </div>
+        <p className="text-red-600 font-display text-lg mb-2">Report not found</p>
+        <Link to="/feed">
+          <Button variant="outline">Back to Feed</Button>
+        </Link>
+      </div>
+    );
+  }
+
+  const typeInfo = REPORT_TYPES.find(t => t.value === report.type);
+  const statusInfo = REPORT_STATUSES.find(s => s.value === report.status);
+
+  const getStatusColor = (color?: string) => {
+    switch (color) {
+      case 'amber': return 'bg-amber-100 text-amber-700';
+      case 'blue': return 'bg-blue-100 text-blue-700';
+      case 'emerald': return 'bg-emerald-100 text-emerald-700';
+      default: return 'bg-slate-100 text-slate-700';
+    }
+  };
+
+  return (
+    <div className="animate-fade-in max-w-3xl mx-auto">
+      <PageHeader
+        title=""
+        breadcrumbs={[
+          { label: 'Feed', path: '/feed' },
+          { label: report.title },
+        ]}
+      />
+
+      <Card className="mb-6">
+        {/* Author */}
+        <div className="flex items-center gap-3 mb-6">
+          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+            {report.user?.username?.charAt(0).toUpperCase() || 'U'}
+          </div>
+          <div>
+            <Link 
+              to="/profile/$userId" 
+              params={{ userId: String(report.user_id) }}
+              className="font-medium text-slate-900 hover:text-amber-600"
+            >
+              {report.user?.username || 'Anonymous'}
+            </Link>
+            <p className="text-sm text-slate-500">
+              {format(new Date(report.created_at), 'PPp')}
+            </p>
+          </div>
+        </div>
+
+        {/* Tags */}
+        <div className="flex flex-wrap gap-2 mb-4">
+          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(statusInfo?.color)}`}>
+            {statusInfo?.label || report.status}
+          </span>
+          <span className="px-3 py-1 text-sm font-medium bg-slate-100 text-slate-700 rounded-full">
+            {typeInfo?.label || report.type}
+          </span>
+        </div>
+
+        {/* Title & Description */}
+        <h1 className="text-2xl font-display font-bold text-slate-900 mb-4">{report.title}</h1>
+        <p className="text-slate-700 leading-relaxed mb-6 whitespace-pre-wrap">{report.description}</p>
+
+        {/* Images */}
+        {report.photo_urls && report.photo_urls.length > 0 && (
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
+            {report.photo_urls.map((url, idx) => (
+              <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
+                <img 
+                  src={url} 
+                  alt={`Report image ${idx + 1}`}
+                  className="w-full h-40 object-cover rounded-lg hover:opacity-90 transition-opacity"
+                />
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* PDFs */}
+        {report.pdf_urls && report.pdf_urls.length > 0 && (
+          <div className="flex flex-wrap gap-2 mb-6">
+            {report.pdf_urls.map((url, idx) => (
+              <a 
+                key={idx}
+                href={url} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+              >
+                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                  <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
+                </svg>
+                <span className="text-sm text-slate-700">Document {idx + 1}</span>
+              </a>
+            ))}
+          </div>
+        )}
+
+        {/* Related info */}
+        {(report.route || report.stop) && (
+          <div className="p-4 bg-slate-50 rounded-lg mb-6">
+            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Related to</p>
+            <div className="flex flex-wrap gap-3">
+              {report.route && (
+                <Link 
+                  to="/routes/$routeId" 
+                  params={{ routeId: String(report.related_route_id) }}
+                  className="inline-flex items-center gap-2 text-amber-700 hover:text-amber-800"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+                  </svg>
+                  Route {report.route.route_number}: {report.route.name}
+                </Link>
+              )}
+              {report.stop && (
+                <span className="inline-flex items-center gap-2 text-slate-700">
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                  </svg>
+                  {report.stop.name}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* Admin notes */}
+        {report.admin_notes && (
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+            <p className="text-xs text-blue-600 uppercase tracking-wider mb-1">Admin Response</p>
+            <p className="text-blue-900">{report.admin_notes}</p>
+          </div>
+        )}
+
+        {/* Reactions */}
+        <div className="flex items-center gap-6 pt-4 border-t border-slate-100">
+          <button
+            onClick={() => handleReaction('upvote')}
+            disabled={!isAuthenticated || reactMutation.isPending}
+            className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 transition-colors disabled:opacity-50"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
+            </svg>
+            <span className="font-medium">{report.upvotes} Upvotes</span>
+          </button>
+          <button
+            onClick={() => handleReaction('downvote')}
+            disabled={!isAuthenticated || reactMutation.isPending}
+            className="flex items-center gap-2 text-slate-600 hover:text-red-600 transition-colors disabled:opacity-50"
+          >
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+            </svg>
+            <span className="font-medium">{report.downvotes} Downvotes</span>
+          </button>
+          <span className="flex items-center gap-2 text-slate-500">
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
+            </svg>
+            <span>{report.comment_count} Comments</span>
+          </span>
+        </div>
+      </Card>
+
+      {/* Comments Section */}
+      <Card static>
+        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Comments</h2>
+        
+        {isAuthenticated && (
+          <form onSubmit={handleSubmitComment} className="mb-6">
+            <Textarea
+              value={newComment}
+              onChange={(e) => setNewComment(e.target.value)}
+              placeholder="Share your thoughts..."
+              rows={3}
+            />
+            <div className="flex justify-end mt-2">
+              <Button type="submit" variant="accent" disabled={createComment.isPending || !newComment.trim()}>
+                {createComment.isPending ? 'Posting...' : 'Post Comment'}
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {commentsLoading ? (
+          <div className="py-8 text-center text-slate-500">Loading comments...</div>
+        ) : comments && comments.length > 0 ? (
+          <div className="divide-y divide-slate-100">
+            {comments.map((comment) => (
+              <CommentItem key={comment.id} comment={comment} reportId={reportId} />
+            ))}
+          </div>
+        ) : (
+          <div className="py-8 text-center text-slate-500">
+            <p>No comments yet. Be the first to comment!</p>
+          </div>
+        )}
+      </Card>
+    </div>
+  );
+}
+
