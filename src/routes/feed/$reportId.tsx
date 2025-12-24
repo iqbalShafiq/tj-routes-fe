@@ -349,17 +349,16 @@ function ReportDetailPage() {
         </div>
       </Card>
 
-      {/* Comments Section */}
-      <Card static>
-        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Comments</h2>
-        
-        {isAuthenticated && (
-          <form onSubmit={handleSubmitComment} className="mb-6">
+      {/* Comment Input */}
+      {isAuthenticated && (
+        <Card className="mb-6">
+          <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Add a Comment</h2>
+          <form onSubmit={handleSubmitComment}>
             <Textarea
               value={newComment}
               onChange={(e) => setNewComment(e.target.value)}
               placeholder="Share your thoughts..."
-              rows={3}
+              rows={2}
             />
             <div className="flex justify-end mt-2">
               <Button type="submit" variant="accent" disabled={createComment.isPending || !newComment.trim()}>
@@ -367,8 +366,13 @@ function ReportDetailPage() {
               </Button>
             </div>
           </form>
-        )}
+        </Card>
+      )}
 
+      {/* Comments Section */}
+      <Card static>
+        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Comments</h2>
+        
         {commentsLoading ? (
           <div className="py-8 text-center text-slate-500">Loading comments...</div>
         ) : comments && comments.length > 0 ? (
