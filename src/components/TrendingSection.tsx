@@ -17,10 +17,12 @@ export const TrendingSection = () => {
           <h2 className="text-xl font-display font-bold text-slate-900">Trending Now</h2>
           <Skeleton className="h-8 w-32" />
         </div>
-        <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-          {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="w-80 h-48 flex-shrink-0 card-chamfered" />
-          ))}
+        <div className="-mx-6">
+          <div className="flex gap-4 overflow-x-auto overflow-y-visible pb-2 pt-2 scrollbar-hide px-6">
+            {[...Array(3)].map((_, i) => (
+              <Skeleton key={i} className="w-80 h-48 flex-shrink-0 card-chamfered" />
+            ))}
+          </div>
         </div>
       </div>
     );
@@ -46,10 +48,12 @@ export const TrendingSection = () => {
           <option value="all">All Time</option>
         </select>
       </div>
-      <div className="flex gap-4 overflow-x-auto pb-2 scrollbar-hide">
-        {data.data.map((report) => (
-          <TrendingCard key={report.id} report={report} />
-        ))}
+      <div className="-mx-6">
+        <div className="flex gap-4 overflow-x-auto overflow-y-visible pb-2 pt-2 scrollbar-hide px-6">
+          {data.data.map((report) => (
+            <TrendingCard key={report.id} report={report} />
+          ))}
+        </div>
       </div>
     </div>
   );

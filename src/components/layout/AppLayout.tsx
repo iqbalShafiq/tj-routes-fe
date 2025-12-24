@@ -92,12 +92,13 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
       )}
 
       {/* Sidebar - Mobile (overlay) */}
-      {isMobile && isMobileOpen && (
+      {isMobile && (
         <Sidebar
           isExpanded={true}
           onToggle={handleToggle}
           isMobile={true}
           onCloseMobile={handleCloseMobile}
+          isMobileOpen={isMobileOpen}
         />
       )}
 

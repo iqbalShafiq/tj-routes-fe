@@ -8,6 +8,7 @@ interface SidebarProps {
   onToggle: () => void;
   isMobile: boolean;
   onCloseMobile: () => void;
+  isMobileOpen?: boolean;
 }
 
 interface NavItem {
@@ -164,7 +165,7 @@ const adminNavItems: NavItem[] = [
   },
 ];
 
-export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: SidebarProps) => {
+export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile, isMobileOpen = false }: SidebarProps) => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const routerState = useRouterState();
   const currentPath = routerState.location.pathname;
@@ -253,7 +254,9 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
       {/* Mobile backdrop */}
       {isMobile && (
         <div
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[55] transition-opacity duration-300"
+          className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[55] transition-opacity duration-300 ${
+            isMobileOpen ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
           onClick={onCloseMobile}
         />
       )}
@@ -264,6 +267,7 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
           fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-[60]
           flex flex-col transition-all duration-300 ease-in-out
           ${isMobile ? 'w-64' : isExpanded ? 'w-64' : 'w-20'}
+          ${isMobile && !isMobileOpen ? '-translate-x-full' : ''}
         `}
       >
         {/* Logo section */}
