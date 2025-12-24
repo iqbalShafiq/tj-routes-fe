@@ -1,10 +1,9 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "@tanstack/react-router";
 import { reportsApi } from "../lib/api/reports";
 import type { CreateReportRequest } from "../lib/api/reports";
-import { useRoutes } from "../lib/hooks/useRoutes";
-import { useStops } from "../lib/hooks/useStops";
+import { useRoutes, useRouteStops } from "../lib/hooks/useRoutes";
 import { Input } from "./ui/Input";
 import { Select } from "./ui/Select";
 import { Textarea } from "./ui/Textarea";
@@ -15,13 +14,13 @@ import { REPORT_TYPES } from "../lib/utils/constants";
 
 interface ReportFormProps {
   initialRouteId?: number;
+  initialStopId?: number;
 }
 
-export const ReportForm = ({ initialRouteId }: ReportFormProps) => {
+export const ReportForm = ({ initialRouteId, initialStopId }: ReportFormProps) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { data: routesData } = useRoutes(1, 100);
-  const { data: stopsData } = useStops(1, 100);
+  const { data: routesData, isLoading: routesLoading } = useRoutes(1, 100);
 
   const [formData, setFormData] = useState<{
     type: CreateReportRequest["type"];
@@ -34,12 +33,68 @@ export const ReportForm = ({ initialRouteId }: ReportFormProps) => {
     title: "",
     description: "",
     related_route_id: initialRouteId,
-    related_stop_id: undefined,
+    related_stop_id: initialStopId,
   });
+
+  const { data: routeStops, isLoading: routeStopsLoading } = useRouteStops(formData.related_route_id);
+
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const [photos, setPhotos] = useState<File[]>([]);
   const [pdfs, setPdfs] = useState<File[]>([]);
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Auto-fill route from query params after routes data is fetched
+  useEffect(() => {
+    if (isInitialized || routesLoading || !routesData) return;
+
+    if (initialRouteId && routesData.data.some(r => r.id === initialRouteId)) {
+      // Route is already set in initial state, just mark as initialized
+      setIsInitialized(true);
+    } else if (!initialRouteId && !initialStopId) {
+      // No initial values, mark as initialized
+      setIsInitialized(true);
+    }
+  }, [routesData, routesLoading, initialRouteId, initialStopId, isInitialized]);
+
+  // Auto-fill stop after route stops are loaded (when route is selected from query params)
+  useEffect(() => {
+    if (!initialStopId || routeStopsLoading) return;
+    
+    // If route stops are loaded and we have an initial stop ID
+    if (routeStops && routeStops.length > 0) {
+      // Check if the initial stop is in the route stops
+      if (routeStops.some(stop => stop.id === initialStopId)) {
+        setFormData(prev => ({
+          ...prev,
+          related_stop_id: initialStopId,
+        }));
+      }
+    }
+  }, [routeStops, routeStopsLoading, initialStopId]);
+
+  // Reset stop selection when route changes (if stop is not in new route)
+  useEffect(() => {
+    if (!formData.related_route_id) {
+      // If route is cleared, clear stop too
+      setFormData(prev => ({
+        ...prev,
+        related_stop_id: undefined,
+      }));
+      return;
+    }
+
+    if (routeStops && formData.related_stop_id) {
+      // Check if current stop is still valid in the new route
+      const isStopValid = routeStops.some(stop => stop.id === formData.related_stop_id);
+      if (!isStopValid) {
+        setFormData(prev => ({
+          ...prev,
+          related_stop_id: undefined,
+        }));
+      }
+    }
+  }, [formData.related_route_id, routeStops]);
 
   const mutation = useMutation({
     mutationFn: () => {
@@ -111,9 +166,32 @@ export const ReportForm = ({ initialRouteId }: ReportFormProps) => {
     }
   };
 
-  if (!routesData) {
+  if (routesLoading || !routesData) {
     return <Loading />;
   }
+
+  // Get available stops based on selected route
+  const availableStops = formData.related_route_id && routeStops
+    ? routeStops
+    : [];
+
+  // Convert routes to Select options
+  const routeOptions = [
+    { value: "", label: "Select a route" },
+    ...routesData.data.map(route => ({
+      value: route.id,
+      label: `${route.route_number || route.code} - ${route.name}`,
+    })),
+  ];
+
+  // Convert stops to Select options
+  const stopOptions = [
+    { value: "", label: formData.related_route_id ? "Select a stop" : "Select a route first" },
+    ...availableStops.map(stop => ({
+      value: stop.id,
+      label: `${stop.name} (${stop.type})`,
+    })),
+  ];
 
   return (
     <form onSubmit={handleSubmit} className="space-y-5">
@@ -152,16 +230,13 @@ export const ReportForm = ({ initialRouteId }: ReportFormProps) => {
           setFormData({
             ...formData,
             related_route_id: value ? Number(value) : undefined,
+            // Reset stop when route changes
+            related_stop_id: undefined,
           })
         }
-      >
-        <option value="">Select a route</option>
-        {routesData.data.map((route) => (
-          <option key={route.id} value={route.id}>
-            {route.route_number || route.code} - {route.name}
-          </option>
-        ))}
-      </Select>
+        options={routeOptions}
+        searchable={true}
+      />
 
       {/* Related Stop */}
       <Select
@@ -173,14 +248,10 @@ export const ReportForm = ({ initialRouteId }: ReportFormProps) => {
             related_stop_id: value ? Number(value) : undefined,
           })
         }
-      >
-        <option value="">Select a stop</option>
-        {stopsData?.data.map((stop) => (
-          <option key={stop.id} value={stop.id}>
-            {stop.name} ({stop.type})
-          </option>
-        ))}
-      </Select>
+        options={stopOptions}
+        searchable={true}
+        disabled={!formData.related_route_id || routeStopsLoading}
+      />
 
       {/* Description */}
       <Textarea

@@ -19,6 +19,7 @@ export const Route = createFileRoute('/reports/new')({
   validateSearch: (search: Record<string, unknown>) => {
     return {
       routeId: search.routeId ? Number(search.routeId) : undefined,
+      stopId: search.stopId ? Number(search.stopId) : undefined,
     };
   },
 });
@@ -62,7 +63,7 @@ function NewReportPage() {
         ]}
       />
       <Card static>
-        <ReportForm initialRouteId={search.routeId} />
+        <ReportForm initialRouteId={search.routeId} initialStopId={search.stopId} />
       </Card>
     </div>
   );

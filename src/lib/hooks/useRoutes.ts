@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { routesApi, type CreateRouteRequest } from '../api/routes';
+import type { Stop } from '../api/stops';
 
 export const useRoutes = (page: number = 1, limit: number = 20, search?: string) => {
   return useQuery({
@@ -13,6 +14,28 @@ export const useRoute = (id: string | number) => {
     queryKey: ['route', id],
     queryFn: () => routesApi.getRoute(id),
     enabled: !!id,
+  });
+};
+
+export const useRouteStops = (routeId: string | number | undefined) => {
+  return useQuery({
+    queryKey: ['route', routeId, 'stops'],
+    queryFn: async () => {
+      if (!routeId) return [];
+      const route = await routesApi.getRoute(routeId);
+      // Extract stops from route_stops array
+      if (route.route_stops && route.route_stops.length > 0) {
+        return route.route_stops
+          .map(routeStop => routeStop.stop)
+          .filter((stop): stop is Stop => stop !== undefined);
+      }
+      // Fallback to stops array if route_stops is not available
+      if (route.stops && route.stops.length > 0) {
+        return route.stops;
+      }
+      return [];
+    },
+    enabled: !!routeId,
   });
 };
 

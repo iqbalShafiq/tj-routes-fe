@@ -20,6 +20,7 @@ interface SelectProps {
   borderless?: boolean;
   children?: React.ReactNode;
   options?: SelectOption[];
+  searchable?: boolean;
 }
 
 export const Select = forwardRef<HTMLDivElement, SelectProps>(
@@ -36,15 +37,18 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     size = 'md',
     borderless = false,
     children,
-    options: optionsProp
+    options: optionsProp,
+    searchable = false
   }, ref) => {
     const [isOpen, setIsOpen] = useState(false);
     const [selectedValue, setSelectedValue] = useState<string | number | undefined>(value || defaultValue);
+    const [searchTerm, setSearchTerm] = useState('');
     const selectRef = useRef<HTMLDivElement>(null);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const searchInputRef = useRef<HTMLInputElement>(null);
 
     // Parse options from children if options prop is not provided
-    const options: SelectOption[] = optionsProp || (() => {
+    const allOptions: SelectOption[] = optionsProp || (() => {
       if (!children) return [];
       const childrenArray = Array.isArray(children) ? children : [children];
       return childrenArray
@@ -56,12 +60,33 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
         }));
     })();
 
+    // Filter options based on search term
+    const options: SelectOption[] = searchable && searchTerm
+      ? allOptions.filter(opt => 
+          opt.label.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : allOptions;
+
     // Update selected value when value prop changes
     useEffect(() => {
       if (value !== undefined) {
         setSelectedValue(value);
       }
     }, [value]);
+
+    // Reset search term when dropdown closes
+    useEffect(() => {
+      if (!isOpen) {
+        setSearchTerm('');
+      }
+    }, [isOpen]);
+
+    // Focus search input when dropdown opens and searchable is enabled
+    useEffect(() => {
+      if (isOpen && searchable && searchInputRef.current) {
+        searchInputRef.current.focus();
+      }
+    }, [isOpen, searchable]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -89,22 +114,35 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       const handleKeyDown = (event: KeyboardEvent) => {
         if (!isOpen) return;
 
+        // Don't handle navigation keys if user is typing in search input
+        if (searchable && document.activeElement === searchInputRef.current) {
+          // Allow Escape to close dropdown even when search input is focused
+          if (event.key === 'Escape') {
+            setIsOpen(false);
+          }
+          return;
+        }
+
         if (event.key === 'Escape') {
           setIsOpen(false);
         } else if (event.key === 'ArrowDown') {
           event.preventDefault();
-          const currentIndex = options.findIndex(opt => opt.value === selectedValue);
-          const nextIndex = currentIndex < options.length - 1 ? currentIndex + 1 : 0;
-          const nextOption = options[nextIndex];
-          if (nextOption && !nextOption.disabled) {
+          const enabledOptions = options.filter(opt => !opt.disabled);
+          if (enabledOptions.length === 0) return;
+          const currentIndex = enabledOptions.findIndex(opt => opt.value === selectedValue);
+          const nextIndex = currentIndex < enabledOptions.length - 1 ? currentIndex + 1 : 0;
+          const nextOption = enabledOptions[nextIndex];
+          if (nextOption) {
             handleSelect(nextOption.value);
           }
         } else if (event.key === 'ArrowUp') {
           event.preventDefault();
-          const currentIndex = options.findIndex(opt => opt.value === selectedValue);
-          const prevIndex = currentIndex > 0 ? currentIndex - 1 : options.length - 1;
-          const prevOption = options[prevIndex];
-          if (prevOption && !prevOption.disabled) {
+          const enabledOptions = options.filter(opt => !opt.disabled);
+          if (enabledOptions.length === 0) return;
+          const currentIndex = enabledOptions.findIndex(opt => opt.value === selectedValue);
+          const prevIndex = currentIndex > 0 ? currentIndex - 1 : enabledOptions.length - 1;
+          const prevOption = enabledOptions[prevIndex];
+          if (prevOption) {
             handleSelect(prevOption.value);
           }
         }
@@ -116,7 +154,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           document.removeEventListener('keydown', handleKeyDown);
         };
       }
-    }, [isOpen, selectedValue, options]);
+    }, [isOpen, selectedValue, options, searchable]);
 
     const handleSelect = (optionValue: string | number) => {
       setSelectedValue(optionValue);
@@ -211,15 +249,39 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-auto dropdown-scrollbar"
+              className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-hidden flex flex-col dropdown-scrollbar"
               role="listbox"
             >
-              {options.length === 0 ? (
-                <div className="px-4 py-3 text-sm text-slate-500 text-center">
-                  No options available
+              {searchable && (
+                <div className="p-2 border-b border-slate-200 sticky top-0 bg-white">
+                  <input
+                    ref={searchInputRef}
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                      // Prevent dropdown from closing when typing
+                      if (e.key === 'Enter' && options.length > 0) {
+                        e.preventDefault();
+                        const firstEnabled = options.find(opt => !opt.disabled);
+                        if (firstEnabled) {
+                          handleSelect(firstEnabled.value);
+                        }
+                      }
+                    }}
+                    placeholder="Search..."
+                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                  />
                 </div>
-              ) : (
-                options.map((option) => {
+              )}
+              <div className="overflow-auto flex-1">
+                {options.length === 0 ? (
+                  <div className="px-4 py-3 text-sm text-slate-500 text-center">
+                    {searchable && searchTerm ? 'No matching options' : 'No options available'}
+                  </div>
+                ) : (
+                  options.map((option) => {
                   const isSelected = option.value === selectedValue;
                   const isDisabled = option.disabled;
 
@@ -263,7 +325,8 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                     </button>
                   );
                 })
-              )}
+                )}
+              </div>
             </div>
           )}
         </div>
