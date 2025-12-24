@@ -74,8 +74,8 @@ function AdminDashboard() {
         subtitle="Manage TransJakarta routes, stops, vehicles, and user reports."
       />
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      {/* Stats Grid - Primary metrics (top row) */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
         {isLoading ? (
           <>
             {[...Array(4)].map((_, i) => (
@@ -108,7 +108,6 @@ function AdminDashboard() {
             <StatCard
               title="Pending Reports"
               value={pendingReports?.total || 0}
-              subtitle="Awaiting review"
               icon={<svg className="w-7 h-7 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>}
               color="text-amber-600"
               link="/admin/reports"
@@ -117,24 +116,38 @@ function AdminDashboard() {
         )}
       </div>
 
-      {/* Quick Stats Row */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <StatCard
-          title="Total Users"
-          value={usersData?.total || 0}
-          icon={<svg className="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
-          color="text-slate-600"
-          link="/admin/users"
-        />
-        <StatCard
-          title="Total Reports"
-          value={reportsData?.total || 0}
-          icon={<svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
-          color="text-red-600"
-          link="/admin/reports"
-        />
+      {/* Secondary Stats Row */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
+        {isLoading ? (
+          <>
+            {[...Array(2)].map((_, i) => (
+              <Skeleton key={i} className="h-28 card-chamfered" />
+            ))}
+          </>
+        ) : (
+          <>
+            <StatCard
+              title="Total Users"
+              value={usersData?.total || 0}
+              icon={<svg className="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
+              color="text-slate-600"
+              link="/admin/users"
+            />
+            <StatCard
+              title="Total Reports"
+              value={reportsData?.total || 0}
+              icon={<svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
+              color="text-red-600"
+              link="/admin/reports"
+            />
+          </>
+        )}
+      </div>
+
+      {/* Bulk Upload */}
+      <div className="mb-8">
         <Card static>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
               <p className="text-sm text-slate-500 mb-1">Bulk Upload</p>
               <p className="text-lg font-display font-semibold text-slate-900">Import Data</p>
@@ -149,7 +162,7 @@ function AdminDashboard() {
         </Card>
       </div>
 
-      {/* Recent Reports */}
+      {/* Recent Reports and Quick Actions */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card static>
           <div className="flex items-center justify-between mb-4">
