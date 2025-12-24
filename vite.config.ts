@@ -8,4 +8,8 @@ export default defineConfig({
     TanStackRouterVite(),
     react(),
   ],
+  server: {
+    host: true, // Allow access from other devices on the network
+    port: 5173, // Default Vite port (you can change this if needed)
+  },
 })

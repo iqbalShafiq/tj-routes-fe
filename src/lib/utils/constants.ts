@@ -1,4 +1,30 @@
-export const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
+// Automatically detect API base URL
+// If accessed from mobile device, replace localhost with the current hostname
+const getApiBaseUrl = (): string => {
+  const envUrl = import.meta.env.VITE_API_BASE_URL;
+  
+  // If explicitly set in env, use it
+  if (envUrl) {
+    return envUrl;
+  }
+  
+  // Default to localhost:8080
+  const defaultUrl = 'http://localhost:8080';
+  const defaultPort = '8080';
+  
+  // If running in browser and not on localhost, replace localhost with current hostname
+  if (typeof window !== 'undefined') {
+    const currentHost = window.location.hostname;
+    // If accessing from a network IP (not localhost/127.0.0.1), use that IP for API too
+    if (currentHost !== 'localhost' && currentHost !== '127.0.0.1') {
+      return `http://${currentHost}:${defaultPort}`;
+    }
+  }
+  
+  return defaultUrl;
+};
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export const API_ENDPOINTS = {
   auth: {
