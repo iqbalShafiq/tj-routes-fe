@@ -42,32 +42,12 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
     }
   };
 
-  const getTypeIcon = () => {
-    switch (report.type) {
-      case 'route_issue':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
-          </svg>
-        );
-      case 'stop_issue':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          </svg>
-        );
-      case 'temporary_event':
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-          </svg>
-        );
+  const getStatusTextColor = (color?: string) => {
+    switch (color) {
+      case 'amber': return 'text-amber-700';
+      case 'blue': return 'text-blue-700';
+      case 'emerald': return 'text-emerald-700';
+      default: return 'text-slate-700';
     }
   };
 
@@ -76,7 +56,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   return (
     <Card size="sm" className="mb-6 hover:shadow-lg transition-shadow sm:p-6">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
         <div className="flex items-center gap-3 flex-1 min-w-0">
           <Link 
             to="/profile/$userId" 
@@ -105,12 +85,22 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
-              {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
-            </p>
+            <div className="flex items-center gap-2 flex-wrap mt-0.5 sm:block">
+              <p className="text-xs text-slate-500">
+                {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
+              </p>
+              <div className="flex items-center gap-1.5 sm:hidden">
+                <span className="text-xs text-slate-400">·</span>
+                <FollowButton userId={report.user_id} variant="minimal" className="text-xs" />
+                <span className="text-xs text-slate-400">·</span>
+                <span className={`text-xs font-medium whitespace-nowrap ${getStatusTextColor(statusInfo?.color)}`}>
+                  {statusInfo?.label || report.status}
+                </span>
+              </div>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2 flex-shrink-0 sm:self-start">
+        <div className="hidden sm:flex items-center gap-2 flex-shrink-0 self-start">
           <FollowButton userId={report.user_id} variant="minimal" />
           <span className={`px-2 py-1 text-xs font-medium border rounded whitespace-nowrap ${getStatusColor(statusInfo?.color)}`}>
             {statusInfo?.label || report.status}
@@ -121,20 +111,17 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       {/* Content */}
       <Link to="/feed/$reportId" params={{ reportId: String(report.id) }} className="block">
         <div className="mb-4">
-          <div className="flex items-center gap-2 mb-2">
-            <span className="text-amber-600">{getTypeIcon()}</span>
-            <span className="text-xs font-medium text-slate-500 uppercase tracking-wider">
-              {typeInfo?.label || report.type}
-            </span>
-          </div>
-          <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-3 hover:text-amber-600 transition-colors">
+          <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider mb-1 block">
+            {typeInfo?.label || report.type}
+          </span>
+          <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-2 hover:text-amber-600 transition-colors">
             {report.title}
           </h3>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">{report.description}</p>
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-2">{report.description}</p>
 
           {/* Hashtags */}
           {report.hashtags && report.hashtags.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-4">
+            <div className="flex flex-wrap gap-2 mb-2">
               {report.hashtags.map((hashtag) => (
                 <button
                   key={hashtag}
@@ -291,9 +278,6 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           </Link>
           <ShareButton url={reportUrl} title={report.title} text={report.description} />
         </div>
-        <p className="text-xs text-slate-400 self-start sm:self-auto">
-          {format(new Date(report.created_at), 'MMM d, yyyy')}
-        </p>
       </div>
     </Card>
   );
