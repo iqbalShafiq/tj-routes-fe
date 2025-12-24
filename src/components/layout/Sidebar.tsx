@@ -253,7 +253,7 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
       {/* Mobile backdrop */}
       {isMobile && (
         <div
-          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40 transition-opacity duration-300"
+          className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[55] transition-opacity duration-300"
           onClick={onCloseMobile}
         />
       )}
@@ -261,7 +261,7 @@ export const Sidebar = ({ isExpanded, onToggle, isMobile, onCloseMobile }: Sideb
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-50
+          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-[60]
           flex flex-col transition-all duration-300 ease-in-out
           ${isMobile ? 'w-64' : isExpanded ? 'w-64' : 'w-20'}
         `}

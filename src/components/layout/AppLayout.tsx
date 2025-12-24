@@ -2,6 +2,7 @@ import { ReactNode, useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileMenuButton } from './MobileMenuButton';
 import { FloatingRoutesButton } from '../FloatingRoutesButton';
+import { BottomNavigationBar } from './BottomNavigationBar';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -24,11 +25,18 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
     }
     return false;
   });
+  const [isSmallScreen, setIsSmallScreen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 1024;
+    }
+    return false;
+  });
 
   // Handle responsive breakpoint
   useEffect(() => {
     const checkMobile = () => {
       setIsMobile(window.innerWidth < 1024);
+      setIsSmallScreen(window.innerWidth < 1024);
     };
 
     // Check immediately on mount
@@ -93,8 +101,8 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         />
       )}
 
-      {/* Mobile menu button */}
-      {isMobile && (
+      {/* Mobile menu button - hidden when bottom nav is visible */}
+      {false && (
         <MobileMenuButton onClick={handleMobileToggle} isOpen={isMobileOpen} />
       )}
 
@@ -103,13 +111,22 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         className={`
           min-h-screen transition-all duration-300
           ${!isMobile ? (isExpanded ? 'pl-64' : 'pl-20') : 'pl-0'}
+          ${isSmallScreen ? 'pb-20' : ''}
         `}
       >
         <div className="max-w-7xl mx-auto px-6 py-8">
           {children}
         </div>
-        <FloatingRoutesButton />
+        {!isSmallScreen && <FloatingRoutesButton />}
       </main>
+
+      {/* Bottom Navigation Bar - only on small screens (mobile) */}
+      {isSmallScreen && (
+        <BottomNavigationBar
+          onMenuToggle={handleMobileToggle}
+          isMenuOpen={isMobileOpen}
+        />
+      )}
     </div>
   );
 };
