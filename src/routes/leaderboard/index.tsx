@@ -38,59 +38,68 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
   const isCurrentUser = user?.id === entry.id;
 
   const getMedalIcon = () => {
-    if (rank === 1) return '🥇';
-    if (rank === 2) return '🥈';
-    if (rank === 3) return '🥉';
+    if (rank === 1) return '#1';
+    if (rank === 2) return '#2';
+    if (rank === 3) return '#3';
     return null;
   };
 
+  const getCardBackgroundColor = () => {
+    if (rank === 1) return 'bg-amber-50';
+    if (rank === 2) return 'bg-slate-50';
+    if (rank === 3) return 'bg-orange-50';
+    return 'bg-white';
+  };
+
   return (
-    <div 
+    <Card 
       className={`
-        flex items-center gap-4 p-4 rounded-xl transition-all duration-200
-        ${isCurrentUser ? 'bg-amber-50 border-2 border-amber-200' : 'bg-white hover:bg-slate-50'}
-        ${rank <= 3 ? 'shadow-md' : ''}
+        ${getCardBackgroundColor()}
+        ${isCurrentUser ? 'border-2 border-amber-200' : ''}
       `}
+      size="md"
     >
-      {/* Rank */}
-      <div className={`
-        w-12 h-12 flex items-center justify-center rounded-xl font-display font-bold text-lg
-        ${rank === 1 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-white' :
-          rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-400 text-white' :
-          rank === 3 ? 'bg-gradient-to-br from-orange-300 to-orange-500 text-white' :
-          'bg-slate-100 text-slate-600'}
-      `}>
-        {getMedalIcon() || `#${rank}`}
-      </div>
-
-      {/* User info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <Link 
-            to="/profile/$userId" 
-            params={{ userId: String(entry.id) }}
-            className="font-display font-semibold text-slate-900 hover:text-amber-600 truncate"
-          >
-            {entry.username}
-          </Link>
-          {isCurrentUser && (
-            <span className="px-2 py-0.5 text-xs bg-amber-200 text-amber-800 rounded-full">You</span>
-          )}
-        </div>
-        <span className={`
-          inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium rounded-full
-          bg-gradient-to-r ${getLevelColor(entry.level)} text-white
+      <div className="flex items-center gap-4">
+        {/* Rank */}
+        <div className={`
+          w-12 h-12 flex items-center justify-center rounded-xl font-display font-bold text-lg
+          ${rank === 1 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-white' :
+            rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-400 text-white' :
+            rank === 3 ? 'bg-gradient-to-br from-orange-300 to-orange-500 text-white' :
+            'bg-slate-100 text-slate-600'}
         `}>
-          {getLevelBadge(entry.level)}
-        </span>
-      </div>
+          {getMedalIcon() || `#${rank}`}
+        </div>
 
-      {/* Points */}
-      <div className="text-right">
-        <p className="text-2xl font-display font-bold text-slate-900">{entry.reputation_points.toLocaleString()}</p>
-        <p className="text-xs text-slate-500">points</p>
+        {/* User info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <Link 
+              to="/profile/$userId" 
+              params={{ userId: String(entry.id) }}
+              className="font-display font-semibold text-slate-900 hover:text-amber-600 truncate"
+            >
+              {entry.username}
+            </Link>
+            {isCurrentUser && (
+              <span className="px-2 py-0.5 text-xs bg-amber-200 text-amber-800 rounded-full">You</span>
+            )}
+          </div>
+          <span className={`
+            inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium rounded-full
+            bg-gradient-to-r ${getLevelColor(entry.level)} text-white
+          `}>
+            {getLevelBadge(entry.level)}
+          </span>
+        </div>
+
+        {/* Points */}
+        <div className="text-right">
+          <p className="text-2xl font-display font-bold text-slate-900">{entry.reputation_points.toLocaleString()}</p>
+          <p className="text-xs text-slate-500">points</p>
+        </div>
       </div>
-    </div>
+    </Card>
   );
 }
 
@@ -155,63 +164,10 @@ function LeaderboardPage() {
         </div>
       </Card>
 
-      {/* Top 3 Podium */}
-      {leaderboard && leaderboard.length >= 3 && (
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {/* 2nd Place */}
-          <div className="flex flex-col items-center pt-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-slate-300 to-slate-400 rounded-full flex items-center justify-center text-white font-bold text-2xl mb-2 shadow-lg">
-              {leaderboard[1].username.charAt(0).toUpperCase()}
-            </div>
-            <span className="text-3xl mb-1">🥈</span>
-            <Link 
-              to="/profile/$userId" 
-              params={{ userId: String(leaderboard[1].id) }}
-              className="font-display font-semibold text-slate-900 hover:text-amber-600 text-center truncate w-full"
-            >
-              {leaderboard[1].username}
-            </Link>
-            <p className="text-lg font-bold text-slate-600">{leaderboard[1].reputation_points.toLocaleString()}</p>
-          </div>
-
-          {/* 1st Place */}
-          <div className="flex flex-col items-center">
-            <div className="w-24 h-24 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-3xl mb-2 shadow-xl ring-4 ring-amber-200">
-              {leaderboard[0].username.charAt(0).toUpperCase()}
-            </div>
-            <span className="text-4xl mb-1">🥇</span>
-            <Link 
-              to="/profile/$userId" 
-              params={{ userId: String(leaderboard[0].id) }}
-              className="font-display font-bold text-xl text-slate-900 hover:text-amber-600 text-center truncate w-full"
-            >
-              {leaderboard[0].username}
-            </Link>
-            <p className="text-xl font-bold text-amber-600">{leaderboard[0].reputation_points.toLocaleString()}</p>
-          </div>
-
-          {/* 3rd Place */}
-          <div className="flex flex-col items-center pt-8">
-            <div className="w-20 h-20 bg-gradient-to-br from-orange-300 to-orange-500 rounded-full flex items-center justify-center text-white font-bold text-2xl mb-2 shadow-lg">
-              {leaderboard[2].username.charAt(0).toUpperCase()}
-            </div>
-            <span className="text-3xl mb-1">🥉</span>
-            <Link 
-              to="/profile/$userId" 
-              params={{ userId: String(leaderboard[2].id) }}
-              className="font-display font-semibold text-slate-900 hover:text-amber-600 text-center truncate w-full"
-            >
-              {leaderboard[2].username}
-            </Link>
-            <p className="text-lg font-bold text-slate-600">{leaderboard[2].reputation_points.toLocaleString()}</p>
-          </div>
-        </div>
-      )}
-
       {/* Full list */}
       <div className="space-y-2">
-        {leaderboard && leaderboard.slice(3).map((entry, index) => (
-          <LeaderboardRow key={entry.id} entry={entry} rank={index + 4} />
+        {leaderboard && leaderboard.map((entry, index) => (
+          <LeaderboardRow key={entry.id} entry={entry} rank={index + 1} />
         ))}
       </div>
 
