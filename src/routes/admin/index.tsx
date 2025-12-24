@@ -75,7 +75,7 @@ function AdminDashboard() {
       />
 
       {/* Stats Grid - Primary metrics (top row) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
         {isLoading ? (
           <>
             {[...Array(4)].map((_, i) => (
@@ -116,55 +116,9 @@ function AdminDashboard() {
         )}
       </div>
 
-      {/* Secondary Stats Row */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 lg:gap-6 mb-8">
-        {isLoading ? (
-          <>
-            {[...Array(2)].map((_, i) => (
-              <Skeleton key={i} className="h-28 card-chamfered" />
-            ))}
-          </>
-        ) : (
-          <>
-            <StatCard
-              title="Total Users"
-              value={usersData?.total || 0}
-              icon={<svg className="w-7 h-7 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" /></svg>}
-              color="text-slate-600"
-              link="/admin/users"
-            />
-            <StatCard
-              title="Total Reports"
-              value={reportsData?.total || 0}
-              icon={<svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>}
-              color="text-red-600"
-              link="/admin/reports"
-            />
-          </>
-        )}
-      </div>
-
-      {/* Bulk Upload */}
-      <div className="mb-8">
-        <Card static>
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <p className="text-sm text-slate-500 mb-1">Bulk Upload</p>
-              <p className="text-lg font-display font-semibold text-slate-900">Import Data</p>
-              <p className="text-xs text-slate-400 mt-1">CSV upload for routes, stops, vehicles</p>
-            </div>
-            <Link to="/admin/bulk-upload">
-              <Button variant="accent" size="sm">
-                Upload
-              </Button>
-            </Link>
-          </div>
-        </Card>
-      </div>
-
-      {/* Recent Reports and Quick Actions */}
+      {/* Recent Reports and Right Column (Quick Actions + Bulk Management) */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card static>
+        <Card static className="flex flex-col h-full">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-lg font-display font-semibold text-slate-900">Recent Reports</h2>
             <Link to="/admin/reports" className="text-sm text-amber-600 hover:text-amber-700">
@@ -210,36 +164,58 @@ function AdminDashboard() {
           )}
         </Card>
 
-        {/* Quick Actions */}
-        <Card static>
-          <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Quick Actions</h2>
-          <div className="grid grid-cols-2 gap-3">
-            <Link to="/admin/routes">
-              <Button variant="outline" className="w-full justify-start">
-                <svg className="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Add Route
-              </Button>
+        {/* Right Column - Quick Actions and Bulk Management */}
+        <div className="flex flex-col space-y-6 h-full">
+          {/* Quick Actions */}
+          <Card static className="flex-shrink-0">
+            <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Quick Actions</h2>
+            <div className="grid grid-cols-2 gap-3">
+              <Link 
+                to="/admin/routes"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+              >
+                <p className="font-semibold text-slate-900 text-sm mb-1">Add Route</p>
+                <p className="text-xs text-slate-500">New transit route</p>
+              </Link>
+              <Link 
+                to="/admin/stops"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+              >
+                <p className="font-semibold text-slate-900 text-sm mb-1">Add Stop</p>
+                <p className="text-xs text-slate-500">New location</p>
+              </Link>
+              <Link 
+                to="/admin/vehicles"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+              >
+                <p className="font-semibold text-slate-900 text-sm mb-1">Add Vehicle</p>
+                <p className="text-xs text-slate-500">Register fleet</p>
+              </Link>
+              <Link 
+                to="/admin/users"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+              >
+                <p className="font-semibold text-slate-900 text-sm mb-1">User Access</p>
+                <p className="text-xs text-slate-500">Manage roles</p>
+              </Link>
+            </div>
+          </Card>
+
+          {/* Bulk Management */}
+          <Card static className="flex-1 flex flex-col">
+            <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Bulk Management</h2>
+            <Link to="/admin/bulk-upload" className="flex-1 flex items-center justify-center">
+              <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 w-full text-center hover:border-slate-400 hover:bg-slate-50 transition-all duration-200">
+                <p className="text-sm text-slate-600 mb-4">
+                  Upload CSV to update routes, stops, or fleet data in bulk.
+                </p>
+                <Button variant="accent" size="sm">
+                  Import Data
+                </Button>
+              </div>
             </Link>
-            <Link to="/admin/stops">
-              <Button variant="outline" className="w-full justify-start">
-                <svg className="w-5 h-5 mr-2 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Add Stop
-              </Button>
-            </Link>
-            <Link to="/admin/vehicles">
-              <Button variant="outline" className="w-full justify-start">
-                <svg className="w-5 h-5 mr-2 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" /></svg>
-                Add Vehicle
-              </Button>
-            </Link>
-            <Link to="/admin/bulk-upload">
-              <Button variant="outline" className="w-full justify-start">
-                <svg className="w-5 h-5 mr-2 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" /></svg>
-                Bulk Import
-              </Button>
-            </Link>
-          </div>
-        </Card>
+          </Card>
+        </div>
       </div>
     </div>
   );

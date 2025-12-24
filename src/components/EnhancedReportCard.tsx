@@ -74,14 +74,14 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   const reportUrl = `${window.location.origin}/feed/${report.id}`;
 
   return (
-    <Card className="mb-6 hover:shadow-lg transition-shadow">
+    <Card size="sm" className="mb-6 hover:shadow-lg transition-shadow sm:p-6">
       {/* Header */}
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3 flex-1">
+      <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
           <Link 
             to="/profile/$userId" 
             params={{ userId: String(report.user_id) }}
-            className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-lg hover:scale-105 transition-transform"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg hover:scale-105 transition-transform flex-shrink-0"
           >
             {report.user?.username?.charAt(0).toUpperCase() || 'U'}
           </Link>
@@ -90,29 +90,29 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
               <Link 
                 to="/profile/$userId" 
                 params={{ userId: String(report.user_id) }}
-                className="font-semibold text-slate-900 hover:text-amber-600 transition-colors"
+                className="font-semibold text-sm sm:text-base text-slate-900 hover:text-amber-600 transition-colors truncate"
               >
                 {report.user?.username || 'Anonymous'}
               </Link>
               {report.user?.level && (
-                <span className="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 rounded-full">
+                <span className="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 rounded-full flex-shrink-0">
                   {report.user.level}
                 </span>
               )}
               {report.is_following && (
-                <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full">
+                <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full flex-shrink-0">
                   Following
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 mt-0.5">
               {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0 sm:self-start">
           <FollowButton userId={report.user_id} variant="minimal" />
-          <span className={`px-2 py-1 text-xs font-medium border rounded ${getStatusColor(statusInfo?.color)}`}>
+          <span className={`px-2 py-1 text-xs font-medium border rounded whitespace-nowrap ${getStatusColor(statusInfo?.color)}`}>
             {statusInfo?.label || report.status}
           </span>
         </div>
@@ -127,10 +127,10 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
               {typeInfo?.label || report.type}
             </span>
           </div>
-          <h3 className="text-2xl font-display font-bold text-slate-900 mb-3 hover:text-amber-600 transition-colors">
+          <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-3 hover:text-amber-600 transition-colors">
             {report.title}
           </h3>
-          <p className="text-slate-600 leading-relaxed mb-4">{report.description}</p>
+          <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-4">{report.description}</p>
 
           {/* Hashtags */}
           {report.hashtags && report.hashtags.length > 0 && (
@@ -249,8 +249,8 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       </Link>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
-        <div className="flex items-center gap-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-100">
+        <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending || removeReactionMutation.isPending}
@@ -291,7 +291,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           </Link>
           <ShareButton url={reportUrl} title={report.title} text={report.description} />
         </div>
-        <p className="text-xs text-slate-400">
+        <p className="text-xs text-slate-400 self-start sm:self-auto">
           {format(new Date(report.created_at), 'MMM d, yyyy')}
         </p>
       </div>
