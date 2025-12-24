@@ -13,6 +13,7 @@ import { Route as ThemeShowcaseRouteImport } from './routes/theme-showcase'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles/index'
 import { Route as StopsIndexRouteImport } from './routes/stops/index'
+import { Route as RoutesIndexRouteImport } from './routes/routes/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
 import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
 import { Route as FeedIndexRouteImport } from './routes/feed/index'
@@ -48,6 +49,11 @@ const VehiclesIndexRoute = VehiclesIndexRouteImport.update({
 const StopsIndexRoute = StopsIndexRouteImport.update({
   id: '/stops/',
   path: '/stops/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const RoutesIndexRoute = RoutesIndexRouteImport.update({
+  id: '/routes/',
+  path: '/routes/',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReportsIndexRoute = ReportsIndexRouteImport.update({
@@ -150,6 +156,7 @@ export interface FileRoutesByFullPath {
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
+  '/routes': typeof RoutesIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
 }
@@ -172,6 +179,7 @@ export interface FileRoutesByTo {
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
+  '/routes': typeof RoutesIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
 }
@@ -195,6 +203,7 @@ export interface FileRoutesById {
   '/feed/': typeof FeedIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/reports/': typeof ReportsIndexRoute
+  '/routes/': typeof RoutesIndexRoute
   '/stops/': typeof StopsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
 }
@@ -219,6 +228,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/leaderboard'
     | '/reports'
+    | '/routes'
     | '/stops'
     | '/vehicles'
   fileRoutesByTo: FileRoutesByTo
@@ -241,6 +251,7 @@ export interface FileRouteTypes {
     | '/feed'
     | '/leaderboard'
     | '/reports'
+    | '/routes'
     | '/stops'
     | '/vehicles'
   id:
@@ -263,6 +274,7 @@ export interface FileRouteTypes {
     | '/feed/'
     | '/leaderboard/'
     | '/reports/'
+    | '/routes/'
     | '/stops/'
     | '/vehicles/'
   fileRoutesById: FileRoutesById
@@ -286,6 +298,7 @@ export interface RootRouteChildren {
   FeedIndexRoute: typeof FeedIndexRoute
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
+  RoutesIndexRoute: typeof RoutesIndexRoute
   StopsIndexRoute: typeof StopsIndexRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
@@ -318,6 +331,13 @@ declare module '@tanstack/react-router' {
       path: '/stops'
       fullPath: '/stops'
       preLoaderRoute: typeof StopsIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/routes/': {
+      id: '/routes/'
+      path: '/routes'
+      fullPath: '/routes'
+      preLoaderRoute: typeof RoutesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reports/': {
@@ -454,6 +474,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedIndexRoute: FeedIndexRoute,
   LeaderboardIndexRoute: LeaderboardIndexRoute,
   ReportsIndexRoute: ReportsIndexRoute,
+  RoutesIndexRoute: RoutesIndexRoute,
   StopsIndexRoute: StopsIndexRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }

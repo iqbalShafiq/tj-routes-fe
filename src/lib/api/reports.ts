@@ -16,6 +16,9 @@ export interface Report {
   upvotes: number;
   downvotes: number;
   comment_count: number;
+  hashtags?: string[] | null;
+  is_following?: boolean | null;
+  user_reaction?: 'upvote' | 'downvote' | null;
   created_at: string;
   updated_at: string;
   user?: {
@@ -141,5 +144,110 @@ export const reportsApi = {
 
   deleteReport: async (id: string | number): Promise<void> => {
     await apiClient.delete(API_ENDPOINTS.reports.detail(id));
+  },
+
+  getFeed: async (
+    offset: number = 0,
+    limit: number = 20,
+    options?: {
+      sort?: 'recent' | 'popular' | 'trending';
+      hashtag?: string;
+      followed?: boolean;
+    }
+  ): Promise<{
+    data: Report[];
+    total: number;
+    offset: number;
+    limit: number;
+  }> => {
+    const params = new URLSearchParams({
+      offset: offset.toString(),
+      limit: limit.toString(),
+    });
+    if (options?.sort) params.append('sort', options.sort);
+    if (options?.hashtag) params.append('hashtag', options.hashtag);
+    if (options?.followed !== undefined) params.append('followed', options.followed.toString());
+
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        reports: Report[];
+        total: number;
+        offset: number;
+        limit: number;
+      };
+    }>(`${API_ENDPOINTS.reports.feed}?${params}`);
+    
+    if (response.data.success && response.data.data.reports) {
+      return {
+        data: response.data.data.reports,
+        total: response.data.data.total,
+        offset: response.data.data.offset,
+        limit: response.data.data.limit,
+      };
+    }
+    return { data: [], total: 0, offset, limit };
+  },
+
+  getTrending: async (
+    offset: number = 0,
+    limit: number = 20,
+    window: '1h' | '24h' | '7d' | '30d' | 'all' = '24h'
+  ): Promise<{
+    data: Report[];
+    total: number;
+    offset: number;
+    limit: number;
+    window: string;
+  }> => {
+    const params = new URLSearchParams({
+      offset: offset.toString(),
+      limit: limit.toString(),
+      window,
+    });
+
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        reports: Report[];
+        total: number;
+        offset: number;
+        limit: number;
+        window: string;
+      };
+    }>(`${API_ENDPOINTS.reports.trending}?${params}`);
+    
+    if (response.data.success && response.data.data.reports) {
+      return {
+        data: response.data.data.reports,
+        total: response.data.data.total,
+        offset: response.data.data.offset,
+        limit: response.data.data.limit,
+        window: response.data.data.window,
+      };
+    }
+    return { data: [], total: 0, offset, limit, window };
+  },
+
+  getStories: async (
+    limit: number = 20,
+    userId?: number
+  ): Promise<Report[]> => {
+    const params = new URLSearchParams({
+      limit: limit.toString(),
+    });
+    if (userId) params.append('user_id', userId.toString());
+
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        stories: Report[];
+      };
+    }>(`${API_ENDPOINTS.reports.stories}?${params}`);
+    
+    if (response.data.success && response.data.data.stories) {
+      return response.data.data.stories;
+    }
+    return [];
   },
 };

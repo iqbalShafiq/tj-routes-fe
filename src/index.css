@@ -520,6 +520,15 @@
 }
 
 @layer utilities {
+  /* Scrollbar utilities */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Animations */
   @keyframes slide-in {
     from {

@@ -1,6 +1,7 @@
 import { ReactNode, useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileMenuButton } from './MobileMenuButton';
+import { FloatingRoutesButton } from '../FloatingRoutesButton';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -107,6 +108,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {children}
         </div>
+        <FloatingRoutesButton />
       </main>
     </div>
   );
