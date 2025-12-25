@@ -37,6 +37,17 @@ function RootComponent() {
     }
   }, [pathname, isAuthPage, is404Page]);
 
+  // Stop navigation loading when route changes (for client-side navigation)
+  useEffect(() => {
+    if (isNavigating) {
+      // Small delay to allow progress bar to complete
+      const stopTimer = setTimeout(() => {
+        stopNavigation();
+      }, 500);
+      return () => clearTimeout(stopTimer);
+    }
+  }, [pathname, isNavigating, stopNavigation]);
+
   // 404 pages get a wide, centered layout without sidebar
   if (is404Page) {
     return (

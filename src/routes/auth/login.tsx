@@ -33,7 +33,7 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const { login, initiateOAuth } = useAuth();
-  const { stopNavigation } = useNavigationLoading();
+  const { stopNavigation, startNavigation } = useNavigationLoading();
   const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
   // Handle navigation loading state on mount
@@ -64,6 +64,7 @@ function LoginPage() {
         console.log("Calling login API...");
         await login(value.email, value.password);
         console.log("Login successful, navigating...");
+        startNavigation();
         navigate({ to: "/" });
       } catch (error: any) {
         console.error("Login error:", error);
@@ -144,6 +145,7 @@ function LoginPage() {
             try {
               await login(email, password);
               console.log("Login successful, navigating...");
+              startNavigation();
               navigate({ to: "/" });
             } catch (error: any) {
               console.error("Login error:", error);
@@ -290,7 +292,10 @@ function LoginPage() {
             type="button"
             variant="primary"
             className="w-full"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => {
+              startNavigation();
+              navigate({ to: "/" });
+            }}
           >
             Continue as Guest
           </Button>

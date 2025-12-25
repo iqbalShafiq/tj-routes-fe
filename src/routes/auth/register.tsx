@@ -37,7 +37,7 @@ const registerSchema = z.object({
 function RegisterPage() {
   const navigate = useNavigate();
   const { register, initiateOAuth } = useAuth();
-  const { stopNavigation } = useNavigationLoading();
+  const { stopNavigation, startNavigation } = useNavigationLoading();
   const [registerError, setRegisterError] = useState<string | undefined>(
     undefined
   );
@@ -71,6 +71,7 @@ function RegisterPage() {
         console.log("Calling register API...");
         await register(value.email, value.password, value.name);
         console.log("Registration successful, navigating to login...");
+        startNavigation();
         navigate({ to: "/auth/login" });
       } catch (error: any) {
         console.error("Registration error:", error);
@@ -161,6 +162,7 @@ function RegisterPage() {
             try {
               await register(email, password, name);
               console.log("Registration successful, navigating to login...");
+              startNavigation();
               navigate({ to: "/auth/login" });
             } catch (error: any) {
               console.error("Registration error:", error);
@@ -322,7 +324,10 @@ function RegisterPage() {
             type="button"
             variant="primary"
             className="w-full"
-            onClick={() => navigate({ to: "/" })}
+            onClick={() => {
+              startNavigation();
+              navigate({ to: "/" });
+            }}
           >
             Continue as Guest
           </Button>

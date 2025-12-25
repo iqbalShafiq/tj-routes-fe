@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 interface ProgressBarProps {
   isActive: boolean;
@@ -14,6 +14,11 @@ export const ProgressBar = ({ isActive, onComplete }: ProgressBarProps) => {
       setIsVisible(true);
       setProgress(0);
 
+      // Start with immediate visible progress for better UX
+      requestAnimationFrame(() => {
+        setProgress(5);
+      });
+
       // Simulate progress animation
       const interval = setInterval(() => {
         setProgress((prev) => {
@@ -26,11 +31,11 @@ export const ProgressBar = ({ isActive, onComplete }: ProgressBarProps) => {
             }, 300);
             return 100;
           }
-          // Slow down as we approach 100%
-          const increment = prev < 90 ? 10 : 2;
+          // Faster start, slow down as we approach 100%
+          const increment = prev < 70 ? 15 : prev < 90 ? 8 : 2;
           return Math.min(prev + increment, 100);
         });
-      }, 50);
+      }, 30);
 
       return () => {
         clearInterval(interval);
@@ -49,10 +54,9 @@ export const ProgressBar = ({ isActive, onComplete }: ProgressBarProps) => {
         className="h-full bg-amber-500 transition-all duration-300 ease-out shadow-lg"
         style={{
           width: `${progress}%`,
-          boxShadow: '0 0 10px rgba(245, 158, 11, 0.5)',
+          boxShadow: "0 0 10px rgba(245, 158, 11, 0.5)",
         }}
       />
     </div>
   );
 };
-
