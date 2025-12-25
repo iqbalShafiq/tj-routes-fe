@@ -1,5 +1,6 @@
 import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
 import { useAuth } from "../../lib/hooks/useAuth";
+import { useNavigationLoading } from "../../lib/hooks/useNavigationLoading";
 import { Button } from "../ui/Button";
 import { useState, useRef, useEffect } from "react";
 
@@ -320,6 +321,7 @@ export const Sidebar = ({
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const routerState = useRouterState();
   const navigate = useNavigate();
+  const { startNavigation } = useNavigationLoading();
   const currentPath = routerState.location.pathname;
   const [showUserMenu, setShowUserMenu] = useState(false);
   const userMenuRef = useRef<HTMLDivElement>(null);
@@ -648,6 +650,7 @@ export const Sidebar = ({
                 onClick={(e) => {
                   e.preventDefault();
                   handleNavClick();
+                  startNavigation();
                   window.location.href = "/auth/login";
                 }}
                 className={`
@@ -684,6 +687,7 @@ export const Sidebar = ({
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavClick();
+                    startNavigation();
                     window.location.href = "/auth/register";
                   }}
                   className="
