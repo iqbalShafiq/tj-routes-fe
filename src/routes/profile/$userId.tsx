@@ -201,7 +201,7 @@ function UserProfilePage() {
         </Card>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <Card static className="text-center">
             <p className="text-3xl font-display font-bold text-amber-600">
               {profile.reputation_points.toLocaleString()}
@@ -213,12 +213,6 @@ function UserProfilePage() {
               {profile.badges.length}
             </p>
             <p className="text-sm text-slate-500">Badges Earned</p>
-          </Card>
-          <Card static className="text-center">
-            <p className="text-3xl font-display font-bold text-emerald-600">
-              {currentLevel?.label || profile.level}
-            </p>
-            <p className="text-sm text-slate-500">Current Level</p>
           </Card>
           <Card static className="text-center">
             <p className="text-3xl font-display font-bold text-blue-600">

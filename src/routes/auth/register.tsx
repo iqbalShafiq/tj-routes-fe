@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, useNavigate, redirect } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
@@ -7,8 +7,20 @@ import { useAuth } from '../../lib/hooks/useAuth';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { authApi } from '../../lib/api/auth';
+import { getLastVisitedPage } from '../../lib/utils/navigation';
 
 export const Route = createFileRoute('/auth/register')({
+  beforeLoad: async () => {
+    // If user is already authenticated, redirect to last page or feed
+    if (authApi.isAuthenticated()) {
+      const lastPage = getLastVisitedPage();
+      const redirectTo = lastPage || '/feed';
+      throw redirect({
+        to: redirectTo,
+      });
+    }
+  },
   component: RegisterPage,
 });
 

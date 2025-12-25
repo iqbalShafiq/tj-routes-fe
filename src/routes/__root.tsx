@@ -2,6 +2,8 @@ import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { AuthProvider } from '../lib/hooks/useAuth';
 import { AppLayout } from '../components/layout';
+import { trackLastVisitedPage } from '../lib/utils/navigation';
+import { useEffect } from 'react';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,6 +17,13 @@ const queryClient = new QueryClient({
 function RootComponent() {
   const routerState = useRouterState();
   const isAuthPage = routerState.location.pathname.startsWith('/auth');
+
+  // Track last visited page for non-auth pages
+  useEffect(() => {
+    if (!isAuthPage) {
+      trackLastVisitedPage(routerState.location.pathname);
+    }
+  }, [routerState.location.pathname, isAuthPage]);
 
   if (isAuthPage) {
     // Auth pages get a centered, clean layout
