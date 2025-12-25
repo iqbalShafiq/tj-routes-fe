@@ -1,9 +1,14 @@
-import { createRootRoute, Outlet, useRouterState } from '@tanstack/react-router';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { AuthProvider } from '../lib/hooks/useAuth';
-import { AppLayout } from '../components/layout';
-import { trackLastVisitedPage } from '../lib/utils/navigation';
-import { useEffect } from 'react';
+import {
+  createRootRoute,
+  Outlet,
+  useRouterState,
+  useLocation,
+} from "@tanstack/react-router";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { AuthProvider } from "../lib/hooks/useAuth";
+import { AppLayout } from "../components/layout";
+import { trackLastVisitedPage } from "../lib/utils/navigation";
+import { useEffect } from "react";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,11 +20,12 @@ const queryClient = new QueryClient({
 });
 
 function RootComponent() {
+  const location = useLocation();
   const routerState = useRouterState();
-  const pathname = routerState.location.pathname;
-  const isAuthPage = pathname.startsWith('/auth');
+  const pathname = location.pathname;
+  const isAuthPage = pathname.startsWith("/auth");
   // Check if the current route is the catch-all 404 route
-  const is404Page = routerState.matches.some(match => match.routeId === '/$');
+  const is404Page = routerState.matches.some((match) => match.routeId === "/$");
 
   // Track last visited page for non-auth pages
   useEffect(() => {
