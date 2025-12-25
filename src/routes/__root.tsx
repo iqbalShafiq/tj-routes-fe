@@ -16,17 +16,31 @@ const queryClient = new QueryClient({
 
 function RootComponent() {
   const routerState = useRouterState();
-  const isAuthPage = routerState.location.pathname.startsWith('/auth');
+  const pathname = routerState.location.pathname;
+  const isAuthPage = pathname.startsWith('/auth');
+  // Check if the current route is the catch-all 404 route
+  const is404Page = routerState.matches.some(match => match.routeId === '/$');
 
   // Track last visited page for non-auth pages
   useEffect(() => {
-    if (!isAuthPage) {
-      trackLastVisitedPage(routerState.location.pathname);
+    if (!isAuthPage && !is404Page) {
+      trackLastVisitedPage(pathname);
     }
-  }, [routerState.location.pathname, isAuthPage]);
+  }, [pathname, isAuthPage, is404Page]);
 
+  // 404 pages get a wide, centered layout without sidebar
+  if (is404Page) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <main className="w-full max-w-7xl mx-auto px-6 py-8">
+          <Outlet />
+        </main>
+      </div>
+    );
+  }
+
+  // Auth pages get a centered, clean layout
   if (isAuthPage) {
-    // Auth pages get a centered, clean layout
     return (
       <div className="min-h-screen bg-white flex items-center justify-center">
         <main className="w-full max-w-md mx-auto px-6 py-12">
