@@ -26,6 +26,7 @@ export interface User {
 
 export interface AuthResponse {
   success: boolean;
+  error?: string;
   data: {
     user: User;
     access_token: string;
@@ -36,6 +37,10 @@ export interface AuthResponse {
 export const authApi = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.login, data);
+    if (!response.data.success) {
+      const errorMessage = response.data.error || 'Login failed. Please try again.';
+      throw new Error(errorMessage);
+    }
     if (response.data.success && response.data.data.access_token) {
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.data.data.access_token);
       if (response.data.data.refresh_token) {
@@ -59,6 +64,10 @@ export const authApi = {
       username: data.name,
     };
     const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.register, apiData);
+    if (!response.data.success) {
+      const errorMessage = response.data.error || 'Registration failed. Please try again.';
+      throw new Error(errorMessage);
+    }
     if (response.data.success && response.data.data.access_token) {
       localStorage.setItem(STORAGE_KEYS.AUTH_TOKEN, response.data.data.access_token);
       if (response.data.data.refresh_token) {

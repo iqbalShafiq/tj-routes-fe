@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
+import { useState } from 'react';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -12,7 +13,9 @@ export const Route = createFileRoute('/auth/register')({
 });
 
 const registerSchema = z.object({
-  name: z.string().min(2, 'Name must be at least 2 characters'),
+  name: z.string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(50, 'Username must be at most 50 characters'),
   email: z.string().email('Invalid email address'),
   password: z.string().min(6, 'Password must be at least 6 characters'),
 });
@@ -20,6 +23,7 @@ const registerSchema = z.object({
 function RegisterPage() {
   const navigate = useNavigate();
   const { register, initiateOAuth } = useAuth();
+  const [registerError, setRegisterError] = useState<string | undefined>(undefined);
 
   const form = useForm({
     defaultValues: {
@@ -28,13 +32,28 @@ function RegisterPage() {
       password: '',
     },
     onSubmit: async ({ value }) => {
+      console.log('Register form onSubmit called with value:', value);
+      setRegisterError(undefined); // Clear previous errors
       try {
+        console.log('Calling register API...');
         await register(value.email, value.password, value.name);
-        navigate({ to: '/' });
+        console.log('Registration successful, navigating to login...');
+        navigate({ to: '/auth/login' });
       } catch (error: any) {
-        form.setFieldMeta('email', {
-          error: error.response?.data?.message || 'Registration failed. Please try again.',
-        });
+        console.error('Registration error:', error);
+        let errorMessage = 'Registration failed. Please try again.';
+        
+        if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.message?.includes('Failed to fetch')) {
+          errorMessage = 'Cannot connect to server. Please ensure the backend is running on http://localhost:8080';
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error;
+        } else if (error.response?.data?.message) {
+          errorMessage = error.response.data.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+        
+        setRegisterError(errorMessage);
       }
     },
     validatorAdapter: zodValidator(),
@@ -51,10 +70,63 @@ function RegisterPage() {
       </div>
       <Card static>
         <form
-          onSubmit={(e) => {
+          onSubmit={async (e) => {
             e.preventDefault();
             e.stopPropagation();
-            form.handleSubmit();
+            console.log('Form onSubmit handler called', form.state.values);
+            
+            const name = form.state.values.name || '';
+            const email = form.state.values.email || '';
+            const password = form.state.values.password || '';
+            
+            // Validate
+            const nameResult = registerSchema.shape.name.safeParse(name);
+            const emailResult = registerSchema.shape.email.safeParse(email);
+            const passwordResult = registerSchema.shape.password.safeParse(password);
+            
+            if (!nameResult.success) {
+              form.setFieldMeta('name', { error: nameResult.error.errors[0]?.message || 'Invalid username' });
+              return;
+            }
+            
+            if (!emailResult.success) {
+              form.setFieldMeta('email', { error: emailResult.error.errors[0]?.message || 'Invalid email' });
+              return;
+            }
+            
+            if (!passwordResult.success) {
+              form.setFieldMeta('password', { error: passwordResult.error.errors[0]?.message || 'Invalid password' });
+              return;
+            }
+            
+            // Clear errors
+            setRegisterError(undefined);
+            form.setFieldMeta('name', { error: undefined });
+            form.setFieldMeta('email', { error: undefined });
+            form.setFieldMeta('password', { error: undefined });
+            
+            // Submit directly
+            console.log('Calling register directly...');
+            try {
+              await register(email, password, name);
+              console.log('Registration successful, navigating to login...');
+              navigate({ to: '/auth/login' });
+            } catch (error: any) {
+              console.error('Registration error:', error);
+              let errorMessage = 'Registration failed. Please try again.';
+              
+              if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.message?.includes('Failed to fetch')) {
+                errorMessage = 'Cannot connect to server. Please ensure the backend is running on http://localhost:8080';
+              } else if (error.response?.data?.error) {
+                errorMessage = error.response.data.error;
+              } else if (error.response?.data?.message) {
+                errorMessage = error.response.data.message;
+              } else if (error.message) {
+                errorMessage = error.message;
+              }
+              
+              setRegisterError(errorMessage);
+            }
           }}
           className="space-y-5"
         >
@@ -66,13 +138,16 @@ function RegisterPage() {
           >
             {(field) => (
               <Input
-                label="Full Name"
+                label="Username"
                 type="text"
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
-                error={typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined}
-                placeholder="John Doe"
+                error={
+                  (field.state.meta.error as string) ||
+                  (typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined)
+                }
+                placeholder="johndoe"
               />
             )}
           </form.Field>
@@ -88,9 +163,15 @@ function RegisterPage() {
                 label="Email"
                 type="email"
                 value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  setRegisterError(undefined); // Clear error when user types
+                }}
                 onBlur={field.handleBlur}
-                error={typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined}
+                error={
+                  (field.state.meta.error as string) ||
+                  (typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined)
+                }
                 placeholder="you@example.com"
               />
             )}
@@ -109,7 +190,10 @@ function RegisterPage() {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
-                error={typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined}
+                error={
+                  (field.state.meta.error as string) ||
+                  (typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined)
+                }
                 placeholder="••••••••"
               />
             )}
@@ -118,6 +202,12 @@ function RegisterPage() {
           <Button type="submit" variant="accent" className="w-full" disabled={form.state.isSubmitting}>
             {form.state.isSubmitting ? 'Creating account...' : 'Create Account'}
           </Button>
+          
+          {registerError && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600 font-body">{registerError}</p>
+            </div>
+          )}
         </form>
 
         <div className="mt-8">

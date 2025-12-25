@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { zodValidator } from '@tanstack/zod-form-adapter';
 import { z } from 'zod';
+import { useState } from 'react';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
@@ -19,6 +20,7 @@ const loginSchema = z.object({
 function LoginPage() {
   const navigate = useNavigate();
   const { login, initiateOAuth } = useAuth();
+  const [loginError, setLoginError] = useState<string | undefined>(undefined);
 
   const form = useForm({
     defaultValues: {
@@ -27,6 +29,7 @@ function LoginPage() {
     },
     onSubmit: async ({ value }) => {
       console.log('onSubmit called with value:', value);
+      setLoginError(undefined); // Clear previous errors
       try {
         console.log('Calling login API...');
         await login(value.email, value.password);
@@ -38,15 +41,16 @@ function LoginPage() {
         
         if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.message?.includes('Failed to fetch')) {
           errorMessage = 'Cannot connect to server. Please ensure the backend is running on http://localhost:8080';
+        } else if (error.response?.data?.error) {
+          errorMessage = error.response.data.error;
         } else if (error.response?.data?.message) {
           errorMessage = error.response.data.message;
         } else if (error.message) {
           errorMessage = error.message;
         }
         
-        form.setFieldMeta('email', {
-          error: errorMessage,
-        });
+        setLoginError(errorMessage);
+        // Error is now displayed below the form, not on the field
       }
     },
     validatorAdapter: zodValidator(),
@@ -86,6 +90,7 @@ function LoginPage() {
             }
             
             // Clear errors
+            setLoginError(undefined);
             form.setFieldMeta('email', { error: undefined });
             form.setFieldMeta('password', { error: undefined });
             
@@ -101,13 +106,15 @@ function LoginPage() {
               
               if (error.code === 'ECONNREFUSED' || error.message?.includes('Network Error') || error.message?.includes('Failed to fetch')) {
                 errorMessage = 'Cannot connect to server. Please ensure the backend is running on http://localhost:8080';
+              } else if (error.response?.data?.error) {
+                errorMessage = error.response.data.error;
               } else if (error.response?.data?.message) {
                 errorMessage = error.response.data.message;
               } else if (error.message) {
                 errorMessage = error.message;
               }
               
-              form.setFieldMeta('email', { error: errorMessage });
+              setLoginError(errorMessage);
             }
           }}
           className="space-y-5"
@@ -124,9 +131,15 @@ function LoginPage() {
                 label="Email"
                 type="email"
                 value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
+                onChange={(e) => {
+                  field.handleChange(e.target.value);
+                  setLoginError(undefined); // Clear error when user types
+                }}
                 onBlur={field.handleBlur}
-                error={typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined}
+                error={
+                  (field.state.meta.error as string) ||
+                  (typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined)
+                }
                 placeholder="you@example.com"
               />
             )}
@@ -146,7 +159,10 @@ function LoginPage() {
                 value={field.state.value}
                 onChange={(e) => field.handleChange(e.target.value)}
                 onBlur={field.handleBlur}
-                error={typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined}
+                error={
+                  (field.state.meta.error as string) ||
+                  (typeof field.state.meta.errors[0] === 'string' ? field.state.meta.errors[0] : undefined)
+                }
                 placeholder="••••••••"
               />
             )}
@@ -167,6 +183,12 @@ function LoginPage() {
           >
             {form.state.isSubmitting ? 'Logging in...' : 'Sign In'}
           </Button>
+          
+          {loginError && (
+            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600 font-body">{loginError}</p>
+            </div>
+          )}
         </form>
 
         <div className="mt-8">
