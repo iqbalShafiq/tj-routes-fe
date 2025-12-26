@@ -211,8 +211,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             className={`
               ${borderless
                 ? 'w-full border-none bg-transparent shadow-none focus:ring-0 focus:outline-none'
-                : `input-offset-shadow
-                    w-full px-4 py-3
+                : `w-full px-4 py-3
                     border-2 border-slate-200 bg-white
                     text-slate-900 placeholder:text-slate-400
                     transition-all duration-200

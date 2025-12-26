@@ -17,7 +17,6 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         <textarea
           ref={ref}
           className={`
-            input-offset-shadow
             resize-none
             w-full px-4 py-3
             border-2 border-slate-200 bg-white

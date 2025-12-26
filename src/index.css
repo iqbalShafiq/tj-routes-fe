@@ -267,37 +267,27 @@
   /* 3. Minimal Squared - Very subtle rounding */
   .card-minimal {
     @apply rounded-sm;
-    box-shadow: 4px 4px 12px -2px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(226 232 240);
   }
 
   .button-minimal {
     @apply rounded;
-    box-shadow: 2px 2px 6px -1px rgb(0 0 0 / 0.15);
   }
 
   .input-minimal {
     @apply rounded;
-    box-shadow: 2px 2px 4px -1px rgb(0 0 0 / 0.1);
   }
 
   /* Hover states */
   .card-minimal:hover {
-    box-shadow: 6px 6px 16px -2px rgb(0 0 0 / 0.2), 0 0 0 1px rgb(255 152 0 / 0.3);
-    transform: translate(-1px, -1px);
   }
 
   .button-minimal:hover {
-    box-shadow: 3px 3px 8px -1px rgb(0 0 0 / 0.2);
-    transform: translate(-1px, -1px);
   }
 
   .button-minimal:active {
-    box-shadow: 1px 1px 3px -1px rgb(0 0 0 / 0.15);
-    transform: translate(0, 0);
   }
 
   .input-minimal:focus {
-    box-shadow: 3px 3px 6px -1px rgb(0 0 0 / 0.15), 0 0 0 2px rgb(255 152 0 / 0.2);
   }
 
   /* 4. Rounded with Accent Border - Standard rounded with colored top border */
@@ -459,36 +449,26 @@
   /* 7. Rounded with Offset Shadow - Standard rounded with directional shadow */
   .card-offset-shadow {
     @apply rounded-lg;
-    box-shadow: 4px 4px 12px -2px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(226 232 240);
   }
 
   .button-offset-shadow {
     @apply rounded-md;
-    box-shadow: 2px 2px 6px -1px rgb(0 0 0 / 0.15);
   }
 
   .input-offset-shadow {
     @apply rounded-md;
-    box-shadow: 2px 2px 4px -1px rgb(0 0 0 / 0.1);
   }
 
   .card-offset-shadow:hover {
-    box-shadow: 6px 6px 16px -2px rgb(0 0 0 / 0.2), 0 0 0 1px rgb(255 152 0 / 0.3);
-    transform: translate(-1px, -1px);
   }
 
   .button-offset-shadow:hover {
-    box-shadow: 3px 3px 8px -1px rgb(0 0 0 / 0.2);
-    transform: translate(-1px, -1px);
   }
 
   .button-offset-shadow:active {
-    box-shadow: 1px 1px 3px -1px rgb(0 0 0 / 0.15);
-    transform: translate(0, 0);
   }
 
   .input-offset-shadow:focus {
-    box-shadow: 3px 3px 6px -1px rgb(0 0 0 / 0.15), 0 0 0 2px rgb(255 152 0 / 0.2);
   }
 }
 

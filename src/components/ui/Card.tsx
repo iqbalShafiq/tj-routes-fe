@@ -20,8 +20,9 @@ export const Card = ({ className = '', children, size = 'md', static: isStatic, 
   return (
     <div
       className={`
-        card-minimal
+        rounded-sm shadow-sm border border-slate-100
         relative bg-white transition-all duration-300
+        ${!isStatic ? 'hover:shadow-md' : ''}
         ${sizeClasses[size]}
         ${className}
       `}

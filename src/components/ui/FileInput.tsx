@@ -1,4 +1,5 @@
 import { InputHTMLAttributes, forwardRef } from 'react';
+import { Button } from './Button';
 
 interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
   label?: string;
@@ -6,10 +7,11 @@ interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   accept?: string;
   multiple?: boolean;
   onFileChange?: (files: FileList | null) => void;
+  buttonSize?: 'sm' | 'md' | 'lg';
 }
 
 export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
-  ({ className = '', label, error, accept, multiple, onFileChange, onChange, ...props }, ref) => {
+  ({ className = '', label, error, accept, multiple, onFileChange, onChange, buttonSize = 'sm', ...props }, ref) => {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onFileChange) {
         onFileChange(e.target.files);
@@ -26,34 +28,28 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
             {label}
           </label>
         )}
-        <div className="relative">
+        <div className="flex items-center gap-3 w-full px-4 py-3 border-2 border-slate-200 bg-white transition-all duration-200 hover:border-slate-300">
           <input
             ref={ref}
             type="file"
             accept={accept}
             multiple={multiple}
             onChange={handleChange}
-            className={`
-              input-offset-shadow
-              w-full px-4 py-3
-              border-2 border-slate-200 bg-white
-              text-slate-900 placeholder:text-slate-400
-              transition-all duration-200
-              focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
-              hover:border-slate-300
-              file:mr-4 file:py-2 file:px-4
-              file:rounded-lg file:border-0
-              file:text-sm file:font-medium
-              file:bg-amber-500 file:text-white
-              file:hover:bg-amber-600
-              file:cursor-pointer
-              file:transition-colors
-              cursor-pointer
-              ${error ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : ''}
-              ${className}
-            `}
+            id="file-upload"
+            className="sr-only"
             {...props}
           />
+          <label
+            htmlFor="file-upload"
+            className="cursor-pointer inline-block"
+          >
+            <Button variant="accent" size={buttonSize}>
+              Choose File
+            </Button>
+          </label>
+          <span className="text-sm text-slate-500">
+            {props.value ? String(props.value).split('\\').pop() || 'No file chosen' : 'No file chosen'}
+          </span>
         </div>
         {error && (
           <p className="mt-2 text-sm text-red-600 font-body animate-fade-in">{error}</p>

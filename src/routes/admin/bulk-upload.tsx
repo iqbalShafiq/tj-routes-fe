@@ -10,6 +10,7 @@ import { Card } from "../../components/ui/Card";
 import { Button } from "../../components/ui/Button";
 import { Select } from "../../components/ui/Select";
 import { FileInput } from "../../components/ui/FileInput";
+import { Chip } from "../../components/ui/Chip";
 import { Skeleton } from "../../components/ui/Loading";
 import { PageHeader } from "../../components/layout";
 import { useToast } from "../../lib/hooks/useToast";
@@ -41,18 +42,18 @@ function UploadProgress({ upload }: { upload: BulkUploadLog }) {
         )
       : 0;
 
-  const getStatusColor = () => {
+  const getStatusVariant = () => {
     switch (current.status) {
       case "completed":
-        return "bg-emerald-100 text-emerald-700";
+        return "success";
       case "processing":
-        return "bg-blue-100 text-blue-700";
+        return "info";
       case "pending":
-        return "bg-amber-100 text-amber-700";
+        return "warning";
       case "failed":
-        return "bg-red-100 text-red-700";
+        return "error";
       default:
-        return "bg-slate-100 text-slate-700";
+        return "neutral";
     }
   };
 
@@ -61,11 +62,7 @@ function UploadProgress({ upload }: { upload: BulkUploadLog }) {
       <div className="flex items-center justify-between mb-4">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span
-              className={`px-2 py-1 text-xs font-medium rounded ${getStatusColor()}`}
-            >
-              {current.status}
-            </span>
+            <Chip variant={getStatusVariant()}>{current.status}</Chip>
             <span className="text-xs text-slate-400">#{current.id}</span>
           </div>
           <p className="font-medium text-slate-900 capitalize">
