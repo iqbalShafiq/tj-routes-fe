@@ -106,17 +106,17 @@ function AdminUsersPage() {
       {/* Users List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">User</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell">Email</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Level</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell">Points</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Role</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden lg:table-cell">Joined</th>
-                  <th className="text-center px-4 py-3 text-sm font-semibold text-slate-900">Actions</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">User</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Email</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Level</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Points</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Role</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden lg:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Joined</th>
+                  <th className="text-center px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">

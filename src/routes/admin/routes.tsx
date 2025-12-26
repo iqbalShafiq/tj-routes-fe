@@ -207,15 +207,15 @@ function AdminRoutesPage() {
       {/* Routes List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Route #</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Name</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell">Description</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Status</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900">Actions</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Route #</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Name</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Description</th>
+                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Status</th>
+                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
