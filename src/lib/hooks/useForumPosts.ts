@@ -109,6 +109,74 @@ export const usePinForumPost = () => {
   return useMutation({
     mutationFn: ({ forumId, postId }: { forumId: string | number; postId: string | number }) =>
       forumPostsApi.pinForumPost(forumId, postId),
+    onMutate: async ({ forumId, postId }) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ['forumPost', forumId, postId] });
+      await queryClient.cancelQueries({ queryKey: ['forumPosts', forumId] });
+
+      // Snapshot the previous values
+      const previousPost = queryClient.getQueryData(['forumPost', forumId, postId]);
+      const previousPosts = queryClient.getQueryData(['forumPosts', forumId]);
+      
+      // Get all infinite query data to snapshot
+      const allInfiniteQueries = queryClient.getQueriesData({ queryKey: ['forumPosts', 'infinite', forumId] });
+      const previousInfiniteQueries = allInfiniteQueries.map(([queryKey, data]) => [queryKey, data]);
+
+      // Optimistically update the post
+      queryClient.setQueryData(['forumPost', forumId, postId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            is_pinned: true,
+          },
+        };
+      });
+
+      // Optimistically update the posts list (regular query)
+      queryClient.setQueryData(['forumPosts', forumId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((post: any) =>
+            post.id === postId ? { ...post, is_pinned: true } : post
+          ),
+        };
+      });
+
+      // Optimistically update infinite queries
+      allInfiniteQueries.forEach(([queryKey]) => {
+        queryClient.setQueryData(queryKey, (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((post: any) =>
+                post.id === postId ? { ...post, is_pinned: true } : post
+              ),
+            })),
+          };
+        });
+      });
+
+      // Return a context object with the snapshotted values
+      return { previousPost, previousPosts, previousInfiniteQueries };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousPost) {
+        queryClient.setQueryData(['forumPost', variables.forumId, variables.postId], context.previousPost);
+      }
+      if (context?.previousPosts) {
+        queryClient.setQueryData(['forumPosts', variables.forumId], context.previousPosts);
+      }
+      // Rollback infinite queries
+      context?.previousInfiniteQueries?.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['forumPost', variables.forumId, variables.postId] });
       queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
@@ -122,6 +190,74 @@ export const useUnpinForumPost = () => {
   return useMutation({
     mutationFn: ({ forumId, postId }: { forumId: string | number; postId: string | number }) =>
       forumPostsApi.unpinForumPost(forumId, postId),
+    onMutate: async ({ forumId, postId }) => {
+      // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
+      await queryClient.cancelQueries({ queryKey: ['forumPost', forumId, postId] });
+      await queryClient.cancelQueries({ queryKey: ['forumPosts', forumId] });
+
+      // Snapshot the previous values
+      const previousPost = queryClient.getQueryData(['forumPost', forumId, postId]);
+      const previousPosts = queryClient.getQueryData(['forumPosts', forumId]);
+      
+      // Get all infinite query data to snapshot
+      const allInfiniteQueries = queryClient.getQueriesData({ queryKey: ['forumPosts', 'infinite', forumId] });
+      const previousInfiniteQueries = allInfiniteQueries.map(([queryKey, data]) => [queryKey, data]);
+
+      // Optimistically update the post
+      queryClient.setQueryData(['forumPost', forumId, postId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            is_pinned: false,
+          },
+        };
+      });
+
+      // Optimistically update the posts list (regular query)
+      queryClient.setQueryData(['forumPosts', forumId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: old.data.map((post: any) =>
+            post.id === postId ? { ...post, is_pinned: false } : post
+          ),
+        };
+      });
+
+      // Optimistically update infinite queries
+      allInfiniteQueries.forEach(([queryKey]) => {
+        queryClient.setQueryData(queryKey, (old: any) => {
+          if (!old) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: any) => ({
+              ...page,
+              data: page.data.map((post: any) =>
+                post.id === postId ? { ...post, is_pinned: false } : post
+              ),
+            })),
+          };
+        });
+      });
+
+      // Return a context object with the snapshotted values
+      return { previousPost, previousPosts, previousInfiniteQueries };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousPost) {
+        queryClient.setQueryData(['forumPost', variables.forumId, variables.postId], context.previousPost);
+      }
+      if (context?.previousPosts) {
+        queryClient.setQueryData(['forumPosts', variables.forumId], context.previousPosts);
+      }
+      // Rollback infinite queries
+      context?.previousInfiniteQueries?.forEach(([queryKey, data]) => {
+        queryClient.setQueryData(queryKey, data);
+      });
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['forumPost', variables.forumId, variables.postId] });
       queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
