@@ -7,6 +7,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
+import { Chip } from '../../components/ui/Chip';
 import { Loading } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -190,12 +191,12 @@ function ReportDetailPage() {
   const typeInfo = REPORT_TYPES.find(t => t.value === report.type);
   const statusInfo = REPORT_STATUSES.find(s => s.value === report.status);
 
-  const getStatusColor = (color?: string) => {
+  const getStatusVariant = (color?: string): 'warning' | 'info' | 'success' | 'default' => {
     switch (color) {
-      case 'amber': return 'bg-amber-100 text-amber-700';
-      case 'blue': return 'bg-blue-100 text-blue-700';
-      case 'emerald': return 'bg-emerald-100 text-emerald-700';
-      default: return 'bg-slate-100 text-slate-700';
+      case 'amber': return 'warning';
+      case 'blue': return 'info';
+      case 'emerald': return 'success';
+      default: return 'default';
     }
   };
 
@@ -231,12 +232,12 @@ function ReportDetailPage() {
 
         {/* Tags */}
         <div className="flex flex-wrap gap-2 mb-4">
-          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(statusInfo?.color)}`}>
+          <Chip variant={getStatusVariant(statusInfo?.color)}>
             {statusInfo?.label || report.status}
-          </span>
-          <span className="px-3 py-1 text-sm font-medium bg-slate-100 text-slate-700 rounded-full">
+          </Chip>
+          <Chip variant="neutral">
             {typeInfo?.label || report.type}
-          </span>
+          </Chip>
         </div>
 
         {/* Title & Description */}

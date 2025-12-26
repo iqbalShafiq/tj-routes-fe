@@ -3,6 +3,7 @@ import { useLeaderboard } from '../../lib/hooks/useLeaderboard';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { authApi } from '../../lib/api/auth';
 import { Card } from '../../components/ui/Card';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import type { LeaderboardEntry } from '../../lib/api/leaderboard';
@@ -17,14 +18,14 @@ export const Route = createFileRoute('/leaderboard/')({
   component: LeaderboardPage,
 });
 
-function getLevelColor(level: string) {
+function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'purple' | 'warning' {
   switch (level) {
-    case 'newcomer': return 'from-slate-400 to-slate-500';
-    case 'contributor': return 'from-emerald-400 to-emerald-600';
-    case 'trusted': return 'from-blue-400 to-blue-600';
-    case 'expert': return 'from-purple-400 to-purple-600';
-    case 'legend': return 'from-amber-400 to-amber-600';
-    default: return 'from-slate-400 to-slate-500';
+    case 'newcomer': return 'default';
+    case 'contributor': return 'success';
+    case 'trusted': return 'info';
+    case 'expert': return 'purple';
+    case 'legend': return 'warning';
+    default: return 'default';
   }
 }
 
@@ -82,15 +83,12 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
               {entry.username}
             </Link>
             {isCurrentUser && (
-              <span className="px-2 py-0.5 text-xs bg-amber-200 text-amber-800 rounded-full">You</span>
+              <Chip variant="warning">You</Chip>
             )}
           </div>
-          <span className={`
-            inline-flex items-center px-2 py-0.5 mt-1 text-xs font-medium rounded-full
-            bg-gradient-to-r ${getLevelColor(entry.level)} text-white
-          `}>
+          <Chip variant={getLevelVariant(entry.level)}>
             {getLevelBadge(entry.level)}
-          </span>
+          </Chip>
         </div>
 
         {/* Points */}
@@ -150,12 +148,9 @@ function LeaderboardPage() {
         <div className="flex flex-wrap gap-3">
           {USER_LEVELS.map((level) => (
             <div key={level.value} className="flex items-center gap-2">
-              <span className={`
-                px-3 py-1 text-xs font-medium rounded-full
-                bg-gradient-to-r ${getLevelColor(level.value)} text-white
-              `}>
+              <Chip variant={getLevelVariant(level.value)}>
                 {level.label}
-              </span>
+              </Chip>
               <span className="text-xs text-slate-500">
                 {level.minPoints}+ pts
               </span>

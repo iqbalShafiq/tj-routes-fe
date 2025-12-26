@@ -6,6 +6,7 @@ import { useAuth } from '../../lib/hooks/useAuth';
 import { authApi } from '../../lib/api/auth';
 import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { format } from 'date-fns';
@@ -87,16 +88,16 @@ function ReportsPage() {
     );
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'success' | 'info' | 'warning' | 'default' => {
     switch (status) {
       case 'resolved':
-        return 'bg-emerald-100 text-emerald-700 border-emerald-200';
+        return 'success';
       case 'reviewed':
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'info';
       case 'pending':
-        return 'bg-amber-100 text-amber-700 border-amber-200';
+        return 'warning';
       default:
-        return 'bg-slate-100 text-slate-700 border-slate-200';
+        return 'default';
     }
   };
 
@@ -132,12 +133,12 @@ function ReportsPage() {
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
                       <h3 className="text-xl font-display font-semibold text-slate-900">Report #{report.id}</h3>
-                      <span className={`px-3 py-1 text-xs font-medium border card-chamfered-sm ${getStatusColor(report.status)}`}>
+                      <Chip variant={getStatusVariant(report.status)}>
                         {report.status}
-                      </span>
-                      <span className="px-3 py-1 text-xs font-medium bg-slate-100 text-slate-700 card-chamfered-sm">
+                      </Chip>
+                      <Chip variant="neutral">
                         {getTypeLabel(report.type)}
-                      </span>
+                      </Chip>
                     </div>
                     <p className="text-sm text-slate-500 mb-4">{format(new Date(report.created_at), 'PPp')}</p>
                   </div>

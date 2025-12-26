@@ -1,27 +1,11 @@
 import { Link } from '@tanstack/react-router';
 import { Card } from './ui/Card';
+import { Chip } from './ui/Chip';
 import type { Route, RouteDetailResponse, RouteStatistics, ReportSummary, ForumPostSummary } from '../lib/api/routes';
 
 interface RouteDetailProps {
   data: RouteDetailResponse;
 }
-
-// Helper component for status badge
-const StatusBadge = ({ status }: { status: string }) => {
-  const colors: Record<string, string> = {
-    pending: 'bg-amber-100 text-amber-700',
-    reviewed: 'bg-blue-100 text-blue-700',
-    resolved: 'bg-emerald-100 text-emerald-700',
-    active: 'bg-emerald-100 text-emerald-700',
-    inactive: 'bg-slate-100 text-slate-700',
-  };
-
-  return (
-    <span className={`px-3 py-1 text-sm font-medium ${colors[status] || 'bg-slate-100 text-slate-700'}`}>
-      {status.charAt(0).toUpperCase() + status.slice(1)}
-    </span>
-  );
-};
 
 // Section 1: Route Info Card
 const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | null }) => (
@@ -38,7 +22,9 @@ const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | nu
           )}
         </div>
       </div>
-      <StatusBadge status={route.status} />
+      <Chip variant={route.status === 'active' ? 'success' : route.status === 'inactive' ? 'error' : 'default'}>
+        {route.status}
+      </Chip>
     </div>
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -220,7 +206,9 @@ const RecentReportsSection = ({ reports }: { reports: ReportSummary[] }) => {
                 <h4 className="font-display font-semibold text-slate-900 group-hover:text-amber-700 transition-colors truncate">
                   {report.title}
                 </h4>
-                <StatusBadge status={report.status} />
+                <Chip variant={report.status === 'resolved' ? 'success' : report.status === 'pending' ? 'warning' : 'default'}>
+                  {report.status}
+                </Chip>
               </div>
               <div className="flex items-center gap-3 mt-2 text-sm text-slate-500">
                 <span className="capitalize">{report.type.replace('_', ' ')}</span>
@@ -294,9 +282,9 @@ const RecentPostsSection = ({ posts }: { posts: ForumPostSummary[] }) => {
                 <h4 className="font-display font-semibold text-slate-900 group-hover:text-blue-700 transition-colors truncate">
                   {post.title}
                 </h4>
-                <span className="px-2 py-1 text-xs font-medium bg-blue-100 text-blue-700 capitalize">
+                <Chip variant="info">
                   {post.post_type}
-                </span>
+                </Chip>
               </div>
               <div className="flex items-center gap-3 mt-2 text-sm text-slate-500">
                 <span className="flex items-center gap-1">
@@ -358,12 +346,9 @@ const RouteStopsSection = ({ stops }: { stops?: any[] }) => {
                 {stop.facilities && stop.facilities.length > 0 && (
                   <div className="mt-3 flex flex-wrap gap-2">
                     {stop.facilities.map((facility: string, i: number) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 text-xs font-medium bg-amber-100 text-amber-700"
-                      >
+                      <Chip key={i} variant="warning">
                         {facility}
-                      </span>
+                      </Chip>
                     ))}
                   </div>
                 )}

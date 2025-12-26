@@ -7,6 +7,7 @@ import { useUsers } from '../../lib/hooks/useUsers';
 import { authApi } from '../../lib/api/auth';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { format } from 'date-fns';
@@ -147,14 +148,13 @@ function AdminDashboard() {
                         {format(new Date(report.created_at), 'MMM d, yyyy')}
                       </p>
                     </div>
-                    <span className={`
-                      px-2 py-1 text-xs font-medium rounded
-                      ${report.status === 'pending' ? 'bg-amber-100 text-amber-700' :
-                        report.status === 'reviewed' ? 'bg-blue-100 text-blue-700' :
-                        'bg-emerald-100 text-emerald-700'}
-                    `}>
+                    <Chip variant={
+                      report.status === 'pending' ? 'warning' :
+                      report.status === 'reviewed' ? 'info' :
+                      'success'
+                    }>
                       {report.status}
-                    </span>
+                    </Chip>
                   </div>
                 </Link>
               ))}

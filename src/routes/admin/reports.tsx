@@ -9,6 +9,7 @@ import { Select } from '../../components/ui/Select';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { Textarea } from '../../components/ui/Textarea';
 import { Modal } from '../../components/ui/Modal';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -77,12 +78,12 @@ function AdminReportsPage() {
     setAdminNotes(report.admin_notes || '');
   };
 
-  const getStatusColor = (status: string) => {
+  const getStatusVariant = (status: string): 'warning' | 'info' | 'success' | 'default' => {
     switch (status) {
-      case 'pending': return 'bg-amber-100 text-amber-700';
-      case 'reviewed': return 'bg-blue-100 text-blue-700';
-      case 'resolved': return 'bg-emerald-100 text-emerald-700';
-      default: return 'bg-slate-100 text-slate-700';
+      case 'pending': return 'warning';
+      case 'reviewed': return 'info';
+      case 'resolved': return 'success';
+      default: return 'default';
     }
   };
 
@@ -202,12 +203,12 @@ function AdminReportsPage() {
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${getStatusColor(report.status)}`}>
+                        <Chip variant={getStatusVariant(report.status)}>
                           {report.status}
-                        </span>
-                        <span className="px-2 py-1 text-xs font-medium bg-slate-100 text-slate-700 rounded">
+                        </Chip>
+                        <Chip variant="neutral">
                           {typeInfo?.label || report.type}
-                        </span>
+                        </Chip>
                         <span className="text-xs text-slate-400">#{report.id}</span>
                       </div>
                       <Link 

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { Card } from "./ui/Card";
+import { Chip } from "./ui/Chip";
 import type { Route } from "../lib/api/routes";
 
 interface RouteCardProps {
@@ -18,12 +19,12 @@ export const RouteCard = ({ route }: RouteCardProps) => {
             {route.code}
           </span>
           {route.status === "active" && (
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 text-xs font-medium bg-emerald-100 text-emerald-700 rounded-full">
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Chip variant="success">
+              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
               </svg>
               Active
-            </span>
+            </Chip>
           )}
         </div>
 

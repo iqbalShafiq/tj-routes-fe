@@ -2,6 +2,7 @@ import { Link } from '@tanstack/react-router';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useReactToReport, useRemoveReportReaction } from '../lib/hooks/useReports';
 import { Card } from './ui/Card';
+import { Chip } from './ui/Chip';
 import { ShareButton } from './ShareButton';
 import { FollowButton } from './FollowButton';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -33,21 +34,12 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
     }
   };
 
-  const getStatusColor = (color?: string) => {
+  const getStatusVariant = (color?: string): 'warning' | 'info' | 'success' | 'default' => {
     switch (color) {
-      case 'amber': return 'bg-amber-100 text-amber-700 border-amber-200';
-      case 'blue': return 'bg-blue-100 text-blue-700 border-blue-200';
-      case 'emerald': return 'bg-emerald-100 text-emerald-700 border-emerald-200';
-      default: return 'bg-slate-100 text-slate-700 border-slate-200';
-    }
-  };
-
-  const getStatusTextColor = (color?: string) => {
-    switch (color) {
-      case 'amber': return 'text-amber-700';
-      case 'blue': return 'text-blue-700';
-      case 'emerald': return 'text-emerald-700';
-      default: return 'text-slate-700';
+      case 'amber': return 'warning';
+      case 'blue': return 'info';
+      case 'emerald': return 'success';
+      default: return 'default';
     }
   };
 
@@ -75,14 +67,14 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                 {report.user?.username || 'Anonymous'}
               </Link>
               {report.user?.level && (
-                <span className="px-2 py-0.5 text-xs bg-slate-100 text-slate-600 rounded-full flex-shrink-0">
+                <Chip variant="neutral" className="text-xs">
                   {report.user.level}
-                </span>
+                </Chip>
               )}
               {report.is_following && (
-                <span className="px-2 py-0.5 text-xs bg-amber-100 text-amber-700 rounded-full flex-shrink-0">
+                <Chip variant="warning" className="text-xs">
                   Following
-                </span>
+                </Chip>
               )}
             </div>
             <div className="flex items-center gap-2 flex-wrap mt-0.5 sm:block">
@@ -93,7 +85,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                 <span className="text-xs text-slate-400">·</span>
                 <FollowButton userId={report.user_id} variant="minimal" className="text-xs" />
                 <span className="text-xs text-slate-400">·</span>
-                <span className={`text-xs font-medium whitespace-nowrap ${getStatusTextColor(statusInfo?.color)}`}>
+                <span className="text-xs font-medium whitespace-nowrap">
                   {statusInfo?.label || report.status}
                 </span>
               </div>
@@ -102,9 +94,9 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
         </div>
         <div className="hidden sm:flex items-center gap-2 flex-shrink-0 self-start">
           <FollowButton userId={report.user_id} variant="minimal" />
-          <span className={`px-2 py-1 text-xs font-medium border rounded whitespace-nowrap ${getStatusColor(statusInfo?.color)}`}>
+          <Chip variant={getStatusVariant(statusInfo?.color)}>
             {statusInfo?.label || report.status}
-          </span>
+          </Chip>
         </div>
       </div>
 

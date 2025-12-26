@@ -9,6 +9,7 @@ import { Select } from '../../components/ui/Select';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { FileInput } from '../../components/ui/FileInput';
 import { Modal } from '../../components/ui/Modal';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -319,19 +320,15 @@ function AdminStopsPage() {
                       </div>
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        stop.type === 'terminal' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'
-                      }`}>
+                      <Chip variant={stop.type === 'terminal' ? 'warning' : 'default'}>
                         {stop.type}
-                      </span>
+                      </Chip>
                     </td>
                     <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">{stop.city || '—'}</td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        stop.status === 'active' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'
-                      }`}>
+                      <Chip variant={stop.status === 'active' ? 'success' : 'error'}>
                         {stop.status}
-                      </span>
+                      </Chip>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">

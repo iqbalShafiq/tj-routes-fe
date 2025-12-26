@@ -5,6 +5,7 @@ import { authApi } from '../../lib/api/auth';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Select } from '../../components/ui/Select';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -21,14 +22,14 @@ export const Route = createFileRoute('/admin/users')({
   component: AdminUsersPage,
 });
 
-function getLevelColor(level: string) {
+function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'purple' | 'warning' {
   switch (level) {
-    case 'newcomer': return 'bg-slate-100 text-slate-700';
-    case 'contributor': return 'bg-emerald-100 text-emerald-700';
-    case 'trusted': return 'bg-blue-100 text-blue-700';
-    case 'expert': return 'bg-purple-100 text-purple-700';
-    case 'legend': return 'bg-amber-100 text-amber-700';
-    default: return 'bg-slate-100 text-slate-700';
+    case 'newcomer': return 'default';
+    case 'contributor': return 'success';
+    case 'trusted': return 'info';
+    case 'expert': return 'purple';
+    case 'legend': return 'warning';
+    default: return 'default';
   }
 }
 
@@ -144,19 +145,17 @@ function AdminUsersPage() {
                       </td>
                       <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">{user.email}</td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${getLevelColor(user.level)}`}>
+                        <Chip variant={getLevelVariant(user.level)}>
                           {levelInfo?.label || user.level}
-                        </span>
+                        </Chip>
                       </td>
                       <td className="px-4 py-3 text-slate-600 hidden md:table-cell">
                         {user.reputation_points.toLocaleString()}
                       </td>
                       <td className="px-4 py-3">
-                        <span className={`px-2 py-1 text-xs font-medium rounded ${
-                          user.role === 'admin' ? 'bg-amber-100 text-amber-700' : 'bg-slate-100 text-slate-700'
-                        }`}>
+                        <Chip variant={user.role === 'admin' ? 'warning' : 'neutral'}>
                           {user.role}
-                        </span>
+                        </Chip>
                       </td>
                       <td className="px-4 py-3 text-slate-500 text-sm hidden lg:table-cell">
                         {format(new Date(user.created_at), 'MMM d, yyyy')}

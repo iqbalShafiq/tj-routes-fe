@@ -5,6 +5,7 @@ import { Card, CardBody } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { FilterSelect } from '../../components/ui/FilterSelect';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import type { Vehicle } from '../../lib/api/vehicles';
@@ -32,13 +33,9 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
         )}
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-2">
-            <span className={`px-2 py-0.5 text-xs font-medium rounded ${
-              vehicle.status === 'active' 
-                ? 'bg-emerald-100 text-emerald-700' 
-                : 'bg-red-100 text-red-700'
-            }`}>
+            <Chip variant={vehicle.status === 'active' ? 'success' : 'error'}>
               {vehicle.status}
-            </span>
+            </Chip>
           </div>
           <h3 className="font-display font-bold text-slate-900 text-xl">{vehicle.vehicle_plate}</h3>
           {vehicle.vehicle_type && (

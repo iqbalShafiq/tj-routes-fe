@@ -1,6 +1,7 @@
 import { Link } from '@tanstack/react-router';
 import { Button } from './ui/Button';
 import { Card } from './ui/Card';
+import { Chip } from './ui/Chip';
 import type { Forum } from '../lib/api/forums';
 
 interface ForumHeaderProps {
@@ -28,8 +29,8 @@ export const ForumHeader = ({
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-2xl font-display font-bold text-slate-900">Forum: {routeName}</h1>
-            <span className="px-3 py-1 text-sm font-medium bg-amber-100 text-amber-700 card-chamfered-sm flex items-center gap-1.5">
-              <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <Chip variant="warning">
+              <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -38,7 +39,7 @@ export const ForumHeader = ({
                 />
               </svg>
               Forum
-            </span>
+            </Chip>
           </div>
           <p className="text-slate-600">
             Join the discussion about this route. Share updates, ask questions, and help fellow commuters.

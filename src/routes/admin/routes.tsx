@@ -10,6 +10,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { Modal } from '../../components/ui/Modal';
+import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -230,13 +231,9 @@ function AdminRoutesPage() {
                       {route.description || '—'}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`px-2 py-1 text-xs font-medium rounded ${
-                        route.status === 'active' 
-                          ? 'bg-emerald-100 text-emerald-700' 
-                          : 'bg-red-100 text-red-700'
-                      }`}>
+                      <Chip variant={route.status === 'active' ? 'success' : 'error'}>
                         {route.status}
-                      </span>
+                      </Chip>
                     </td>
                     <td className="px-4 py-3 text-right">
                       <div className="flex justify-end gap-2">
