@@ -54,5 +54,16 @@ export const commentsApi = {
   deleteComment: async (commentId: number | string): Promise<void> => {
     await apiClient.delete(`/api/v1/comments/${commentId}`);
   },
+
+  // Forum post comments
+  getForumPostComments: async (postId: number | string): Promise<Comment[]> => {
+    const response = await apiClient.get<CommentsResponse>(`/api/v1/forum-posts/${postId}/comments`);
+    return response.data.data.comments || [];
+  },
+
+  createForumPostComment: async (postId: number | string, data: CreateCommentRequest): Promise<Comment> => {
+    const response = await apiClient.post<CommentResponse>(`/api/v1/forum-posts/${postId}/comments`, data);
+    return response.data.data;
+  },
 };
 

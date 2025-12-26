@@ -29,5 +29,14 @@ export const reactionsApi = {
   removeCommentReaction: async (commentId: number | string): Promise<void> => {
     await apiClient.delete(`/api/v1/comments/${commentId}/react`);
   },
+
+  // Forum post reactions
+  reactToForumPost: async (postId: number | string, type: ReactionType): Promise<void> => {
+    await apiClient.post<MessageResponse>(`/api/v1/forum-posts/${postId}/react`, { type });
+  },
+
+  removeForumPostReaction: async (postId: number | string): Promise<void> => {
+    await apiClient.delete(`/api/v1/forum-posts/${postId}/react`);
+  },
 };
 

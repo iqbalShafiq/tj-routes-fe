@@ -82,6 +82,23 @@ export const API_ENDPOINTS = {
     status: (id: string | number) => `/api/v1/bulk-upload/${id}`,
     list: "/api/v1/bulk-upload",
   },
+  forums: {
+    byRoute: (routeId: string | number) => `/api/v1/routes/${routeId}/forum`,
+    detail: (id: string | number) => `/api/v1/forums/${id}`,
+    join: (id: string | number) => `/api/v1/forums/${id}/join`,
+    leave: (id: string | number) => `/api/v1/forums/${id}/leave`,
+    membership: (id: string | number) => `/api/v1/forums/${id}/membership`,
+    members: (id: string | number) => `/api/v1/forums/${id}/members`,
+    posts: (id: string | number) => `/api/v1/forums/${id}/posts`,
+    postDetail: (forumId: string | number, postId: string | number) =>
+      `/api/v1/forums/${forumId}/posts/${postId}`,
+    pinPost: (forumId: string | number, postId: string | number) =>
+      `/api/v1/forums/${forumId}/posts/${postId}/pin`,
+  },
+  forumPosts: {
+    comments: (id: string | number) => `/api/v1/forum-posts/${id}/comments`,
+    react: (id: string | number) => `/api/v1/forum-posts/${id}/react`,
+  },
 } as const;
 
 export const STORAGE_KEYS = {
@@ -109,4 +126,11 @@ export const USER_LEVELS = [
   { value: "trusted", label: "Trusted", minPoints: 200 },
   { value: "expert", label: "Expert", minPoints: 500 },
   { value: "legend", label: "Legend", minPoints: 1000 },
+] as const;
+
+export const FORUM_POST_TYPES = [
+  { value: "discussion", label: "Discussion", icon: "discussion" },
+  { value: "info", label: "Info", icon: "info" },
+  { value: "question", label: "Question", icon: "question" },
+  { value: "announcement", label: "Announcement", icon: "announcement" },
 ] as const;

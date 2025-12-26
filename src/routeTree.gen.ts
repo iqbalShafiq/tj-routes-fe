@@ -31,6 +31,9 @@ import { Route as AdminStopsRouteImport } from './routes/admin/stops'
 import { Route as AdminRoutesRouteImport } from './routes/admin/routes'
 import { Route as AdminReportsRouteImport } from './routes/admin/reports'
 import { Route as AdminBulkUploadRouteImport } from './routes/admin/bulk-upload'
+import { Route as RoutesRouteIdForumRouteImport } from './routes/routes/$routeId/forum'
+import { Route as RoutesRouteIdForumMembersRouteImport } from './routes/routes/$routeId/forum/members'
+import { Route as RoutesRouteIdForumPostsPostIdRouteImport } from './routes/routes/$routeId/forum/posts/$postId'
 
 const ThemeShowcaseRoute = ThemeShowcaseRouteImport.update({
   id: '/theme-showcase',
@@ -142,6 +145,23 @@ const AdminBulkUploadRoute = AdminBulkUploadRouteImport.update({
   path: '/admin/bulk-upload',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoutesRouteIdForumRoute = RoutesRouteIdForumRouteImport.update({
+  id: '/forum',
+  path: '/forum',
+  getParentRoute: () => RoutesRouteIdRoute,
+} as any)
+const RoutesRouteIdForumMembersRoute =
+  RoutesRouteIdForumMembersRouteImport.update({
+    id: '/members',
+    path: '/members',
+    getParentRoute: () => RoutesRouteIdForumRoute,
+  } as any)
+const RoutesRouteIdForumPostsPostIdRoute =
+  RoutesRouteIdForumPostsPostIdRouteImport.update({
+    id: '/posts/$postId',
+    path: '/posts/$postId',
+    getParentRoute: () => RoutesRouteIdForumRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -158,7 +178,7 @@ export interface FileRoutesByFullPath {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/reports/new': typeof ReportsNewRoute
-  '/routes/$routeId': typeof RoutesRouteIdRoute
+  '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
@@ -166,6 +186,9 @@ export interface FileRoutesByFullPath {
   '/routes': typeof RoutesIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
+  '/routes/$routeId/forum/members': typeof RoutesRouteIdForumMembersRoute
+  '/routes/$routeId/forum/posts/$postId': typeof RoutesRouteIdForumPostsPostIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -182,7 +205,7 @@ export interface FileRoutesByTo {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/reports/new': typeof ReportsNewRoute
-  '/routes/$routeId': typeof RoutesRouteIdRoute
+  '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
@@ -190,6 +213,9 @@ export interface FileRoutesByTo {
   '/routes': typeof RoutesIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
+  '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
+  '/routes/$routeId/forum/members': typeof RoutesRouteIdForumMembersRoute
+  '/routes/$routeId/forum/posts/$postId': typeof RoutesRouteIdForumPostsPostIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -207,7 +233,7 @@ export interface FileRoutesById {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/reports/new': typeof ReportsNewRoute
-  '/routes/$routeId': typeof RoutesRouteIdRoute
+  '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/feed/': typeof FeedIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
@@ -215,6 +241,9 @@ export interface FileRoutesById {
   '/routes/': typeof RoutesIndexRoute
   '/stops/': typeof StopsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
+  '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
+  '/routes/$routeId/forum/members': typeof RoutesRouteIdForumMembersRoute
+  '/routes/$routeId/forum/posts/$postId': typeof RoutesRouteIdForumPostsPostIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -241,6 +270,9 @@ export interface FileRouteTypes {
     | '/routes'
     | '/stops'
     | '/vehicles'
+    | '/routes/$routeId/forum'
+    | '/routes/$routeId/forum/members'
+    | '/routes/$routeId/forum/posts/$postId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -265,6 +297,9 @@ export interface FileRouteTypes {
     | '/routes'
     | '/stops'
     | '/vehicles'
+    | '/routes/$routeId/forum'
+    | '/routes/$routeId/forum/members'
+    | '/routes/$routeId/forum/posts/$postId'
   id:
     | '__root__'
     | '/'
@@ -289,6 +324,9 @@ export interface FileRouteTypes {
     | '/routes/'
     | '/stops/'
     | '/vehicles/'
+    | '/routes/$routeId/forum'
+    | '/routes/$routeId/forum/members'
+    | '/routes/$routeId/forum/posts/$postId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -306,7 +344,7 @@ export interface RootRouteChildren {
   FeedReportIdRoute: typeof FeedReportIdRoute
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   ReportsNewRoute: typeof ReportsNewRoute
-  RoutesRouteIdRoute: typeof RoutesRouteIdRoute
+  RoutesRouteIdRoute: typeof RoutesRouteIdRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   FeedIndexRoute: typeof FeedIndexRoute
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
@@ -472,8 +510,54 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminBulkUploadRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/routes/$routeId/forum': {
+      id: '/routes/$routeId/forum'
+      path: '/forum'
+      fullPath: '/routes/$routeId/forum'
+      preLoaderRoute: typeof RoutesRouteIdForumRouteImport
+      parentRoute: typeof RoutesRouteIdRoute
+    }
+    '/routes/$routeId/forum/members': {
+      id: '/routes/$routeId/forum/members'
+      path: '/members'
+      fullPath: '/routes/$routeId/forum/members'
+      preLoaderRoute: typeof RoutesRouteIdForumMembersRouteImport
+      parentRoute: typeof RoutesRouteIdForumRoute
+    }
+    '/routes/$routeId/forum/posts/$postId': {
+      id: '/routes/$routeId/forum/posts/$postId'
+      path: '/posts/$postId'
+      fullPath: '/routes/$routeId/forum/posts/$postId'
+      preLoaderRoute: typeof RoutesRouteIdForumPostsPostIdRouteImport
+      parentRoute: typeof RoutesRouteIdForumRoute
+    }
   }
 }
+
+interface RoutesRouteIdForumRouteChildren {
+  RoutesRouteIdForumMembersRoute: typeof RoutesRouteIdForumMembersRoute
+  RoutesRouteIdForumPostsPostIdRoute: typeof RoutesRouteIdForumPostsPostIdRoute
+}
+
+const RoutesRouteIdForumRouteChildren: RoutesRouteIdForumRouteChildren = {
+  RoutesRouteIdForumMembersRoute: RoutesRouteIdForumMembersRoute,
+  RoutesRouteIdForumPostsPostIdRoute: RoutesRouteIdForumPostsPostIdRoute,
+}
+
+const RoutesRouteIdForumRouteWithChildren =
+  RoutesRouteIdForumRoute._addFileChildren(RoutesRouteIdForumRouteChildren)
+
+interface RoutesRouteIdRouteChildren {
+  RoutesRouteIdForumRoute: typeof RoutesRouteIdForumRouteWithChildren
+}
+
+const RoutesRouteIdRouteChildren: RoutesRouteIdRouteChildren = {
+  RoutesRouteIdForumRoute: RoutesRouteIdForumRouteWithChildren,
+}
+
+const RoutesRouteIdRouteWithChildren = RoutesRouteIdRoute._addFileChildren(
+  RoutesRouteIdRouteChildren,
+)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -490,7 +574,7 @@ const rootRouteChildren: RootRouteChildren = {
   FeedReportIdRoute: FeedReportIdRoute,
   ProfileUserIdRoute: ProfileUserIdRoute,
   ReportsNewRoute: ReportsNewRoute,
-  RoutesRouteIdRoute: RoutesRouteIdRoute,
+  RoutesRouteIdRoute: RoutesRouteIdRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   FeedIndexRoute: FeedIndexRoute,
   LeaderboardIndexRoute: LeaderboardIndexRoute,

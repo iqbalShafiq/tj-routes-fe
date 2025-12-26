@@ -1,4 +1,4 @@
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { useRoute } from '../../lib/hooks/useRoutes';
 import { RouteDetail } from '../../components/RouteDetail';
 import { Loading } from '../../components/ui/Loading';
@@ -11,7 +11,16 @@ export const Route = createFileRoute('/routes/$routeId')({
 
 function RouteDetailPage() {
   const { routeId } = Route.useParams();
+  const location = useLocation();
   const { data: route, isLoading, error } = useRoute(routeId);
+
+  // Check if we're on a child route (forum, etc.) by checking the pathname
+  const isChildRoute = location.pathname.includes('/forum');
+
+  // If we're on a child route, just render the outlet
+  if (isChildRoute) {
+    return <Outlet />;
+  }
 
   if (isLoading) {
     return <Loading />;
@@ -41,9 +50,16 @@ function RouteDetailPage() {
           { label: route.code },
         ]}
         actions={
-          <Button variant="accent" onClick={() => window.location.href = `/reports/new?routeId=${route.id}`}>
-            Report Issue
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link to="/routes/$routeId/forum" params={{ routeId }}>
+              <Button variant="outline">
+                View Forum
+              </Button>
+            </Link>
+            <Button variant="accent" onClick={() => window.location.href = `/reports/new?routeId=${route.id}`}>
+              Report Issue
+            </Button>
+          </div>
         }
       />
       <RouteDetail route={route} />
