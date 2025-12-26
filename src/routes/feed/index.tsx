@@ -126,10 +126,10 @@ function FeedPage() {
       >
         {/* Feed Sorting Tabs */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="flex gap-2 bg-slate-100 p-1 rounded-lg">
+          <div className="flex gap-2 bg-slate-100 p-1 rounded-sm">
             <button
               onClick={() => setSort('recent')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'recent'
                   ? 'bg-white text-amber-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -139,7 +139,7 @@ function FeedPage() {
             </button>
             <button
               onClick={() => setSort('popular')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'popular'
                   ? 'bg-white text-amber-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -149,7 +149,7 @@ function FeedPage() {
             </button>
             <button
               onClick={() => setSort('trending')}
-              className={`px-4 py-2 text-sm font-medium rounded-md transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'trending'
                   ? 'bg-white text-amber-600 shadow-sm'
                   : 'text-slate-600 hover:text-slate-900'
@@ -161,7 +161,7 @@ function FeedPage() {
           {isAuthenticated && (
             <button
               onClick={() => setFollowed(followed ? undefined : true)}
-              className={`px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+              className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 followed
                   ? 'bg-amber-500 text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'

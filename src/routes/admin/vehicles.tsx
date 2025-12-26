@@ -239,7 +239,7 @@ function AdminVehiclesPage() {
       {/* Vehicles List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden mb-6">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
@@ -257,9 +257,9 @@ function AdminVehiclesPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {vehicle.photo_url ? (
-                          <img src={vehicle.photo_url} alt={vehicle.vehicle_plate} className="w-10 h-10 rounded-lg object-cover" />
+                          <img src={vehicle.photo_url} alt={vehicle.vehicle_plate} className="w-10 h-10 rounded-sm object-cover" />
                         ) : (
-                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                          <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
                             <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                             </svg>

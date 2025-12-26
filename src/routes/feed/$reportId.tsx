@@ -248,10 +248,10 @@ function ReportDetailPage() {
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
             {report.photo_urls.map((url, idx) => (
               <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
-                <img 
-                  src={url} 
+                <img
+                  src={url}
                   alt={`Report image ${idx + 1}`}
-                  className="w-full h-40 object-cover rounded-lg hover:opacity-90 transition-opacity"
+                  className="w-full h-40 object-cover rounded-sm hover:opacity-90 transition-opacity"
                 />
               </a>
             ))}
@@ -262,12 +262,12 @@ function ReportDetailPage() {
         {report.pdf_urls && report.pdf_urls.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
             {report.pdf_urls.map((url, idx) => (
-              <a 
+              <a
                 key={idx}
-                href={url} 
-                target="_blank" 
+                href={url}
+                target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-sm transition-colors"
               >
                 <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
@@ -280,7 +280,7 @@ function ReportDetailPage() {
 
         {/* Related info */}
         {(report.route || report.stop) && (
-          <div className="p-4 bg-slate-50 rounded-lg mb-6">
+          <div className="p-4 bg-slate-50 rounded-sm mb-6">
             <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Related to</p>
             <div className="flex flex-wrap gap-3">
               {report.route && (
@@ -309,7 +309,7 @@ function ReportDetailPage() {
 
         {/* Admin notes */}
         {report.admin_notes && (
-          <div className="p-4 bg-blue-50 border border-blue-200 rounded-lg mb-6">
+          <div className="p-4 bg-blue-50 border border-blue-200 rounded-sm mb-6">
             <p className="text-xs text-blue-600 uppercase tracking-wider mb-1">Admin Response</p>
             <p className="text-blue-900">{report.admin_notes}</p>
           </div>

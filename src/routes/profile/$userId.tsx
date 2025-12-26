@@ -229,9 +229,9 @@ function UserProfilePage() {
           {profile.badges.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {profile.badges.map((userBadge) => (
-                <div 
+                <div
                   key={userBadge.id}
-                  className="flex flex-col items-center p-4 bg-amber-50 rounded-xl border border-amber-200"
+                  className="flex flex-col items-center p-4 bg-amber-50 rounded-sm border border-amber-200"
                 >
                   <div className="text-amber-600 mb-2">
                     {getBadgeIcon(userBadge.badge.name, userBadge.badge.criteria_type)}
@@ -268,12 +268,12 @@ function UserProfilePage() {
             {allBadges.map((badge) => {
               const isEarned = profile.badges.some(b => b.badge_id === badge.id);
               return (
-                <div 
+                <div
                   key={badge.id}
                   className={`
-                    flex flex-col items-center p-4 rounded-xl border transition-all
-                    ${isEarned 
-                      ? 'bg-emerald-50 border-emerald-200' 
+                    flex flex-col items-center p-4 rounded-sm border transition-all
+                    ${isEarned
+                      ? 'bg-emerald-50 border-emerald-200'
                       : 'bg-slate-50 border-slate-200 opacity-60'}
                   `}
                 >

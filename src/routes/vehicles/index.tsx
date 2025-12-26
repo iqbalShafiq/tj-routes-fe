@@ -18,13 +18,13 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
     <Card className="h-full">
       <div className="flex items-start gap-4">
         {vehicle.photo_url ? (
-          <img 
-            src={vehicle.photo_url} 
+          <img
+            src={vehicle.photo_url}
             alt={vehicle.vehicle_plate}
-            className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+            className="w-24 h-24 object-cover rounded-sm flex-shrink-0"
           />
         ) : (
-          <div className="w-24 h-24 bg-slate-100 flex items-center justify-center rounded-lg flex-shrink-0">
+          <div className="w-24 h-24 bg-slate-100 flex items-center justify-center rounded-sm flex-shrink-0">
             <svg className="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>

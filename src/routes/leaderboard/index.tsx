@@ -62,7 +62,7 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
       <div className="flex items-center gap-4">
         {/* Rank */}
         <div className={`
-          w-12 h-12 flex items-center justify-center rounded-xl font-display font-bold text-lg
+          w-12 h-12 flex items-center justify-center rounded-sm font-display font-bold text-lg
           ${rank === 1 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-white' :
             rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-400 text-white' :
             rank === 3 ? 'bg-gradient-to-br from-orange-300 to-orange-500 text-white' :
@@ -116,7 +116,7 @@ function LeaderboardPage() {
         />
         <div className="space-y-3">
           {[...Array(10)].map((_, i) => (
-            <Skeleton key={i} className="h-20 rounded-xl" />
+            <Skeleton key={i} className="h-20 rounded-sm" />
           ))}
         </div>
       </div>
@@ -174,7 +174,7 @@ function LeaderboardPage() {
       {leaderboard && leaderboard.length === 0 && (
         <Card static>
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 rounded-full">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 rounded-sm">
               <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>

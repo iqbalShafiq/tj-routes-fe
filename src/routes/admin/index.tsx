@@ -44,7 +44,7 @@ function StatCard({
           <p className={`text-3xl font-display font-bold ${color}`}>{value}</p>
           {subtitle && <p className="text-xs text-slate-400 mt-1">{subtitle}</p>}
         </div>
-        <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${color.replace('text-', 'bg-').replace('600', '100')}`}>
+        <div className={`w-14 h-14 rounded-sm flex items-center justify-center ${color.replace('text-', 'bg-').replace('600', '100')}`}>
           {icon}
         </div>
       </div>
@@ -135,10 +135,10 @@ function AdminDashboard() {
           ) : reportsData && reportsData.data.length > 0 ? (
             <div className="space-y-3">
               {reportsData.data.slice(0, 5).map((report) => (
-                <Link 
-                  key={report.id} 
+                <Link
+                  key={report.id}
                   to="/admin/reports"
-                  className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-lg transition-colors"
+                  className="block p-3 bg-slate-50 hover:bg-slate-100 rounded-sm transition-colors"
                 >
                   <div className="flex items-center justify-between">
                     <div className="flex-1 min-w-0">
@@ -170,30 +170,30 @@ function AdminDashboard() {
           <Card static className="flex-shrink-0">
             <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Quick Actions</h2>
             <div className="grid grid-cols-2 gap-3">
-              <Link 
+              <Link
                 to="/admin/routes"
-                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-sm transition-all duration-200 text-center"
               >
                 <p className="font-semibold text-slate-900 text-sm mb-1">Add Route</p>
                 <p className="text-xs text-slate-500">New transit route</p>
               </Link>
-              <Link 
+              <Link
                 to="/admin/stops"
-                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-sm transition-all duration-200 text-center"
               >
                 <p className="font-semibold text-slate-900 text-sm mb-1">Add Stop</p>
                 <p className="text-xs text-slate-500">New location</p>
               </Link>
-              <Link 
+              <Link
                 to="/admin/vehicles"
-                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-sm transition-all duration-200 text-center"
               >
                 <p className="font-semibold text-slate-900 text-sm mb-1">Add Vehicle</p>
                 <p className="text-xs text-slate-500">Register fleet</p>
               </Link>
-              <Link 
+              <Link
                 to="/admin/users"
-                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-lg transition-all duration-200 text-center"
+                className="group p-4 bg-slate-50 hover:bg-slate-100 border border-slate-200 hover:border-slate-300 rounded-sm transition-all duration-200 text-center"
               >
                 <p className="font-semibold text-slate-900 text-sm mb-1">User Access</p>
                 <p className="text-xs text-slate-500">Manage roles</p>
@@ -205,7 +205,7 @@ function AdminDashboard() {
           <Card static className="flex-1 flex flex-col">
             <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Bulk Management</h2>
             <Link to="/admin/bulk-upload" className="flex-1 flex items-center justify-center">
-              <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 w-full text-center hover:border-slate-400 hover:bg-slate-50 transition-all duration-200">
+              <div className="border-2 border-dashed border-slate-300 rounded-sm p-6 w-full text-center hover:border-slate-400 hover:bg-slate-50 transition-all duration-200">
                 <p className="text-sm text-slate-600 mb-4">
                   Upload CSV to update routes, stops, or fleet data in bulk.
                 </p>

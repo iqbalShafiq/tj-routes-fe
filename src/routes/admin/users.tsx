@@ -105,7 +105,7 @@ function AdminUsersPage() {
       {/* Users List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden mb-6">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>

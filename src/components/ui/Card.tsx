@@ -20,7 +20,7 @@ export const Card = ({ className = '', children, size = 'md', static: isStatic, 
   return (
     <div
       className={`
-        card-offset-shadow
+        card-minimal
         relative bg-white transition-all duration-300
         ${sizeClasses[size]}
         ${className}

@@ -25,13 +25,13 @@ function StopCard({ stop }: { stop: Stop }) {
     <Card className="h-full">
       <div className="flex items-start gap-4">
         {stop.photo_url ? (
-          <img 
-            src={stop.photo_url} 
+          <img
+            src={stop.photo_url}
             alt={stop.name}
-            className="w-20 h-20 object-cover rounded-lg flex-shrink-0"
+            className="w-20 h-20 object-cover rounded-sm flex-shrink-0"
           />
         ) : (
-          <div className={`w-20 h-20 flex items-center justify-center rounded-lg flex-shrink-0 ${
+          <div className={`w-20 h-20 flex items-center justify-center rounded-sm flex-shrink-0 ${
             isTerminal ? 'bg-amber-100' : 'bg-slate-100'
           }`}>
             <svg className={`w-10 h-10 ${isTerminal ? 'text-amber-600' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">

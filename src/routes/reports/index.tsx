@@ -144,14 +144,14 @@ function ReportsPage() {
                 </div>
                 <CardBody>
                   {report.route && (
-                    <div className="mb-3 p-3 bg-slate-50 rounded-lg">
+                    <div className="mb-3 p-3 bg-slate-50 rounded-sm">
                       <p className="text-sm text-slate-600 mb-1">
                         <span className="font-medium">Route:</span> {report.route.code} - {report.route.name}
                       </p>
                     </div>
                   )}
                   {report.stop && (
-                    <div className="mb-3 p-3 bg-slate-50 rounded-lg">
+                    <div className="mb-3 p-3 bg-slate-50 rounded-sm">
                       <p className="text-sm text-slate-600">
                         <span className="font-medium">Stop:</span> {report.stop.name}
                       </p>

@@ -288,7 +288,7 @@ function AdminStopsPage() {
       {/* Stops List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-lg border border-slate-200 overflow-hidden mb-6">
+          <div className="bg-white rounded-sm border border-slate-200 overflow-hidden mb-6">
             <table className="w-full">
               <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
@@ -305,9 +305,9 @@ function AdminStopsPage() {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         {stop.photo_url ? (
-                          <img src={stop.photo_url} alt={stop.name} className="w-10 h-10 rounded-lg object-cover" />
+                          <img src={stop.photo_url} alt={stop.name} className="w-10 h-10 rounded-sm object-cover" />
                         ) : (
-                          <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center">
+                          <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
                             <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                             </svg>

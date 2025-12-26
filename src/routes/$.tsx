@@ -13,7 +13,7 @@ function NotFoundPage() {
         {/* Main 404 Content */}
         <div className="text-center">
           {/* Icon Container */}
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-amber-50 mb-6 rounded-xl relative">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-amber-50 mb-6 rounded-sm relative">
             <svg
               className="w-12 h-12 text-amber-600"
               fill="none"
@@ -76,7 +76,7 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                 <svg
                   className="w-5 h-5 text-amber-600"
                   fill="none"
@@ -107,7 +107,7 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                 <svg
                   className="w-5 h-5 text-amber-600"
                   fill="none"
@@ -138,7 +138,7 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-lg flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
                 <svg
                   className="w-5 h-5 text-amber-600"
                   fill="none"

@@ -17,7 +17,7 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           className={`
-            input-offset-shadow
+            input-minimal
             w-full px-4 py-3
             border-2 border-slate-200 bg-white
             text-slate-900 placeholder:text-slate-400
