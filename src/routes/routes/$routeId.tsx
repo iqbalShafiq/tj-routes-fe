@@ -1,5 +1,5 @@
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
-import { useRoute } from '../../lib/hooks/useRoutes';
+import { useRouteWithStats } from '../../lib/hooks/useRoutes';
 import { RouteDetail } from '../../components/RouteDetail';
 import { Loading } from '../../components/ui/Loading';
 import { Button } from '../../components/ui/Button';
@@ -12,7 +12,7 @@ export const Route = createFileRoute('/routes/$routeId')({
 function RouteDetailPage() {
   const { routeId } = Route.useParams();
   const location = useLocation();
-  const { data: route, isLoading, error } = useRoute(routeId);
+  const { data: routeDetail, isLoading, error } = useRouteWithStats(routeId);
 
   // Check if we're on a child route (forum, etc.) by checking the pathname
   const isChildRoute = location.pathname.includes('/forum');
@@ -26,7 +26,7 @@ function RouteDetailPage() {
     return <Loading />;
   }
 
-  if (error || !route) {
+  if (error || !routeDetail) {
     return (
       <div className="text-center py-20 animate-fade-in">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 mb-4 card-chamfered">
@@ -43,11 +43,11 @@ function RouteDetailPage() {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title={`${route.code} - ${route.name}`}
-        subtitle={route.description}
+        title={`${routeDetail.route.code} - ${routeDetail.route.name}`}
+        subtitle={routeDetail.route.description}
         breadcrumbs={[
           { label: 'Routes', path: '/' },
-          { label: route.code },
+          { label: routeDetail.route.code },
         ]}
         actions={
           <div className="flex items-center gap-3">
@@ -56,13 +56,13 @@ function RouteDetailPage() {
                 View Forum
               </Button>
             </Link>
-            <Button variant="accent" onClick={() => window.location.href = `/reports/new?routeId=${route.id}`}>
+            <Button variant="accent" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
               Report Issue
             </Button>
           </div>
         }
       />
-      <RouteDetail route={route} />
+      <RouteDetail data={routeDetail} />
     </div>
   );
 }

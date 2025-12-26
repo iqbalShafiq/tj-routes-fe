@@ -67,56 +67,6 @@
     border: 1px solid rgba(226, 232, 240, 0.8);
   }
 
-  /* Chamfered card - transit ticket aesthetic */
-  .card-chamfered {
-    clip-path: polygon(
-      0 12px,
-      12px 0,
-      100% 0,
-      100% calc(100% - 12px),
-      calc(100% - 12px) 100%,
-      0 100%
-    );
-  }
-
-  .card-chamfered-sm {
-    clip-path: polygon(
-      0 8px,
-      8px 0,
-      100% 0,
-      100% calc(100% - 8px),
-      calc(100% - 8px) 100%,
-      0 100%
-    );
-  }
-
-  .card-chamfered-lg {
-    clip-path: polygon(
-      0 16px,
-      16px 0,
-      100% 0,
-      100% calc(100% - 16px),
-      calc(100% - 16px) 100%,
-      0 100%
-    );
-  }
-
-  /* Refined card with chamfered corners */
-  .card-refined {
-    @apply bg-white shadow-md;
-    @apply border border-slate-200;
-    @apply transition-all duration-300;
-    clip-path: polygon(
-      0 12px,
-      12px 0,
-      100% 0,
-      100% calc(100% - 12px),
-      calc(100% - 12px) 100%,
-      0 100%
-    );
-    position: relative;
-  }
-
   /* Decorative corner accent */
   .card-refined::before {
     content: '';
@@ -485,17 +435,17 @@
 
   /* 7. Rounded with Offset Shadow - Standard rounded with directional shadow */
   .card-offset-shadow {
-    @apply rounded-xl;
+    @apply rounded-lg;
     box-shadow: 4px 4px 12px -2px rgb(0 0 0 / 0.15), 0 0 0 1px rgb(226 232 240);
   }
 
   .button-offset-shadow {
-    @apply rounded-lg;
+    @apply rounded-md;
     box-shadow: 2px 2px 6px -1px rgb(0 0 0 / 0.15);
   }
 
   .input-offset-shadow {
-    @apply rounded-lg;
+    @apply rounded-md;
     box-shadow: 2px 2px 4px -1px rgb(0 0 0 / 0.1);
   }
 

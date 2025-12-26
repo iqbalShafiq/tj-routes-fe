@@ -17,6 +17,14 @@ export const useRoute = (id: string | number) => {
   });
 };
 
+export const useRouteWithStats = (id: string | number) => {
+  return useQuery({
+    queryKey: ['route', id, 'withStats'],
+    queryFn: () => routesApi.getRouteWithStats(id),
+    enabled: !!id,
+  });
+};
+
 export const useRouteStops = (routeId: string | number | undefined) => {
   return useQuery({
     queryKey: ['route', routeId, 'stops'],

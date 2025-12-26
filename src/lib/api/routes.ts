@@ -10,6 +10,58 @@ export interface RouteStop {
   stop: Stop;
 }
 
+// Report Summary for recent activity
+export interface ReportSummary {
+  id: number;
+  type: 'route_issue' | 'stop_issue' | 'temporary_event' | 'policy_change';
+  title: string;
+  status: 'pending' | 'reviewed' | 'resolved';
+  upvotes: number;
+  created_at: string;
+}
+
+// Forum Post Summary for recent activity
+export interface ForumPostSummary {
+  id: number;
+  post_type: 'discussion' | 'info' | 'question' | 'announcement';
+  title: string;
+  upvotes: number;
+  created_at: string;
+}
+
+// Route Statistics from API
+export interface RouteStatistics {
+  forum_id: number | null;
+  total_reports: number;
+  reports_by_status: {
+    pending: number;
+    reviewed: number;
+    resolved: number;
+  };
+  reports_by_type: {
+    route_issue: number;
+    stop_issue: number;
+    temporary_event: number;
+    policy_change: number;
+  };
+  total_report_upvotes: number;
+  total_report_downvotes: number;
+  forum_member_count: number;
+  forum_post_count: number;
+  total_post_upvotes: number;
+  total_post_downvotes: number;
+  report_resolution_rate: number;
+  community_activity_score: number;
+}
+
+// Full Route Detail Response with statistics
+export interface RouteDetailResponse {
+  route: Route;
+  statistics: RouteStatistics;
+  recent_reports: ReportSummary[];
+  recent_posts: ForumPostSummary[];
+}
+
 export interface Route {
   id: number;
   code?: string; // For frontend compatibility
@@ -104,6 +156,14 @@ export const routesApi = {
       ...route,
       code: route.route_number || (route as any).code,
     };
+  },
+
+  getRouteWithStats: async (id: string | number): Promise<RouteDetailResponse> => {
+    const response = await apiClient.get<{
+      success: boolean;
+      data: RouteDetailResponse;
+    }>(`${API_ENDPOINTS.routes.detail(id)}?stats=true`);
+    return response.data.data;
   },
 
   createRoute: async (data: CreateRouteRequest): Promise<Route> => {
