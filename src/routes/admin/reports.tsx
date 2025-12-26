@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { Textarea } from '../../components/ui/Textarea';
+import { Modal } from '../../components/ui/Modal';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -139,12 +140,14 @@ function AdminReportsPage() {
       </div>
 
       {/* Status Update Modal */}
-      {selectedReport && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card static className="w-full max-w-lg">
-            <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">
-              Update Report Status
-            </h2>
+      <Modal
+        isOpen={!!selectedReport}
+        onClose={() => setSelectedReport(null)}
+        title="Update Report Status"
+        size="md"
+      >
+        {selectedReport && (
+          <>
             <div className="mb-4">
               <p className="text-sm text-slate-500 mb-2">Report #{selectedReport.id}</p>
               <p className="font-medium text-slate-900">{selectedReport.title}</p>
@@ -174,8 +177,8 @@ function AdminReportsPage() {
                 <Button type="button" variant="outline" onClick={() => setSelectedReport(null)} className="flex-1">
                   Cancel
                 </Button>
-                <Button 
-                  variant="accent" 
+                <Button
+                  variant="accent"
                   className="flex-1"
                   onClick={handleUpdateStatus}
                   disabled={updateStatusMutation.isPending}
@@ -184,9 +187,9 @@ function AdminReportsPage() {
                 </Button>
               </div>
             </div>
-          </Card>
-        </div>
-      )}
+          </>
+        )}
+      </Modal>
 
       {/* Reports List */}
       {data && data.data.length > 0 ? (

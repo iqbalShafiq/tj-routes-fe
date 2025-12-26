@@ -8,6 +8,7 @@ import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { FilterSelect } from '../../components/ui/FilterSelect';
 import { FileInput } from '../../components/ui/FileInput';
+import { Modal } from '../../components/ui/Modal';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -179,22 +180,24 @@ function AdminStopsPage() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card static className="w-full max-w-2xl max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">
-              {editingStop ? 'Edit Stop' : 'Add New Stop'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-                  <Input
-                    value={formData.name}
-                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    placeholder="Stop name"
-                    required
-                  />
-                </div>
+        <Modal
+          isOpen={showForm}
+          onClose={resetForm}
+          title={editingStop ? 'Edit Stop' : 'Add New Stop'}
+          size="xl"
+        >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2">
+                <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+                <Input
+                  value={formData.name}
+                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                  placeholder="Stop name"
+                  required
+                  autoFocus
+                />
+              </div>
                 <div>
                   <Select
                     label="Type"
@@ -281,9 +284,8 @@ function AdminStopsPage() {
                 </Button>
               </div>
             </form>
-          </Card>
-        </div>
-      )}
+          </Modal>
+        )}
 
       {/* Stops List */}
       {data && data.data.length > 0 ? (

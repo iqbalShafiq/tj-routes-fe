@@ -9,6 +9,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
+import { Modal } from '../../components/ui/Modal';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -146,62 +147,61 @@ function AdminRoutesPage() {
       </div>
 
       {/* Form Modal */}
-      {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card static className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">
-              {editingRoute ? 'Edit Route' : 'Add New Route'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Route Number</label>
-                <Input
-                  value={formData.route_number}
-                  onChange={(e) => setFormData({ ...formData, route_number: e.target.value })}
-                  placeholder="e.g., 1, 1A, 2B"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
-                <Input
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="e.g., Blok M - Kota"
-                  required
-                />
-              </div>
-              <div>
-                <Textarea
-                  label="Description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Route description..."
-                  rows={3}
-                />
-              </div>
-              <div>
-                <Select
-                  label="Status"
-                  value={formData.status}
-                  onChange={(value) => setFormData({ ...formData, status: value as 'active' | 'inactive' })}
-                >
-                  <option value="active">Active</option>
-                  <option value="inactive">Inactive</option>
-                </Select>
-              </div>
-              <div className="flex gap-3 pt-4">
-                <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingRoute(null); }} className="flex-1">
-                  Cancel
-                </Button>
-                <Button type="submit" variant="accent" className="flex-1">
-                  {editingRoute ? 'Update' : 'Create'}
-                </Button>
-              </div>
-            </form>
-          </Card>
-        </div>
-      )}
+      <Modal
+        isOpen={showForm}
+        onClose={() => { setShowForm(false); setEditingRoute(null); }}
+        title={editingRoute ? 'Edit Route' : 'Add New Route'}
+        size="lg"
+      >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Route Number</label>
+            <Input
+              value={formData.route_number}
+              onChange={(e) => setFormData({ ...formData, route_number: e.target.value })}
+              placeholder="e.g., 1, 1A, 2B"
+              required
+              autoFocus
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+            <Input
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="e.g., Blok M - Kota"
+              required
+            />
+          </div>
+          <div>
+            <Textarea
+              label="Description"
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              placeholder="Route description..."
+              rows={3}
+            />
+          </div>
+          <div>
+            <Select
+              label="Status"
+              value={formData.status}
+              onChange={(value) => setFormData({ ...formData, status: value as 'active' | 'inactive' })}
+            >
+              <option value="active">Active</option>
+              <option value="inactive">Inactive</option>
+            </Select>
+          </div>
+          <div className="flex gap-3 pt-4">
+            <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingRoute(null); }} className="flex-1">
+              Cancel
+            </Button>
+            <Button type="submit" variant="accent" className="flex-1">
+              {editingRoute ? 'Update' : 'Create'}
+            </Button>
+          </div>
+        </form>
+      </Modal>
 
       {/* Routes List */}
       {data && data.data.length > 0 ? (

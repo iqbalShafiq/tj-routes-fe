@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Select } from '../../components/ui/Select';
 import { FileInput } from '../../components/ui/FileInput';
+import { Modal } from '../../components/ui/Modal';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -154,21 +155,23 @@ function AdminVehiclesPage() {
 
       {/* Form Modal */}
       {showForm && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <Card static className="w-full max-w-lg max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">
-              {editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}
-            </h2>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Plate Number</label>
-                <Input
-                  value={formData.vehicle_plate}
-                  onChange={(e) => setFormData({ ...formData, vehicle_plate: e.target.value })}
-                  placeholder="e.g., B1234XYZ"
-                  required
-                />
-              </div>
+        <Modal
+          isOpen={showForm}
+          onClose={resetForm}
+          title={editingVehicle ? 'Edit Vehicle' : 'Add New Vehicle'}
+          size="lg"
+        >
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">Plate Number</label>
+              <Input
+                value={formData.vehicle_plate}
+                onChange={(e) => setFormData({ ...formData, vehicle_plate: e.target.value })}
+                placeholder="e.g., B1234XYZ"
+                required
+                autoFocus
+              />
+            </div>
               <div>
                 <Select
                   label="Route"
@@ -232,9 +235,8 @@ function AdminVehiclesPage() {
                 </Button>
               </div>
             </form>
-          </Card>
-        </div>
-      )}
+          </Modal>
+        )}
 
       {/* Vehicles List */}
       {data && data.data.length > 0 ? (
