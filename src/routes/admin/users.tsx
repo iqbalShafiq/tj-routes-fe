@@ -6,6 +6,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Select } from '../../components/ui/Select';
 import { Chip } from '../../components/ui/Chip';
+import { Table } from '../../components/ui/Table';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -106,78 +107,85 @@ function AdminUsersPage() {
       {/* Users List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">User</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Email</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Level</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Points</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Role</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden lg:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Joined</th>
-                  <th className="text-center px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data.data.map((user) => {
+          <Table
+            data={data.data}
+            columns={[
+              {
+                key: 'username',
+                header: 'User',
+                render: (user) => {
                   const levelInfo = USER_LEVELS.find(l => l.value === user.level);
                   return (
-                    <tr key={user.id} className="hover:bg-slate-50">
-                      <td className="px-4 py-3">
-                        <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white font-bold">
-                            {user.username.charAt(0).toUpperCase()}
-                          </div>
-                          <div>
-                            <Link 
-                              to="/profile/$userId" 
-                              params={{ userId: String(user.id) }}
-                              className="font-medium text-slate-900 hover:text-amber-600"
-                            >
-                              {user.username}
-                            </Link>
-                            {user.oauth_provider && (
-                              <span className="ml-2 text-xs text-slate-400">({user.oauth_provider})</span>
-                            )}
-                          </div>
-                        </div>
-                      </td>
-                      <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">{user.email}</td>
-                      <td className="px-4 py-3">
-                        <Chip variant={getLevelVariant(user.level)}>
-                          {levelInfo?.label || user.level}
-                        </Chip>
-                      </td>
-                      <td className="px-4 py-3 text-slate-600 hidden md:table-cell">
-                        {user.reputation_points.toLocaleString()}
-                      </td>
-                      <td className="px-4 py-3">
-                        <Chip variant={user.role === 'admin' ? 'warning' : 'neutral'}>
-                          {user.role}
-                        </Chip>
-                      </td>
-                      <td className="px-4 py-3 text-slate-500 text-sm hidden lg:table-cell">
-                        {format(new Date(user.created_at), 'MMM d, yyyy')}
-                      </td>
-                      <td className="px-4 py-3 text-right">
-                        <Select
-                          value={user.role}
-                          onChange={(value) => handleRoleChange(user.id, value as 'common_user' | 'admin')}
-                          disabled={updateRoleMutation.isPending}
-                          size="xs"
-                          className="w-20"
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white font-bold">
+                        {user.username.charAt(0).toUpperCase()}
+                      </div>
+                      <div>
+                        <Link
+                          to="/profile/$userId"
+                          params={{ userId: String(user.id) }}
+                          className="font-medium text-slate-900 hover:text-amber-600"
                         >
-                          <option value="common_user">User</option>
-                          <option value="admin">Admin</option>
-                        </Select>
-                      </td>
-                    </tr>
+                          {user.username}
+                        </Link>
+                        {user.oauth_provider && (
+                          <span className="ml-2 text-xs text-slate-400">({user.oauth_provider})</span>
+                        )}
+                      </div>
+                    </div>
                   );
-                })}
-              </tbody>
-            </table>
-          </div>
+                },
+              },
+              {
+                key: 'email',
+                header: 'Email',
+                hidden: 'md:table-cell',
+                render: (user) => user.email,
+              },
+              {
+                key: 'level',
+                header: 'Level',
+                render: (user) => (
+                  <Chip variant={getLevelVariant(user.level)}>
+                    {USER_LEVELS.find(l => l.value === user.level)?.label || user.level}
+                  </Chip>
+                ),
+              },
+              {
+                key: 'points',
+                header: 'Points',
+                hidden: 'md:table-cell',
+                render: (user) => user.reputation_points.toLocaleString(),
+              },
+              {
+                key: 'role',
+                header: 'Role',
+                render: (user) => (
+                  <Chip variant={user.role === 'admin' ? 'warning' : 'neutral'}>
+                    {user.role}
+                  </Chip>
+                ),
+              },
+              {
+                key: 'joined',
+                header: 'Joined',
+                hidden: 'lg:table-cell',
+                render: (user) => format(new Date(user.created_at), 'MMM d, yyyy'),
+              },
+            ]}
+            actions={(user) => (
+              <Select
+                value={user.role}
+                onChange={(value) => handleRoleChange(user.id, value as 'common_user' | 'admin')}
+                disabled={updateRoleMutation.isPending}
+                size="xs"
+                className="w-20"
+              >
+                <option value="common_user">User</option>
+                <option value="admin">Admin</option>
+              </Select>
+            )}
+          />
 
           <div className="flex justify-center items-center gap-4">
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>

@@ -10,6 +10,7 @@ import { Select } from '../../components/ui/Select';
 import { FileInput } from '../../components/ui/FileInput';
 import { Modal } from '../../components/ui/Modal';
 import { Chip } from '../../components/ui/Chip';
+import { Table } from '../../components/ui/Table';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -242,65 +243,66 @@ function AdminVehiclesPage() {
       {/* Vehicles List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Plate</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Type</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Route</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Capacity</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Status</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data.data.map((vehicle) => (
-                  <tr key={vehicle.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {vehicle.photo_url ? (
-                          <img src={vehicle.photo_url} alt={vehicle.vehicle_plate} className="w-10 h-10 rounded-sm object-cover" />
-                        ) : (
-                          <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
-                            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                            </svg>
-                          </div>
-                        )}
-                        <span className="font-display font-semibold text-slate-900">{vehicle.vehicle_plate}</span>
+          <Table
+            data={data.data}
+            columns={[
+              {
+                key: 'plate',
+                header: 'Plate',
+                render: (vehicle) => (
+                  <div className="flex items-center gap-3">
+                    {vehicle.photo_url ? (
+                      <img src={vehicle.photo_url} alt={vehicle.vehicle_plate} className="w-10 h-10 rounded-sm object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
                       </div>
-                    </td>
-                    <td className="px-4 py-3 text-slate-600">{vehicle.vehicle_type || '—'}</td>
-                    <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">
-                      {vehicle.route ? `${vehicle.route.route_number}` : '—'}
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 hidden md:table-cell">{vehicle.capacity || '—'}</td>
-                    <td className="px-4 py-3">
-                      <Chip variant={vehicle.status === 'active' ? 'success' : 'error'}>
-                        {vehicle.status}
-                      </Chip>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => startEdit(vehicle)}>
-                          Edit
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="danger" 
-                          onClick={() => handleDelete(vehicle.id)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                    <span className="font-display font-semibold text-slate-900">{vehicle.vehicle_plate}</span>
+                  </div>
+                ),
+              },
+              { key: 'type', header: 'Type', render: (vehicle) => vehicle.vehicle_type || '—' },
+              {
+                key: 'route',
+                header: 'Route',
+                hidden: 'md:table-cell',
+                render: (vehicle) => vehicle.route ? `${vehicle.route.route_number}` : '—',
+              },
+              {
+                key: 'capacity',
+                header: 'Capacity',
+                hidden: 'md:table-cell',
+                render: (vehicle) => vehicle.capacity || '—',
+              },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (vehicle) => (
+                  <Chip variant={vehicle.status === 'active' ? 'success' : 'error'}>
+                    {vehicle.status}
+                  </Chip>
+                ),
+              },
+            ]}
+            actions={(vehicle) => (
+              <div className="flex justify-end gap-2">
+                <Button size="sm" variant="outline" onClick={() => startEdit(vehicle)}>
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => handleDelete(vehicle.id)}
+                  disabled={deleteMutation.isPending}
+                >
+                  Delete
+                </Button>
+              </div>
+            )}
+          />
 
           <div className="flex justify-center items-center gap-4">
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>

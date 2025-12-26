@@ -10,6 +10,7 @@ import { FilterSelect } from '../../components/ui/FilterSelect';
 import { FileInput } from '../../components/ui/FileInput';
 import { Modal } from '../../components/ui/Modal';
 import { Chip } from '../../components/ui/Chip';
+import { Table } from '../../components/ui/Table';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -291,65 +292,68 @@ function AdminStopsPage() {
       {/* Stops List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Name</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Type</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">City</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Status</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data.data.map((stop) => (
-                  <tr key={stop.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <div className="flex items-center gap-3">
-                        {stop.photo_url ? (
-                          <img src={stop.photo_url} alt={stop.name} className="w-10 h-10 rounded-sm object-cover" />
-                        ) : (
-                          <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
-                            <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            </svg>
-                          </div>
-                        )}
-                        <span className="font-medium text-slate-900">{stop.name}</span>
+          <Table
+            data={data.data}
+            columns={[
+              {
+                key: 'name',
+                header: 'Name',
+                render: (stop) => (
+                  <div className="flex items-center gap-3">
+                    {stop.photo_url ? (
+                      <img src={stop.photo_url} alt={stop.name} className="w-10 h-10 rounded-sm object-cover" />
+                    ) : (
+                      <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
+                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                        </svg>
                       </div>
-                    </td>
-                    <td className="px-4 py-3">
-                      <Chip variant={stop.type === 'terminal' ? 'warning' : 'default'}>
-                        {stop.type}
-                      </Chip>
-                    </td>
-                    <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell">{stop.city || '—'}</td>
-                    <td className="px-4 py-3">
-                      <Chip variant={stop.status === 'active' ? 'success' : 'error'}>
-                        {stop.status}
-                      </Chip>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => startEdit(stop)}>
-                          Edit
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="danger" 
-                          onClick={() => handleDelete(stop.id)}
-                          disabled={deleteMutation.isPending}
-                        >
-                          Delete
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                    )}
+                    <span className="font-medium text-slate-900">{stop.name}</span>
+                  </div>
+                ),
+              },
+              {
+                key: 'type',
+                header: 'Type',
+                render: (stop) => (
+                  <Chip variant={stop.type === 'terminal' ? 'warning' : 'default'}>
+                    {stop.type}
+                  </Chip>
+                ),
+              },
+              {
+                key: 'city',
+                header: 'City',
+                hidden: 'md:table-cell',
+                render: (stop) => stop.city || '—',
+              },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (stop) => (
+                  <Chip variant={stop.status === 'active' ? 'success' : 'error'}>
+                    {stop.status}
+                  </Chip>
+                ),
+              },
+            ]}
+            actions={(stop) => (
+              <div className="flex justify-end gap-2">
+                <Button size="sm" variant="outline" onClick={() => startEdit(stop)}>
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => handleDelete(stop.id)}
+                  disabled={deleteMutation.isPending}
+                >
+                  Delete
+                </Button>
+              </div>
+            )}
+          />
 
           <div className="flex justify-center items-center gap-4">
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>

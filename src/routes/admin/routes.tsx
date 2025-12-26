@@ -11,6 +11,7 @@ import { Select } from '../../components/ui/Select';
 import { Textarea } from '../../components/ui/Textarea';
 import { Modal } from '../../components/ui/Modal';
 import { Chip } from '../../components/ui/Chip';
+import { Table, Column } from '../../components/ui/Table';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
@@ -207,54 +208,52 @@ function AdminRoutesPage() {
       {/* Routes List */}
       {data && data.data.length > 0 ? (
         <>
-          <div className="bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6">
-            <table className="w-full">
-              <thead className="bg-slate-50 border-b border-slate-200">
-                <tr>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Route #</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Name</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell whitespace-nowrap overflow-hidden text-ellipsis">Description</th>
-                  <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Status</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100">
-                {data.data.map((route) => (
-                  <tr key={route.id} className="hover:bg-slate-50">
-                    <td className="px-4 py-3">
-                      <span className="font-display font-semibold text-amber-600">
-                        {route.route_number || route.code}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-slate-900">{route.name}</td>
-                    <td className="px-4 py-3 text-slate-500 text-sm hidden md:table-cell truncate max-w-xs">
-                      {route.description || '—'}
-                    </td>
-                    <td className="px-4 py-3">
-                      <Chip variant={route.status === 'active' ? 'success' : 'error'}>
-                        {route.status}
-                      </Chip>
-                    </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex justify-end gap-2">
-                        <Button size="sm" variant="outline" onClick={() => startEdit(route)}>
-                          Edit
-                        </Button>
-                        <Button 
-                          size="sm" 
-                          variant="danger" 
-                          onClick={() => handleDelete(route.id)}
-                          disabled={isDeleting === route.id}
-                        >
-                          {isDeleting === route.id ? '...' : 'Delete'}
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+          <Table
+            data={data.data}
+            columns={[
+              {
+                key: 'route_number',
+                header: 'Route #',
+                render: (route) => (
+                  <span className="font-display font-semibold text-amber-600">
+                    {route.route_number || route.code}
+                  </span>
+                ),
+              },
+              { key: 'name', header: 'Name' },
+              {
+                key: 'description',
+                header: 'Description',
+                hidden: 'md:table-cell',
+                className: 'truncate max-w-xs',
+                render: (route) => route.description || '—',
+              },
+              {
+                key: 'status',
+                header: 'Status',
+                render: (route) => (
+                  <Chip variant={route.status === 'active' ? 'success' : 'error'}>
+                    {route.status}
+                  </Chip>
+                ),
+              },
+            ]}
+            actions={(route) => (
+              <div className="flex justify-end gap-2">
+                <Button size="sm" variant="outline" onClick={() => startEdit(route)}>
+                  Edit
+                </Button>
+                <Button
+                  size="sm"
+                  variant="danger"
+                  onClick={() => handleDelete(route.id)}
+                  disabled={isDeleting === route.id}
+                >
+                  {isDeleting === route.id ? '...' : 'Delete'}
+                </Button>
+              </div>
+            )}
+          />
 
           {/* Pagination */}
           <div className="flex justify-center items-center gap-4">
