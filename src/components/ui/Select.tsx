@@ -171,7 +171,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
         button: 'px-1 py-1 text-sm',
         label: 'text-xs mb-1',
         icon: 'w-3.5 h-3.5',
-        option: 'px-2 py-1.5 text-xs',
+        option: 'px-2 py-1.5 text-sm',
       },
       sm: {
         button: 'px-2 py-1.5 text-sm',
@@ -209,8 +209,8 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             onClick={() => !disabled && setIsOpen(!isOpen)}
             disabled={disabled}
             className={`
-              ${borderless 
-                ? 'border-none bg-transparent shadow-none focus:ring-0 focus:outline-none' 
+              ${borderless
+                ? 'w-full border-none bg-transparent shadow-none focus:ring-0 focus:outline-none'
                 : `input-offset-shadow
                     w-full px-4 py-3
                     border-2 border-slate-200 bg-white

@@ -3,6 +3,7 @@ import { Link } from '@tanstack/react-router';
 import { useTrendingReports } from '../lib/hooks/useTrendingReports';
 import { Card } from './ui/Card';
 import { Skeleton } from './ui/Loading';
+import { FilterSelect } from './ui/FilterSelect';
 import { formatDistanceToNow } from 'date-fns';
 import type { Report } from '../lib/api/reports';
 
@@ -36,17 +37,18 @@ export const TrendingSection = () => {
     <div className="mb-6">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-xl font-display font-bold text-slate-900">Trending Now</h2>
-        <select
+        <FilterSelect
+          label="Time"
           value={window}
-          onChange={(e) => setWindow(e.target.value as typeof window)}
-          className="px-3 py-1.5 text-sm border border-slate-300 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-amber-500"
-        >
-          <option value="1h">Last Hour</option>
-          <option value="24h">Last 24 Hours</option>
-          <option value="7d">Last 7 Days</option>
-          <option value="30d">Last 30 Days</option>
-          <option value="all">All Time</option>
-        </select>
+          onChange={(value) => setWindow(value as typeof window)}
+          options={[
+            { value: '1h', label: 'Last Hour' },
+            { value: '24h', label: 'Last 24 Hours' },
+            { value: '7d', label: 'Last 7 Days' },
+            { value: '30d', label: 'Last 30 Days' },
+            { value: 'all', label: 'All Time' },
+          ]}
+        />
       </div>
       <div className="-mx-6">
         <div className="flex gap-4 overflow-x-auto overflow-y-visible pb-2 pt-2 scrollbar-hide px-6">
