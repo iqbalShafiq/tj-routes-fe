@@ -63,9 +63,42 @@ export const useCreateForumPost = () => {
       photos?: File[];
       pdfs?: File[];
     }) => forumPostsApi.createForumPost(forumId, data, photos, pdfs),
-    onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
-      queryClient.invalidateQueries({ queryKey: ['forum', variables.forumId] });
+    onSuccess: (newPost, variables) => {
+      // Update infinite queries - add the new post to the first page
+      // We update all infinite queries so the user sees the new post immediately
+      const allInfiniteQueries = queryClient.getQueriesData({ queryKey: ['forumPosts', 'infinite', variables.forumId] });
+      allInfiniteQueries.forEach(([queryKey]) => {
+        queryClient.setQueryData(queryKey, (old: any) => {
+          if (!old || !old.pages || old.pages.length === 0) return old;
+          return {
+            ...old,
+            pages: old.pages.map((page: any, pageIndex: number) => {
+              // Add the new post to the first page
+              if (pageIndex === 0) {
+                return {
+                  ...page,
+                  data: [newPost, ...page.data],
+                  total: (page.total || 0) + 1,
+                };
+              }
+              return page;
+            }),
+          };
+        });
+      });
+
+      // Update regular queries - add the new post to the beginning of the data array
+      queryClient.setQueryData(['forumPosts', variables.forumId], (old: any) => {
+        if (!old) return old;
+        return {
+          ...old,
+          data: [newPost, ...old.data],
+          total: (old.total || 0) + 1,
+        };
+      });
+
+      // Note: We don't invalidate here to allow the optimistic update to be visible immediately
+      // The cache update above is sufficient for immediate UI feedback
     },
   });
 };

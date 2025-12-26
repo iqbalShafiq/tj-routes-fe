@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCreateForumPost } from '../lib/hooks/useForumPosts';
 import type { CreateForumPostRequest } from '../lib/api/forum-posts';
 import { Input } from './ui/Input';
@@ -25,7 +24,6 @@ export const CreateForumPostForm = ({
   onCancel,
   initialData,
 }: CreateForumPostFormProps) => {
-  const queryClient = useQueryClient();
   const [formData, setFormData] = useState<CreateForumPostRequest>({
     post_type: initialData?.post_type || 'discussion',
     title: initialData?.title || '',
@@ -72,7 +70,7 @@ export const CreateForumPostForm = ({
         },
         {
           onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['forumPosts', forumId] });
+            // Cache update is handled in the mutation's onSuccess callback
             onSuccess?.();
           },
           onError: (error: any) => {
