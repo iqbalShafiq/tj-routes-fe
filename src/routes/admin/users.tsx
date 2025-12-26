@@ -116,7 +116,7 @@ function AdminUsersPage() {
                   <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden md:table-cell">Points</th>
                   <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900">Role</th>
                   <th className="text-left px-4 py-3 text-sm font-semibold text-slate-900 hidden lg:table-cell">Joined</th>
-                  <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900">Actions</th>
+                  <th className="text-center px-4 py-3 text-sm font-semibold text-slate-900">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100">
@@ -165,8 +165,8 @@ function AdminUsersPage() {
                           value={user.role}
                           onChange={(value) => handleRoleChange(user.id, value as 'common_user' | 'admin')}
                           disabled={updateRoleMutation.isPending}
-                          size="sm"
-                          className="w-24"
+                          size="xs"
+                          className="w-20"
                         >
                           <option value="common_user">User</option>
                           <option value="admin">Admin</option>
