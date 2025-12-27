@@ -229,7 +229,7 @@ function ForumPage() {
           />
         </div>
         {isAuthenticated && forumData.is_member && (
-          <Button variant="accent" onClick={() => setShowCreateForm(!showCreateForm)}>
+          <Button variant="primary" onClick={() => setShowCreateForm(!showCreateForm)}>
             {showCreateForm ? 'Cancel' : '+ Create Post'}
           </Button>
         )}
@@ -308,7 +308,7 @@ function ForumPage() {
               : 'Join the forum to create posts'}
           </p>
           {isAuthenticated && !forumData.is_member && (
-            <Button variant="accent" onClick={handleJoin}>
+            <Button variant="primary" onClick={handleJoin}>
               Join Forum
             </Button>
           )}

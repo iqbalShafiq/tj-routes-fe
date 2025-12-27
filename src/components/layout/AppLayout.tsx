@@ -1,4 +1,4 @@
-import { ReactNode, useState, useEffect } from 'react';
+import { type ReactNode, useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileMenuButton } from './MobileMenuButton';
 import { FloatingRoutesButton } from '../FloatingRoutesButton';
@@ -80,7 +80,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-bg-main">
       {/* Sidebar - Desktop */}
       {!isMobile && (
         <Sidebar

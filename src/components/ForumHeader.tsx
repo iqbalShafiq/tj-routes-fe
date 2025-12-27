@@ -74,7 +74,7 @@ export const ForumHeader = ({
               {isLoading ? 'Leaving...' : 'Leave Forum'}
             </Button>
           ) : (
-            <Button variant="accent" onClick={onJoin} disabled={isLoading}>
+            <Button variant="primary" onClick={onJoin} disabled={isLoading}>
               {isLoading ? 'Joining...' : 'Join Forum'}
             </Button>
           )}

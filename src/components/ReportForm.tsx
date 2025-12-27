@@ -299,7 +299,7 @@ export const ReportForm = ({ initialRouteId, initialStopId }: ReportFormProps) =
       <div className="flex gap-4 pt-4">
         <Button
           type="submit"
-          variant="accent"
+          variant="primary"
           disabled={mutation.isPending}
           className="flex-1"
         >

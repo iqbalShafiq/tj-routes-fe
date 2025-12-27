@@ -49,7 +49,7 @@ function ReportsPage() {
             <p className="text-slate-600 mb-6">
               You need to be logged in to view your reports.
             </p>
-            <Button variant="accent" onClick={() => navigate({ to: '/auth/login' })}>
+            <Button variant="primary" onClick={() => navigate({ to: '/auth/login' })}>
               Go to Login
             </Button>
           </div>
@@ -118,7 +118,7 @@ function ReportsPage() {
         title="My Reports"
         subtitle="Track the status of your submitted reports"
         actions={
-          <Button variant="accent" onClick={() => navigate({ to: '/reports/new' })}>
+          <Button variant="primary" onClick={() => navigate({ to: '/reports/new' })}>
             New Report
           </Button>
         }
@@ -136,7 +136,7 @@ function ReportsPage() {
                       <Chip variant={getStatusVariant(report.status)}>
                         {report.status}
                       </Chip>
-                      <Chip variant="neutral">
+                      <Chip variant="default">
                         {getTypeLabel(report.type)}
                       </Chip>
                     </div>
@@ -202,7 +202,7 @@ function ReportsPage() {
             </div>
             <p className="text-slate-600 font-display text-lg mb-2">No reports yet</p>
             <p className="text-slate-500 text-sm mb-6">Start by submitting your first report</p>
-            <Button variant="accent" onClick={() => navigate({ to: '/reports/new' })}>
+            <Button variant="primary" onClick={() => navigate({ to: '/reports/new' })}>
               Submit Your First Report
             </Button>
           </div>

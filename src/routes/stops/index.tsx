@@ -69,12 +69,12 @@ function StopCard({ stop }: { stop: Stop }) {
         <CardBody>
           <div className="flex flex-wrap gap-1 mt-2">
             {facilities.slice(0, 4).map((facility: string, idx: number) => (
-              <Chip key={idx} variant="neutral" className="text-xs">
+              <Chip key={idx} variant="default" className="text-xs">
                 {facility}
               </Chip>
             ))}
             {facilities.length > 4 && (
-              <Chip variant="neutral" className="text-xs">
+              <Chip variant="default" className="text-xs">
                 +{facilities.length - 4} more
               </Chip>
             )}
@@ -154,7 +154,7 @@ function StopsPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               className="flex-1"
             />
-            <Button type="submit" variant="accent" className="w-full sm:w-auto">
+            <Button type="submit" variant="primary" className="w-full sm:w-auto">
               Search
             </Button>
           </form>

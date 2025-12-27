@@ -265,7 +265,7 @@ function RegisterPage() {
 
           <Button
             type="submit"
-            variant="accent"
+            variant="primary"
             className="w-full"
             disabled={form.state.isSubmitting}
           >

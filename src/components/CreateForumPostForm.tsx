@@ -196,7 +196,7 @@ export const CreateForumPostForm = ({
             Cancel
           </Button>
         )}
-        <Button type="submit" variant="accent" disabled={createPostMutation.isPending}>
+        <Button type="submit" variant="primary" disabled={createPostMutation.isPending}>
           {createPostMutation.isPending ? (
             <>
               <Loading className="w-4 h-4 mr-2" />

@@ -56,7 +56,7 @@ function RouteDetailPage() {
                 View Forum
               </Button>
             </Link>
-            <Button variant="accent" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
+            <Button variant="primary" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
               Report Issue
             </Button>
           </div>

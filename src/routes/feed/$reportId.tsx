@@ -120,7 +120,7 @@ function CommentItem({
                   placeholder="Write a reply..."
                   className="flex-1 text-sm"
                 />
-                <Button type="submit" size="sm" variant="accent" disabled={createComment.isPending}>
+                <Button type="submit" size="sm" variant="primary" disabled={createComment.isPending}>
                   Reply
                 </Button>
               </form>
@@ -235,7 +235,7 @@ function ReportDetailPage() {
           <Chip variant={getStatusVariant(statusInfo?.color)}>
             {statusInfo?.label || report.status}
           </Chip>
-          <Chip variant="neutral">
+          <Chip variant="default">
             {typeInfo?.label || report.type}
           </Chip>
         </div>
@@ -362,7 +362,7 @@ function ReportDetailPage() {
               rows={2}
             />
             <div className="flex justify-end mt-2">
-              <Button type="submit" variant="accent" disabled={createComment.isPending || !newComment.trim()}>
+              <Button type="submit" variant="primary" disabled={createComment.isPending || !newComment.trim()}>
                 {createComment.isPending ? 'Posting...' : 'Post Comment'}
               </Button>
             </div>

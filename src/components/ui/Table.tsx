@@ -31,15 +31,15 @@ export function Table<T>({
   };
 
   return (
-    <div className={`bg-white rounded-sm border border-slate-200 overflow-x-auto mb-6 ${className}`}>
+    <div className={`bg-bg-surface border border-border rounded-card overflow-x-auto mb-6 ${className}`}>
       <table className="w-full">
-        <thead className="bg-slate-50 border-b border-slate-200">
+        <thead className="bg-bg-subtle border-b border-border">
           <tr>
             {columns.map((column) => (
               <th
                 key={column.key}
                 className={`
-                  text-left px-4 py-3 text-sm font-semibold text-slate-900
+                  text-left px-4 py-3 text-xs font-medium text-text-secondary uppercase tracking-wider
                   whitespace-nowrap overflow-hidden text-ellipsis
                   ${column.className || ''}
                   ${column.hidden || ''}
@@ -49,20 +49,20 @@ export function Table<T>({
               </th>
             ))}
             {actions && (
-              <th className="text-right px-4 py-3 text-sm font-semibold text-slate-900 whitespace-nowrap overflow-hidden text-ellipsis">
+              <th className="text-right px-4 py-3 text-xs font-medium text-text-secondary uppercase tracking-wider whitespace-nowrap overflow-hidden text-ellipsis">
                 Actions
               </th>
             )}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-100">
+        <tbody className="divide-y divide-border">
           {data.map((item) => (
-            <tr key={getRowKey(item)} className="hover:bg-slate-50">
+            <tr key={getRowKey(item)} className="hover:bg-bg-hover transition-colors duration-150">
               {columns.map((column) => (
                 <td
                   key={column.key}
                   className={`
-                    px-4 py-3
+                    px-4 py-3 text-sm text-text-primary
                     ${column.className || ''}
                     ${column.hidden || ''}
                   `}

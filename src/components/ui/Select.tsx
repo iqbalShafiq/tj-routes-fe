@@ -24,10 +24,10 @@ interface SelectProps {
 }
 
 export const Select = forwardRef<HTMLDivElement, SelectProps>(
-  ({ 
-    label, 
-    error, 
-    value, 
+  ({
+    label,
+    error,
+    value,
     defaultValue,
     onChange,
     placeholder = 'Select an option',
@@ -62,7 +62,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
 
     // Filter options based on search term
     const options: SelectOption[] = searchable && searchTerm
-      ? allOptions.filter(opt => 
+      ? allOptions.filter(opt =>
           opt.label.toLowerCase().includes(searchTerm.toLowerCase())
         )
       : allOptions;
@@ -114,9 +114,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
       const handleKeyDown = (event: KeyboardEvent) => {
         if (!isOpen) return;
 
-        // Don't handle navigation keys if user is typing in search input
         if (searchable && document.activeElement === searchInputRef.current) {
-          // Allow Escape to close dropdown even when search input is focused
           if (event.key === 'Escape') {
             setIsOpen(false);
           }
@@ -168,28 +166,28 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     // Size variants
     const sizeStyles = {
       xs: {
-        button: 'px-1 py-1 text-sm',
+        button: 'px-2 py-1.5 text-sm',
         label: 'text-xs mb-1',
         icon: 'w-3.5 h-3.5',
         option: 'px-2 py-1.5 text-sm',
       },
       sm: {
-        button: 'px-2 py-1.5 text-sm',
+        button: 'px-3 py-2 text-sm',
         label: 'text-xs mb-1',
         icon: 'w-4 h-4',
         option: 'px-3 py-2 text-xs',
       },
       md: {
-        button: 'px-4 py-3 text-base',
-        label: 'text-sm mb-2',
-        icon: 'w-5 h-5',
-        option: 'px-4 py-3 text-sm',
+        button: 'px-3 py-2 text-sm',
+        label: 'text-sm mb-1.5',
+        icon: 'w-4 h-4',
+        option: 'px-3 py-2 text-sm',
       },
       lg: {
-        button: 'px-6 py-4 text-lg',
-        label: 'text-base mb-2',
-        icon: 'w-6 h-6',
-        option: 'px-5 py-4 text-base',
+        button: 'px-4 py-3 text-base',
+        label: 'text-base mb-1.5',
+        icon: 'w-5 h-5',
+        option: 'px-4 py-3 text-base',
       },
     };
 
@@ -198,9 +196,9 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
     return (
       <div className={`w-full ${className}`} ref={ref}>
         {label && (
-          <label className={`block font-medium text-slate-700 font-display ${currentSize.label}`}>
+          <label className={`block font-medium text-text-primary font-display ${currentSize.label}`}>
             {label}
-            {required && <span className="text-red-500 ml-1">*</span>}
+            {required && <span className="text-error ml-1">*</span>}
           </label>
         )}
         <div className="relative" ref={selectRef}>
@@ -211,30 +209,30 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             className={`
               ${borderless
                 ? 'w-full border-none bg-transparent shadow-none focus:ring-0 focus:outline-none'
-                : `w-full px-4 py-3
-                    border-2 border-slate-200 bg-white
-                    text-slate-900 placeholder:text-slate-400
-                    transition-all duration-200
-                    focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
-                    hover:border-slate-300`
+                : `w-full px-3 py-2
+                    border border-border bg-bg-surface
+                    text-text-primary placeholder:text-text-tertiary
+                    transition-all duration-200 rounded-button
+                    focus:outline-none focus:ring-2 focus:ring-accent-muted focus:border-accent
+                    hover:border-border-strong`
               }
               text-left
               flex items-center justify-between
               cursor-pointer
               ${!borderless ? currentSize.button : currentSize.button}
-              ${error && !borderless ? 'border-red-400 focus:border-red-500 focus:ring-red-500/20' : ''}
+              ${error && !borderless ? 'border-error focus:border-error focus:ring-error/20' : ''}
               ${disabled ? 'opacity-50 cursor-not-allowed' : ''}
-              ${isOpen && !borderless ? 'ring-2 ring-amber-500/20 border-amber-500' : ''}
+              ${isOpen && !borderless ? 'ring-2 ring-accent-muted border-accent' : ''}
             `}
             aria-haspopup="listbox"
             aria-expanded={isOpen}
             aria-label={label || 'Select an option'}
           >
-            <span className={`truncate ${!selectedOption ? 'text-slate-400' : 'text-slate-900'}`}>
+            <span className={`truncate ${!selectedOption ? 'text-text-tertiary' : 'text-text-primary'}`}>
               {displayText}
             </span>
             <svg
-              className={`${currentSize.icon} text-slate-500 flex-shrink-0 ml-2 transition-transform duration-200 ${
+              className={`${currentSize.icon} text-text-secondary flex-shrink-0 ml-2 transition-transform duration-200 ${
                 isOpen ? 'transform rotate-180' : ''
               }`}
               fill="none"
@@ -248,11 +246,11 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute z-50 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-hidden flex flex-col dropdown-scrollbar"
+              className="absolute z-50 w-full mt-1 bg-bg-surface border border-border rounded-lg shadow-elevated max-h-60 overflow-hidden flex flex-col dropdown-scrollbar"
               role="listbox"
             >
               {searchable && (
-                <div className="p-2 border-b border-slate-200 sticky top-0 bg-white">
+                <div className="p-2 border-b border-border sticky top-0 bg-bg-surface">
                   <input
                     ref={searchInputRef}
                     type="text"
@@ -260,7 +258,6 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                     onChange={(e) => setSearchTerm(e.target.value)}
                     onClick={(e) => e.stopPropagation()}
                     onKeyDown={(e) => {
-                      // Prevent dropdown from closing when typing
                       if (e.key === 'Enter' && options.length > 0) {
                         e.preventDefault();
                         const firstEnabled = options.find(opt => !opt.disabled);
@@ -270,67 +267,67 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                       }
                     }}
                     placeholder="Search..."
-                    className="w-full px-3 py-2 text-sm border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                    className="w-full px-3 py-2 text-sm border border-border rounded-button bg-bg-surface focus:outline-none focus:ring-2 focus:ring-accent-muted focus:border-accent"
                   />
                 </div>
               )}
               <div className="overflow-auto flex-1">
                 {options.length === 0 ? (
-                  <div className="px-4 py-3 text-sm text-slate-500 text-center">
+                  <div className="px-3 py-3 text-sm text-text-tertiary text-center">
                     {searchable && searchTerm ? 'No matching options' : 'No options available'}
                   </div>
                 ) : (
                   options.map((option) => {
-                  const isSelected = option.value === selectedValue;
-                  const isDisabled = option.disabled;
+                    const isSelected = option.value === selectedValue;
+                    const isDisabled = option.disabled;
 
-                  return (
-                    <button
-                      key={option.value}
-                      type="button"
-                      onClick={() => !isDisabled && handleSelect(option.value)}
-                      disabled={isDisabled}
-                      className={`
-                        w-full text-left
-                        transition-colors duration-150
-                        first:rounded-t-lg last:rounded-b-lg
-                        ${currentSize.option}
-                        ${isSelected 
-                          ? 'bg-amber-50 text-amber-700 font-medium' 
-                          : 'text-slate-900 hover:bg-slate-50'
-                        }
-                        ${isDisabled 
-                          ? 'opacity-50 cursor-not-allowed' 
-                          : 'cursor-pointer'
-                        }
-                        focus:outline-none focus:bg-amber-50
-                      `}
-                      role="option"
-                      aria-selected={isSelected}
-                    >
-                      <div className="flex items-center justify-between">
-                        <span>{option.label}</span>
-                        {isSelected && (
-                          <svg
-                            className={`${currentSize.icon} text-amber-600`}
-                            fill="none"
-                            stroke="currentColor"
-                            viewBox="0 0 24 24"
-                          >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                          </svg>
-                        )}
-                      </div>
-                    </button>
-                  );
-                })
+                    return (
+                      <button
+                        key={option.value}
+                        type="button"
+                        onClick={() => !isDisabled && handleSelect(option.value)}
+                        disabled={isDisabled}
+                        className={`
+                          w-full text-left
+                          transition-colors duration-150
+                          first:rounded-t-lg last:rounded-b-lg
+                          ${currentSize.option}
+                          ${isSelected
+                            ? 'bg-bg-hover text-text-primary font-medium'
+                            : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary'
+                          }
+                          ${isDisabled
+                            ? 'opacity-50 cursor-not-allowed'
+                            : 'cursor-pointer'
+                          }
+                          focus:outline-none focus:bg-bg-hover
+                        `}
+                        role="option"
+                        aria-selected={isSelected}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span>{option.label}</span>
+                          {isSelected && (
+                            <svg
+                              className={`${currentSize.icon} text-accent`}
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                            </svg>
+                          )}
+                        </div>
+                      </button>
+                    );
+                  })
                 )}
               </div>
             </div>
           )}
         </div>
         {error && (
-          <p className="mt-2 text-sm text-red-600 font-body animate-fade-in">{error}</p>
+          <p className="mt-1.5 text-sm text-error font-body animate-fade-in">{error}</p>
         )}
       </div>
     );

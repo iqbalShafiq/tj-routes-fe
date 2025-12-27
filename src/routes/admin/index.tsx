@@ -209,7 +209,7 @@ function AdminDashboard() {
                 <p className="text-sm text-slate-600 mb-4">
                   Upload CSV to update routes, stops, or fleet data in bulk.
                 </p>
-                <Button variant="accent" size="sm">
+                <Button variant="primary" size="sm">
                   Import Data
                 </Button>
               </div>

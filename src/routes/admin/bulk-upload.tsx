@@ -215,7 +215,7 @@ function AdminBulkUploadPage() {
             Make sure your CSV follows the required format for {selectedType}s.
           </p>
           <Button
-            variant="accent"
+            variant="primary"
             onClick={handleUpload}
             disabled={!selectedFile || uploadMutation.isPending}
           >

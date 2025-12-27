@@ -114,7 +114,7 @@ function FeedPage() {
         actions={
           isAuthenticated && (
             <Link to="/reports/new">
-              <Button variant="accent">
+              <Button variant="primary">
                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
                 </svg>
@@ -220,7 +220,7 @@ function FeedPage() {
             <p className="text-slate-500 text-sm mt-2 mb-6">Be the first to share something!</p>
             {isAuthenticated && (
               <Link to="/reports/new">
-                <Button variant="accent">Create Report</Button>
+                <Button variant="primary">Create Report</Button>
               </Link>
             )}
           </div>

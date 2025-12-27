@@ -150,7 +150,7 @@ function AdminStopsPage() {
           { label: 'Stops' },
         ]}
         actions={
-          <Button variant="accent" onClick={() => { resetForm(); setShowForm(true); }}>
+          <Button variant="primary" onClick={() => { resetForm(); setShowForm(true); }}>
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -278,7 +278,7 @@ function AdminStopsPage() {
                 </Button>
                 <Button 
                   type="submit" 
-                  variant="accent" 
+                  variant="primary" 
                   className="flex-1"
                   disabled={createMutation.isPending || updateMutation.isPending}
                 >
@@ -369,7 +369,7 @@ function AdminStopsPage() {
         <Card static>
           <div className="text-center py-12">
             <p className="text-slate-600">No stops found</p>
-            <Button variant="accent" className="mt-4" onClick={() => setShowForm(true)}>
+            <Button variant="primary" className="mt-4" onClick={() => setShowForm(true)}>
               Add Your First Stop
             </Button>
           </div>

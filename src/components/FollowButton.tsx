@@ -50,7 +50,7 @@ export const FollowButton = ({ userId, className, variant = 'default' }: FollowB
     <Button
       onClick={handleToggleFollow}
       disabled={isLoading}
-      variant={isFollowing ? 'outline' : 'accent'}
+      variant={isFollowing ? 'outline' : 'primary'}
       size="sm"
       className={className}
     >

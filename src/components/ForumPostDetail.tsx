@@ -114,7 +114,7 @@ function CommentItem({ comment, postId, depth = 0 }: CommentItemProps) {
                   placeholder="Write a reply..."
                   className="flex-1 text-sm"
                 />
-                <Button type="submit" size="sm" variant="accent" disabled={createComment.isPending}>
+                <Button type="submit" size="sm" variant="primary" disabled={createComment.isPending}>
                   Reply
                 </Button>
               </form>
@@ -204,7 +204,7 @@ export const ForumPostDetail = ({
                   {post.user?.username || 'Anonymous'}
                 </Link>
                 {postTypeInfo && (
-                  <Chip variant="neutral" className="text-xs">
+                  <Chip variant="default" className="text-xs">
                     <PostTypeIcon type={postTypeInfo.icon as any} className="w-3 h-3 mr-1" />
                     <span>{postTypeInfo.label}</span>
                   </Chip>
@@ -358,7 +358,7 @@ export const ForumPostDetail = ({
               rows={2}
             />
             <div className="flex justify-end mt-2">
-              <Button type="submit" variant="accent" disabled={createComment.isPending || !newComment.trim()}>
+              <Button type="submit" variant="primary" disabled={createComment.isPending || !newComment.trim()}>
                 {createComment.isPending ? 'Posting...' : 'Post Comment'}
               </Button>
             </div>

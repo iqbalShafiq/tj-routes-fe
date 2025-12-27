@@ -1,4 +1,4 @@
-import { Link, useRouterState, useNavigate } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useNavigationLoading } from "../../lib/hooks/useNavigationLoading";
 import { Button } from "../ui/Button";
@@ -320,7 +320,6 @@ export const Sidebar = ({
 }: SidebarProps) => {
   const { isAuthenticated, isAdmin, user, logout } = useAuth();
   const routerState = useRouterState();
-  const navigate = useNavigate();
   const { startNavigation } = useNavigationLoading();
   const currentPath = routerState.location.pathname;
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -380,30 +379,30 @@ export const Sidebar = ({
           to={item.path}
           onClick={handleNavClick}
           className={`
-            flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 w-full
+            flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 w-full
             ${!isMobile && !isExpanded ? "justify-center gap-0" : "gap-3"}
             ${
               isActive
-                ? "bg-amber-50 text-amber-600 font-medium"
-                : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
+                ? "bg-accent-subtle text-text-primary border-l-2 border-accent"
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-hover"
             }
           `}
         >
           <span
-            className={`flex-shrink-0 ${isActive ? "text-amber-600" : "text-slate-600"}`}
+            className={`flex-shrink-0 ${isActive ? "text-accent" : "text-text-tertiary"}`}
           >
             {item.icon}
           </span>
           <span
             className={`
-              whitespace-nowrap transition-opacity duration-300
+              whitespace-nowrap transition-opacity duration-300 text-sm font-medium
               ${!isMobile && !isExpanded ? "opacity-0 w-0 overflow-hidden" : "opacity-100"}
             `}
           >
             {item.label}
           </span>
           {item.badge && (isMobile || isExpanded) && (
-            <span className="ml-auto px-2 py-0.5 text-xs bg-amber-500 text-white rounded-full">
+            <span className="ml-auto px-2.5 py-0.5 text-xs font-medium bg-accent-subtle text-accent rounded-badge">
               {item.badge}
             </span>
           )}
@@ -417,7 +416,7 @@ export const Sidebar = ({
       {/* Mobile backdrop */}
       {isMobile && (
         <div
-          className={`fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[55] transition-opacity duration-300 ${
+          className={`fixed inset-0 bg-text-primary/40 backdrop-blur-sm z-[55] transition-opacity duration-300 ${
             isMobileOpen ? "opacity-100" : "opacity-0 pointer-events-none"
           }`}
           onClick={onCloseMobile}
@@ -427,26 +426,26 @@ export const Sidebar = ({
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-white border-r border-slate-200 z-[60]
+          fixed top-0 left-0 h-full bg-bg-sidebar border-r border-border z-[60]
           flex flex-col transition-all duration-300 ease-in-out
           ${isMobile ? "w-64" : isExpanded ? "w-64" : "w-20"}
           ${isMobile && !isMobileOpen ? "-translate-x-full" : ""}
         `}
       >
         {/* Logo section */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-200 relative">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-border relative">
           {!isMobile && !isExpanded ? null : (
             <Link
               to="/"
               onClick={handleNavClick}
               className="flex items-center gap-3 overflow-hidden"
             >
-              <div className="w-10 h-10 bg-amber-500 flex items-center justify-center flex-shrink-0 card-chamfered">
+              <div className="w-10 h-10 bg-accent flex items-center justify-center flex-shrink-0 rounded-card">
                 <span className="text-white font-bold text-lg">TJ</span>
               </div>
               <span
                 className={`
-                  font-display font-bold text-slate-900 whitespace-nowrap transition-opacity duration-300
+                  font-display font-bold text-text-primary whitespace-nowrap transition-opacity duration-300
                   ${!isMobile && !isExpanded ? "opacity-0 w-0" : "opacity-100"}
                 `}
               >
@@ -459,13 +458,13 @@ export const Sidebar = ({
             <button
               onClick={onToggle}
               className={`
-                p-2 hover:bg-slate-100 rounded-lg transition-colors flex-shrink-0
+                p-2 hover:bg-bg-hover rounded-lg transition-colors flex-shrink-0
                 ${!isExpanded ? "absolute left-1/2 -translate-x-1/2" : ""}
               `}
               aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
             >
               <svg
-                className={`w-5 h-5 text-slate-600 transition-transform duration-300 ${isExpanded ? "" : "rotate-180"}`}
+                className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${isExpanded ? "" : "rotate-180"}`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -485,7 +484,7 @@ export const Sidebar = ({
         <nav className="flex-1 py-4 px-3 overflow-y-auto sidebar-scrollbar">
           {/* User Navigation */}
           {(isMobile || isExpanded) && (
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 px-3">
+            <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-3 px-3">
               MAIN MENU
             </p>
           )}
@@ -497,9 +496,9 @@ export const Sidebar = ({
               <div
                 className={`my-4 ${!isMobile && !isExpanded ? "mx-2" : "mx-0"}`}
               >
-                <div className="border-t border-slate-200" />
+                <div className="border-t border-border" />
                 {(isMobile || isExpanded) && (
-                  <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mt-4 mb-3 px-3">
+                  <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mt-4 mb-3 px-3">
                     ADMIN
                   </p>
                 )}
@@ -513,7 +512,7 @@ export const Sidebar = ({
 
         {/* User section */}
         <div
-          className="border-t border-slate-200 p-4 relative"
+          className="border-t border-border p-4 relative bg-bg-hover/30"
           ref={userMenuRef}
           onMouseLeave={() => !isMobile && setShowUserMenu(false)}
         >
@@ -521,10 +520,10 @@ export const Sidebar = ({
             <>
               <div
                 className={`
-                  flex items-center cursor-pointer rounded-lg transition-colors p-3 bg-slate-50
+                  flex items-center cursor-pointer rounded-lg transition-colors p-3
                   ${!isMobile && !isExpanded ? "justify-center gap-0" : "gap-3"}
-                  hover:bg-slate-100
-                  ${showUserMenu ? "bg-slate-100" : ""}
+                  hover:bg-bg-hover
+                  ${showUserMenu ? "bg-bg-hover" : ""}
                 `}
                 onClick={() => setShowUserMenu(!showUserMenu)}
                 onMouseEnter={() => !isMobile && setShowUserMenu(true)}
@@ -532,8 +531,8 @@ export const Sidebar = ({
                 <div
                   className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
                     isAdmin
-                      ? "bg-amber-500 text-white"
-                      : "bg-slate-300 text-slate-700"
+                      ? "bg-accent text-white"
+                      : "bg-bg-subtle text-text-tertiary"
                   }`}
                 >
                   <span className="font-bold text-sm">
@@ -544,16 +543,16 @@ export const Sidebar = ({
                 <div
                   className={`flex-1 min-w-0 ${!isMobile && !isExpanded ? "hidden" : ""}`}
                 >
-                  <span className="text-sm font-bold text-slate-900 truncate block">
+                  <span className="text-sm font-medium text-text-primary truncate block">
                     {user?.username || "User"}
                   </span>
-                  <span className="text-xs text-slate-500">
+                  <span className="text-xs text-text-tertiary">
                     {isAdmin ? "Administrator" : user?.level || "User"}
                   </span>
                 </div>
                 {(isMobile || isExpanded) && (
                   <svg
-                    className="w-5 h-5 text-slate-600 flex-shrink-0"
+                    className="w-5 h-5 text-text-tertiary flex-shrink-0"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -585,7 +584,7 @@ export const Sidebar = ({
                   )}
                   <div
                     className={`
-                      absolute bg-white border border-slate-200 shadow-lg card-chamfered-sm overflow-hidden z-50
+                      absolute bg-bg-surface border border-border shadow-elevated rounded-card overflow-hidden z-50
                       ${
                         !isMobile && !isExpanded
                           ? "left-full top-0 ml-2 w-48"
@@ -601,7 +600,7 @@ export const Sidebar = ({
                         setShowUserMenu(false);
                         handleNavClick();
                       }}
-                      className="w-full px-4 py-3 text-left text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2"
+                      className="w-full px-4 py-2.5 text-left text-sm text-text-secondary hover:bg-bg-hover transition-colors flex items-center gap-2"
                     >
                       <svg
                         className="w-4 h-4"
@@ -620,7 +619,7 @@ export const Sidebar = ({
                     </Link>
                     <button
                       onClick={handleLogout}
-                      className="w-full px-4 py-3 text-left text-sm text-slate-700 hover:bg-slate-50 transition-colors flex items-center gap-2 border-t border-slate-100"
+                      className="w-full px-4 py-2.5 text-left text-sm text-text-secondary hover:bg-bg-hover transition-colors flex items-center gap-2 border-t border-border"
                     >
                       <svg
                         className="w-4 h-4"
@@ -654,12 +653,12 @@ export const Sidebar = ({
                   window.location.href = "/auth/login";
                 }}
                 className={`
-                  font-display font-medium button-offset-shadow transition-all duration-200 
-                  focus:outline-none focus:ring-2 focus:ring-offset-2 
+                  font-display font-medium transition-all duration-200
+                  focus:outline-none focus:ring-2 focus:ring-offset-2
                   inline-flex items-center justify-center
-                  bg-transparent border-2 border-slate-300 text-slate-700 
-                  hover:border-slate-400 hover:bg-slate-50 focus:ring-slate-500 
-                  px-4 py-2 text-sm w-full rounded-lg
+                  bg-bg-surface border border-border text-text-primary
+                  hover:bg-bg-hover focus:ring-border
+                  px-4 py-2 text-sm w-full rounded-button
                   ${!isMobile && !isExpanded ? "justify-center px-2" : ""}
                 `}
               >
@@ -682,24 +681,19 @@ export const Sidebar = ({
                 )}
               </button>
               {(isMobile || isExpanded) && (
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
+                  size="sm"
                   onClick={(e) => {
                     e.preventDefault();
                     handleNavClick();
                     startNavigation();
                     window.location.href = "/auth/register";
                   }}
-                  className="
-                    font-display font-medium button-offset-shadow transition-all duration-200 
-                    focus:outline-none focus:ring-2 focus:ring-offset-2 
-                    inline-flex items-center justify-center
-                    bg-amber-500 text-white hover:bg-amber-600 focus:ring-amber-500 
-                    px-4 py-2 text-sm w-full rounded-lg
-                  "
+                  className="w-full"
                 >
                   Register
-                </button>
+                </Button>
               )}
             </div>
           )}

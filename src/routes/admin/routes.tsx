@@ -128,7 +128,7 @@ function AdminRoutesPage() {
           { label: 'Routes' },
         ]}
         actions={
-          <Button variant="accent" onClick={() => { setShowForm(true); setEditingRoute(null); setFormData({ route_number: '', name: '', description: '', status: 'active', stop_ids: [] }); }}>
+          <Button variant="primary" onClick={() => { setShowForm(true); setEditingRoute(null); setFormData({ route_number: '', name: '', description: '', status: 'active', stop_ids: [] }); }}>
             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
@@ -198,7 +198,7 @@ function AdminRoutesPage() {
             <Button type="button" variant="outline" onClick={() => { setShowForm(false); setEditingRoute(null); }} className="flex-1">
               Cancel
             </Button>
-            <Button type="submit" variant="accent" className="flex-1">
+            <Button type="submit" variant="primary" className="flex-1">
               {editingRoute ? 'Update' : 'Create'}
             </Button>
           </div>
@@ -280,7 +280,7 @@ function AdminRoutesPage() {
         <Card static>
           <div className="text-center py-12">
             <p className="text-slate-600">No routes found</p>
-            <Button variant="accent" className="mt-4" onClick={() => setShowForm(true)}>
+            <Button variant="primary" className="mt-4" onClick={() => setShowForm(true)}>
               Add Your First Route
             </Button>
           </div>

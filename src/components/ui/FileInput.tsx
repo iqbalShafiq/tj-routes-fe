@@ -1,4 +1,4 @@
-import { InputHTMLAttributes, forwardRef } from 'react';
+import { type InputHTMLAttributes, forwardRef } from 'react';
 import { Button } from './Button';
 
 interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
@@ -24,11 +24,11 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-slate-700 mb-2 font-display">
+          <label className="block text-sm font-medium text-text-primary mb-1.5 font-display">
             {label}
           </label>
         )}
-        <div className="flex items-center gap-3 w-full px-4 py-3 border-2 border-slate-200 bg-white transition-all duration-200 hover:border-slate-300">
+        <div className="flex items-center gap-3 w-full px-3 py-2 border border-border bg-bg-surface rounded-button transition-all duration-200 hover:border-border-strong">
           <input
             ref={ref}
             type="file"
@@ -43,16 +43,16 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
             htmlFor="file-upload"
             className="cursor-pointer inline-block"
           >
-            <Button variant="accent" size={buttonSize}>
+            <Button variant="primary" size={buttonSize}>
               Choose File
             </Button>
           </label>
-          <span className="text-sm text-slate-500">
+          <span className="text-sm text-text-tertiary">
             {props.value ? String(props.value).split('\\').pop() || 'No file chosen' : 'No file chosen'}
           </span>
         </div>
         {error && (
-          <p className="mt-2 text-sm text-red-600 font-body animate-fade-in">{error}</p>
+          <p className="mt-1.5 text-sm text-error font-body animate-fade-in">{error}</p>
         )}
       </div>
     );
@@ -60,4 +60,3 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
 );
 
 FileInput.displayName = 'FileInput';
-

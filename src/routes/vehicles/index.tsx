@@ -128,7 +128,7 @@ function VehiclesPage() {
               onChange={(e) => setSearchInput(e.target.value)}
               className="flex-1"
             />
-            <Button type="submit" variant="accent" className="w-full sm:w-auto">
+            <Button type="submit" variant="primary" className="w-full sm:w-auto">
               Search
             </Button>
           </form>

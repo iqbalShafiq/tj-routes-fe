@@ -1,4 +1,4 @@
-import { HTMLAttributes } from 'react';
+import { type HTMLAttributes } from 'react';
 
 interface PostTypeIconProps extends HTMLAttributes<SVGElement> {
   type: 'discussion' | 'info' | 'question' | 'announcement';

@@ -67,7 +67,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                 {report.user?.username || 'Anonymous'}
               </Link>
               {report.user?.level && (
-                <Chip variant="neutral" className="text-xs">
+                <Chip variant="default" className="text-xs">
                   {report.user.level}
                 </Chip>
               )}

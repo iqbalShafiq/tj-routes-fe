@@ -179,7 +179,7 @@ function AdminReportsPage() {
                   Cancel
                 </Button>
                 <Button
-                  variant="accent"
+                  variant="primary"
                   className="flex-1"
                   onClick={handleUpdateStatus}
                   disabled={updateStatusMutation.isPending}
@@ -206,7 +206,7 @@ function AdminReportsPage() {
                         <Chip variant={getStatusVariant(report.status)}>
                           {report.status}
                         </Chip>
-                        <Chip variant="neutral">
+                        <Chip variant="default">
                           {typeInfo?.label || report.type}
                         </Chip>
                         <span className="text-xs text-slate-400">#{report.id}</span>

@@ -43,7 +43,7 @@ function NewReportPage() {
             <p className="text-slate-600 mb-6">
               You need to be logged in to submit a report.
             </p>
-            <Button variant="accent" onClick={() => navigate({ to: '/auth/login' })}>
+            <Button variant="primary" onClick={() => navigate({ to: '/auth/login' })}>
               Go to Login
             </Button>
           </div>
