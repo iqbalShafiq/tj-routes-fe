@@ -1,8 +1,6 @@
 import { Link, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "../../lib/hooks/useAuth";
 import { useNavigationLoading } from "../../lib/hooks/useNavigationLoading";
-import { Button } from "../ui/Button";
-import { useState, useRef, useEffect } from "react";
 
 interface SidebarProps {
   isExpanded: boolean;
@@ -322,8 +320,6 @@ export const Sidebar = ({
   const routerState = useRouterState();
   const { startNavigation } = useNavigationLoading();
   const currentPath = routerState.location.pathname;
-  const [showUserMenu, setShowUserMenu] = useState(false);
-  const userMenuRef = useRef<HTMLDivElement>(null);
 
   const handleNavClick = () => {
     if (isMobile) {
@@ -333,30 +329,10 @@ export const Sidebar = ({
 
   const handleLogout = () => {
     logout();
-    setShowUserMenu(false);
     if (isMobile) {
       onCloseMobile();
     }
   };
-
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (
-        userMenuRef.current &&
-        !userMenuRef.current.contains(event.target as Node)
-      ) {
-        setShowUserMenu(false);
-      }
-    };
-
-    if (showUserMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [showUserMenu]);
 
   // Filter nav items based on auth and admin status
   const visibleUserItems = userNavItems.filter((item) => {
@@ -379,11 +355,11 @@ export const Sidebar = ({
           to={item.path}
           onClick={handleNavClick}
           className={`
-            flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 w-full
-            ${!isMobile && !isExpanded ? "justify-center gap-0" : "gap-3"}
+            flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200 w-full
+            ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
             ${
               isActive
-                ? "bg-accent-subtle text-text-primary border-l-2 border-accent"
+                ? `bg-accent-subtle text-text-primary ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
                 : "text-text-secondary hover:text-text-primary hover:bg-bg-hover"
             }
           `}
@@ -432,39 +408,62 @@ export const Sidebar = ({
           ${isMobile && !isMobileOpen ? "-translate-x-full" : ""}
         `}
       >
-        {/* Logo section */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-border relative">
-          {!isMobile && !isExpanded ? null : (
+        {/* Header: Greeting or Logo */}
+        <div className="h-16 flex items-center px-4 border-b border-border relative">
+          {/* Mobile close button */}
+          {isMobile && (
+            <button
+              onClick={onCloseMobile}
+              className="absolute right-2 p-2 hover:bg-bg-hover rounded-lg transition-colors"
+              aria-label="Close sidebar"
+            >
+              <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          )}
+
+          {/* Greeting / Logo - show when expanded or mobile */}
+          {(isMobile || isExpanded) && (
             <Link
               to="/"
               onClick={handleNavClick}
               className="flex items-center gap-3 overflow-hidden"
             >
-              <div className="w-10 h-10 bg-accent flex items-center justify-center flex-shrink-0 rounded-card">
-                <span className="text-white font-bold text-lg">TJ</span>
+              {/* Avatar */}
+              <div className="w-8 h-8 rounded-full bg-accent text-white flex items-center justify-center flex-shrink-0">
+                <span className="font-bold text-xs">
+                  {user?.username?.charAt(0).toUpperCase() || (isAuthenticated ? "U" : "?")}
+                </span>
               </div>
-              <span
-                className={`
-                  font-display font-bold text-text-primary whitespace-nowrap transition-opacity duration-300
-                  ${!isMobile && !isExpanded ? "opacity-0 w-0" : "opacity-100"}
-                `}
-              >
-                TransJakarta
+
+              {/* Greeting text */}
+              <span className="font-display font-medium text-text-primary whitespace-nowrap text-sm">
+                {isAuthenticated
+                  ? `Hi, ${user?.username?.split(" ")[0] || "User"}!`
+                  : "Sign In"}
               </span>
             </Link>
           )}
 
+          {/* Collapsed desktop: show nothing, just the toggle button */}
+          {!isMobile && !isExpanded && (
+            <div className="w-8 h-8" />
+          )}
+
+          {/* Toggle button - desktop only, centered */}
           {!isMobile && (
             <button
               onClick={onToggle}
-              className={`
-                p-2 hover:bg-bg-hover rounded-lg transition-colors flex-shrink-0
-                ${!isExpanded ? "absolute left-1/2 -translate-x-1/2" : ""}
-              `}
+              className={`p-2 hover:bg-bg-hover rounded-lg transition-colors ${
+                !isExpanded ? "absolute left-1/2 -translate-x-1/2" : "absolute right-2"
+              }`}
               aria-label={isExpanded ? "Collapse sidebar" : "Expand sidebar"}
             >
               <svg
-                className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${isExpanded ? "" : "rotate-180"}`}
+                className={`w-5 h-5 text-text-secondary transition-transform duration-300 ${
+                  isExpanded ? "" : "rotate-180"
+                }`}
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -508,102 +507,42 @@ export const Sidebar = ({
               </ul>
             </>
           )}
-        </nav>
 
-        {/* User section */}
-        <div
-          className="border-t border-border p-4 relative bg-bg-hover/30"
-          ref={userMenuRef}
-          onMouseLeave={() => !isMobile && setShowUserMenu(false)}
-        >
-          {isAuthenticated ? (
-            <>
-              <div
-                className={`
-                  flex items-center cursor-pointer rounded-lg transition-colors p-3
-                  ${!isMobile && !isExpanded ? "justify-center gap-0" : "gap-3"}
-                  hover:bg-bg-hover
-                  ${showUserMenu ? "bg-bg-hover" : ""}
-                `}
-                onClick={() => setShowUserMenu(!showUserMenu)}
-                onMouseEnter={() => !isMobile && setShowUserMenu(true)}
-              >
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0 ${
-                    isAdmin
-                      ? "bg-accent text-white"
-                      : "bg-bg-subtle text-text-tertiary"
-                  }`}
-                >
-                  <span className="font-bold text-sm">
-                    {user?.username?.charAt(0).toUpperCase() || "U"}
-                    {user?.username?.charAt(1)?.toUpperCase() || ""}
-                  </span>
-                </div>
-                <div
-                  className={`flex-1 min-w-0 ${!isMobile && !isExpanded ? "hidden" : ""}`}
-                >
-                  <span className="text-sm font-medium text-text-primary truncate block">
-                    {user?.username || "User"}
-                  </span>
-                  <span className="text-xs text-text-tertiary">
-                    {isAdmin ? "Administrator" : user?.level || "User"}
-                  </span>
-                </div>
-                {(isMobile || isExpanded) && (
-                  <svg
-                    className="w-5 h-5 text-text-tertiary flex-shrink-0"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                    />
-                  </svg>
-                )}
-              </div>
-
-              {/* Popover menu */}
-              {showUserMenu && (
-                <>
-                  {!isMobile && !isExpanded && (
-                    <div
-                      className="absolute left-full top-0 w-2 h-full z-40"
-                      onMouseEnter={() => setShowUserMenu(true)}
-                    />
-                  )}
-                  {!isMobile && isExpanded && (
-                    <div
-                      className="absolute bottom-full left-0 right-0 h-4 z-40"
-                      onMouseEnter={() => setShowUserMenu(true)}
-                    />
-                  )}
-                  <div
+          {/* YOUR ACCOUNT Section */}
+          <div
+            className={`my-4 ${!isMobile && !isExpanded ? "mx-2" : "mx-0"}`}
+          >
+            <div className="border-t border-border" />
+            {(isMobile || isExpanded) && (
+              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mt-4 mb-3 px-3">
+                YOUR ACCOUNT
+              </p>
+            )}
+          </div>
+          <ul className="space-y-1">
+            {isAuthenticated ? (
+              <>
+                {/* My Profile */}
+                <li>
+                  <Link
+                    to="/profile/$userId"
+                    params={{ userId: String(user?.id) }}
+                    onClick={handleNavClick}
                     className={`
-                      absolute bg-bg-surface border border-border shadow-elevated rounded-card overflow-hidden z-50
+                      flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200 w-full
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
                       ${
-                        !isMobile && !isExpanded
-                          ? "left-full top-0 ml-2 w-48"
-                          : "bottom-full left-0 right-0 mb-1 w-full"
+                        currentPath.startsWith("/profile")
+                          ? `bg-accent-subtle text-text-primary ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
+                          : "text-text-secondary hover:bg-bg-hover hover:text-text-primary"
                       }
                     `}
-                    onMouseEnter={() => !isMobile && setShowUserMenu(true)}
                   >
-                    <Link
-                      to="/profile/$userId"
-                      params={{ userId: String(user?.id) }}
-                      onClick={() => {
-                        setShowUserMenu(false);
-                        handleNavClick();
-                      }}
-                      className="w-full px-4 py-2.5 text-left text-sm text-text-secondary hover:bg-bg-hover transition-colors flex items-center gap-2"
+                    <span
+                      className={`flex-shrink-0 ${currentPath.startsWith("/profile") ? "text-accent" : "text-text-tertiary"}`}
                     >
                       <svg
-                        className="w-4 h-4"
+                        className="w-5 h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -615,14 +554,26 @@ export const Sidebar = ({
                           d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
                         />
                       </svg>
-                      My Profile
-                    </Link>
-                    <button
-                      onClick={handleLogout}
-                      className="w-full px-4 py-2.5 text-left text-sm text-text-secondary hover:bg-bg-hover transition-colors flex items-center gap-2 border-t border-border"
-                    >
+                    </span>
+                    {(isMobile || isExpanded) && (
+                      <span className="text-sm font-medium whitespace-nowrap">My Profile</span>
+                    )}
+                  </Link>
+                </li>
+
+                {/* Logout */}
+                <li>
+                  <button
+                    onClick={handleLogout}
+                    className={`
+                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                    `}
+                  >
+                    <span className="flex-shrink-0 text-text-tertiary">
                       <svg
-                        className="w-4 h-4"
+                        className="w-5 h-5"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -634,70 +585,91 @@ export const Sidebar = ({
                           d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
                         />
                       </svg>
-                      Logout
-                    </button>
-                  </div>
-                </>
-              )}
-            </>
-          ) : (
-            <div
-              className={`space-y-2 ${!isMobile && !isExpanded ? "flex flex-col items-center" : ""}`}
-            >
-              <button
-                type="button"
-                onClick={(e) => {
-                  e.preventDefault();
-                  handleNavClick();
-                  startNavigation();
-                  window.location.href = "/auth/login";
-                }}
-                className={`
-                  font-display font-medium transition-all duration-200
-                  focus:outline-none focus:ring-2 focus:ring-offset-2
-                  inline-flex items-center justify-center
-                  bg-bg-surface border border-border text-text-primary
-                  hover:bg-bg-hover focus:ring-border
-                  px-4 py-2 text-sm w-full rounded-button
-                  ${!isMobile && !isExpanded ? "justify-center px-2" : ""}
-                `}
-              >
-                {!isMobile && !isExpanded ? (
-                  <svg
-                    className="w-4 h-4"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
+                    </span>
+                    {(isMobile || isExpanded) && (
+                      <span className="text-sm font-medium whitespace-nowrap">Logout</span>
+                    )}
+                  </button>
+                </li>
+              </>
+            ) : (
+              /* Logged out state */
+              <>
+                {/* Login */}
+                <li>
+                  <button
+                    onClick={() => {
+                      handleNavClick();
+                      startNavigation();
+                      window.location.href = "/auth/login";
+                    }}
+                    className={`
+                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                    `}
                   >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
-                    />
-                  </svg>
-                ) : (
-                  "Login"
-                )}
-              </button>
-              {(isMobile || isExpanded) && (
-                <Button
-                  variant="primary"
-                  size="sm"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleNavClick();
-                    startNavigation();
-                    window.location.href = "/auth/register";
-                  }}
-                  className="w-full"
-                >
-                  Register
-                </Button>
-              )}
-            </div>
-          )}
-        </div>
+                    <span className="flex-shrink-0 text-text-tertiary">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"
+                        />
+                      </svg>
+                    </span>
+                    {(isMobile || isExpanded) && (
+                      <span className="text-sm font-medium whitespace-nowrap">Login</span>
+                    )}
+                  </button>
+                </li>
+
+                {/* Register */}
+                <li>
+                  <button
+                    onClick={() => {
+                      handleNavClick();
+                      startNavigation();
+                      window.location.href = "/auth/register";
+                    }}
+                    className={`
+                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                    `}
+                  >
+                    <span className="flex-shrink-0 text-text-tertiary">
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"
+                        />
+                      </svg>
+                    </span>
+                    {(isMobile || isExpanded) && (
+                      <span className="text-sm font-medium whitespace-nowrap">Register</span>
+                    )}
+                  </button>
+                </li>
+              </>
+            )}
+          </ul>
+        </nav>
+
+        {/* Empty bottom area */}
       </aside>
     </>
   );
