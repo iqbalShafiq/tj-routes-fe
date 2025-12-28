@@ -59,32 +59,32 @@ function CommentItem({
   };
 
   return (
-    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-slate-100 pl-4' : ''}`}>
+    <div className={`${depth > 0 ? 'ml-8 border-l-2 border-border pl-4' : ''}`}>
       <div className="py-4">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+          <div className="w-8 h-8 bg-gradient-to-br from-text-muted/40 to-text-muted/60 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
             {comment.user?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-1">
-              <Link 
-                to="/profile/$userId" 
+              <Link
+                to="/profile/$userId"
                 params={{ userId: String(comment.user_id) }}
-                className="font-medium text-slate-900 hover:text-amber-600 text-sm"
+                className="font-medium text-text-primary hover:text-accent text-sm"
               >
                 {comment.user?.username || 'Anonymous'}
               </Link>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-text-muted">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
               </span>
             </div>
-            <p className="text-slate-700 text-sm">{comment.content}</p>
+            <p className="text-text-secondary text-sm">{comment.content}</p>
             
             <div className="flex items-center gap-4 mt-2">
               <button
                 onClick={() => handleReaction('upvote')}
                 disabled={!isAuthenticated}
-                className="flex items-center gap-1 text-xs text-slate-500 hover:text-emerald-600 disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-text-muted hover:text-success disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -94,7 +94,7 @@ function CommentItem({
               <button
                 onClick={() => handleReaction('downvote')}
                 disabled={!isAuthenticated}
-                className="flex items-center gap-1 text-xs text-slate-500 hover:text-red-600 disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-text-muted hover:text-error disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -104,7 +104,7 @@ function CommentItem({
               {depth < 2 && isAuthenticated && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-xs text-slate-500 hover:text-amber-600"
+                  className="text-xs text-text-muted hover:text-accent"
                 >
                   Reply
                 </button>

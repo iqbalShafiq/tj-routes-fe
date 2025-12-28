@@ -359,13 +359,13 @@ export const Sidebar = ({
             ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
             ${
               isActive
-                ? `bg-accent-subtle text-text-primary ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
-                : "text-text-secondary hover:text-text-primary hover:bg-bg-hover"
+                ? `bg-accent-light text-accent font-medium ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
+                : "text-text-secondary hover:text-text-primary hover:bg-bg-elevated"
             }
           `}
         >
           <span
-            className={`flex-shrink-0 ${isActive ? "text-accent" : "text-text-tertiary"}`}
+            className={`flex-shrink-0 ${isActive ? "text-accent" : "text-text-muted"}`}
           >
             {item.icon}
           </span>
@@ -378,7 +378,7 @@ export const Sidebar = ({
             {item.label}
           </span>
           {item.badge && (isMobile || isExpanded) && (
-            <span className="ml-auto px-2.5 py-0.5 text-xs font-medium bg-accent-subtle text-accent rounded-badge">
+            <span className="ml-auto px-2.5 py-0.5 text-xs font-medium bg-accent-light text-accent rounded-badge">
               {item.badge}
             </span>
           )}
@@ -402,7 +402,7 @@ export const Sidebar = ({
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-full bg-bg-sidebar border-r border-border z-[60]
+          fixed top-0 left-0 h-full bg-bg-surface border-r border-border z-[60]
           flex flex-col transition-all duration-300 ease-in-out
           ${isMobile ? "w-64" : isExpanded ? "w-64" : "w-20"}
           ${isMobile && !isMobileOpen ? "-translate-x-full" : ""}
@@ -414,7 +414,7 @@ export const Sidebar = ({
           {isMobile && (
             <button
               onClick={onCloseMobile}
-              className="absolute right-2 p-2 hover:bg-bg-hover rounded-lg transition-colors"
+              className="absolute right-2 p-2 hover:bg-bg-elevated rounded-lg transition-colors"
               aria-label="Close sidebar"
             >
               <svg className="w-5 h-5 text-text-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -483,7 +483,7 @@ export const Sidebar = ({
         <nav className="flex-1 py-4 px-3 overflow-y-auto sidebar-scrollbar">
           {/* User Navigation */}
           {(isMobile || isExpanded) && (
-            <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mb-3 px-3">
+            <p className="text-xs font-medium text-text-muted uppercase tracking-wider mb-3 px-3 whitespace-nowrap">
               MAIN MENU
             </p>
           )}
@@ -497,7 +497,7 @@ export const Sidebar = ({
               >
                 <div className="border-t border-border" />
                 {(isMobile || isExpanded) && (
-                  <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mt-4 mb-3 px-3">
+                  <p className="text-xs font-medium text-text-muted uppercase tracking-wider mt-4 mb-3 px-3 whitespace-nowrap">
                     ADMIN
                   </p>
                 )}
@@ -514,7 +514,7 @@ export const Sidebar = ({
           >
             <div className="border-t border-border" />
             {(isMobile || isExpanded) && (
-              <p className="text-xs font-medium text-text-tertiary uppercase tracking-wider mt-4 mb-3 px-3">
+              <p className="text-xs font-medium text-text-muted uppercase tracking-wider mt-4 mb-3 px-3 whitespace-nowrap">
                 YOUR ACCOUNT
               </p>
             )}
@@ -533,13 +533,13 @@ export const Sidebar = ({
                       ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
                       ${
                         currentPath.startsWith("/profile")
-                          ? `bg-accent-subtle text-text-primary ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
-                          : "text-text-secondary hover:bg-bg-hover hover:text-text-primary"
+                          ? `bg-accent-light text-accent font-medium ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
+                          : "text-text-secondary hover:bg-bg-elevated hover:text-text-primary"
                       }
                     `}
                   >
                     <span
-                      className={`flex-shrink-0 ${currentPath.startsWith("/profile") ? "text-accent" : "text-text-tertiary"}`}
+                      className={`flex-shrink-0 ${currentPath.startsWith("/profile") ? "text-accent" : "text-text-muted"}`}
                     >
                       <svg
                         className="w-5 h-5"
@@ -568,10 +568,10 @@ export const Sidebar = ({
                     className={`
                       w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
                       ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
-                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                      text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
-                    <span className="flex-shrink-0 text-text-tertiary">
+                    <span className="flex-shrink-0 text-text-muted">
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -606,10 +606,10 @@ export const Sidebar = ({
                     className={`
                       w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
                       ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
-                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                      text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
-                    <span className="flex-shrink-0 text-text-tertiary">
+                    <span className="flex-shrink-0 text-text-muted">
                       <svg
                         className="w-5 h-5"
                         fill="none"
@@ -641,10 +641,10 @@ export const Sidebar = ({
                     className={`
                       w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
                       ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
-                      text-text-secondary hover:bg-bg-hover hover:text-text-primary
+                      text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
-                    <span className="flex-shrink-0 text-text-tertiary">
+                    <span className="flex-shrink-0 text-text-muted">
                       <svg
                         className="w-5 h-5"
                         fill="none"

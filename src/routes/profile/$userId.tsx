@@ -18,8 +18,8 @@ export const Route = createFileRoute('/profile/$userId')({
 });
 
 function getLevelColor(level: string) {
-  // Use theme accent color (amber-500) for all levels
-  return 'bg-amber-500';
+  // Use theme accent color for all levels
+  return 'bg-accent';
 }
 
 function getBadgeIcon(badgeName: string, criteriaType?: string) {
@@ -113,14 +113,14 @@ function UserProfilePage() {
   if (profileError || !profile) {
     return (
       <div className="text-center py-20 animate-fade-in">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 mb-4 card-chamfered">
-          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-error/10 mb-4 card-chamfered">
+          <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">User not found</p>
+        <p className="text-error font-display text-lg mb-2">User not found</p>
         <Link to="/leaderboard">
-          <span className="text-amber-600 hover:underline">Back to Leaderboard</span>
+          <span className="text-accent hover:underline">Back to Leaderboard</span>
         </Link>
       </div>
     );

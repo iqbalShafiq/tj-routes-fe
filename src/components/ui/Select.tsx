@@ -211,7 +211,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                 ? 'w-full border-none bg-transparent shadow-none focus:ring-0 focus:outline-none'
                 : `w-full px-3 py-2
                     border border-border bg-bg-surface
-                    text-text-primary placeholder:text-text-tertiary
+                    text-text-primary placeholder:text-text-muted
                     transition-all duration-200 rounded-button
                     focus:outline-none focus:ring-2 focus:ring-accent-muted focus:border-accent
                     hover:border-border-strong`
@@ -228,7 +228,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
             aria-expanded={isOpen}
             aria-label={label || 'Select an option'}
           >
-            <span className={`truncate ${!selectedOption ? 'text-text-tertiary' : 'text-text-primary'}`}>
+            <span className={`truncate ${!selectedOption ? 'text-text-muted' : 'text-text-primary'}`}>
               {displayText}
             </span>
             <svg
@@ -273,7 +273,7 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
               )}
               <div className="overflow-auto flex-1">
                 {options.length === 0 ? (
-                  <div className="px-3 py-3 text-sm text-text-tertiary text-center">
+                  <div className="px-3 py-3 text-sm text-text-muted text-center">
                     {searchable && searchTerm ? 'No matching options' : 'No options available'}
                   </div>
                 ) : (
@@ -293,14 +293,14 @@ export const Select = forwardRef<HTMLDivElement, SelectProps>(
                           first:rounded-t-lg last:rounded-b-lg
                           ${currentSize.option}
                           ${isSelected
-                            ? 'bg-bg-hover text-text-primary font-medium'
-                            : 'text-text-secondary hover:bg-bg-hover hover:text-text-primary'
+                            ? 'bg-bg-elevated text-text-primary font-medium'
+                            : 'text-text-secondary hover:bg-bg-elevated hover:text-text-primary'
                           }
                           ${isDisabled
                             ? 'opacity-50 cursor-not-allowed'
                             : 'cursor-pointer'
                           }
-                          focus:outline-none focus:bg-bg-hover
+                          focus:outline-none focus:bg-bg-elevated
                         `}
                         role="option"
                         aria-selected={isSelected}

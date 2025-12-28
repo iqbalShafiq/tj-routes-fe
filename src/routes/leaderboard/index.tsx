@@ -46,17 +46,17 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
   };
 
   const getCardBackgroundColor = () => {
-    if (rank === 1) return 'bg-amber-50';
-    if (rank === 2) return 'bg-slate-50';
-    if (rank === 3) return 'bg-orange-50';
-    return 'bg-white';
+    if (rank === 1) return 'bg-accent-light';
+    if (rank === 2) return 'bg-bg-surface';
+    if (rank === 3) return 'bg-bg-elevated';
+    return 'bg-bg-surface';
   };
 
   return (
     <Card 
       className={`
         ${getCardBackgroundColor()}
-        ${isCurrentUser ? 'border-2 border-amber-200' : ''}
+        ${isCurrentUser ? 'border-2 border-accent/30' : ''}
       `}
       size="md"
     >
@@ -64,10 +64,10 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
         {/* Rank */}
         <div className={`
           w-12 h-12 flex items-center justify-center rounded-sm font-display font-bold text-lg
-          ${rank === 1 ? 'bg-gradient-to-br from-amber-300 to-amber-500 text-white' :
-            rank === 2 ? 'bg-gradient-to-br from-slate-300 to-slate-400 text-white' :
-            rank === 3 ? 'bg-gradient-to-br from-orange-300 to-orange-500 text-white' :
-            'bg-slate-100 text-slate-600'}
+          ${rank === 1 ? 'bg-gradient-to-br from-accent/60 to-accent text-white' :
+            rank === 2 ? 'bg-gradient-to-br from-text-muted/40 to-text-muted/60 text-white' :
+            rank === 3 ? 'bg-gradient-to-br from-accent/40 to-accent/60 text-white' :
+            'bg-bg-elevated text-text-secondary'}
         `}>
           {getMedalIcon() || `#${rank}`}
         </div>
@@ -78,7 +78,7 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
             <Link 
               to="/profile/$userId" 
               params={{ userId: String(entry.id) }}
-              className="font-display font-semibold text-slate-900 hover:text-amber-600 truncate"
+              className="font-display font-semibold text-text-primary hover:text-accent truncate"
             >
               {entry.username}
             </Link>
@@ -93,8 +93,8 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
 
         {/* Points */}
         <div className="text-right">
-          <p className="text-2xl font-display font-bold text-slate-900">{entry.reputation_points.toLocaleString()}</p>
-          <p className="text-xs text-slate-500">points</p>
+          <p className="text-2xl font-display font-bold text-text-primary">{entry.reputation_points.toLocaleString()}</p>
+          <p className="text-xs text-text-muted">points</p>
         </div>
       </div>
     </Card>
@@ -124,13 +124,13 @@ function LeaderboardPage() {
   if (error) {
     return (
       <div className="text-center py-20 animate-fade-in">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 mb-4 card-chamfered">
-          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-error/10 mb-4 card-chamfered">
+          <svg className="w-8 h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">Error loading leaderboard</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-error font-display text-lg mb-2">Error loading leaderboard</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -144,14 +144,14 @@ function LeaderboardPage() {
 
       {/* Level guide */}
       <Card static className="mb-8">
-        <h3 className="font-display font-semibold text-slate-900 mb-4">Level Progression</h3>
+        <h3 className="font-display font-semibold text-text-primary mb-4">Level Progression</h3>
         <div className="flex flex-wrap gap-3">
           {USER_LEVELS.map((level) => (
             <div key={level.value} className="flex items-center gap-2">
               <Chip variant={getLevelVariant(level.value)}>
                 {level.label}
               </Chip>
-              <span className="text-xs text-slate-500">
+              <span className="text-xs text-text-muted">
                 {level.minPoints}+ pts
               </span>
             </div>
@@ -169,13 +169,13 @@ function LeaderboardPage() {
       {leaderboard && leaderboard.length === 0 && (
         <Card static>
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 rounded-sm">
-              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 rounded-sm">
+              <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
               </svg>
             </div>
-            <p className="text-slate-600 font-display text-lg">No rankings yet</p>
-            <p className="text-slate-500 text-sm mt-2">Be the first to earn points!</p>
+            <p className="text-text-secondary font-display text-lg">No rankings yet</p>
+            <p className="text-text-muted text-sm mt-2">Be the first to earn points!</p>
           </div>
         </Card>
       )}

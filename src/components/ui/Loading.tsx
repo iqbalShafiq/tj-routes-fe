@@ -2,8 +2,8 @@ export const Loading = () => {
   return (
     <div className="flex items-center justify-center p-12">
       <div className="relative">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-200 border-t-amber-500"></div>
-        <div className="absolute inset-0 animate-spin rounded-full h-16 w-16 border-4 border-transparent border-r-amber-300" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-slate-200 border-t-accent"></div>
+        <div className="absolute inset-0 animate-spin rounded-full h-16 w-16 border-4 border-transparent border-r-accent/60" style={{ animationDirection: 'reverse', animationDuration: '1.5s' }}></div>
       </div>
     </div>
   );
@@ -17,7 +17,7 @@ export const LoadingSpinner = ({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) =
   };
   
   return (
-    <div className={`animate-spin rounded-full border-slate-200 border-t-amber-500 ${sizes[size]}`}></div>
+    <div className={`animate-spin rounded-full border-slate-200 border-t-accent ${sizes[size]}`}></div>
   );
 };
 

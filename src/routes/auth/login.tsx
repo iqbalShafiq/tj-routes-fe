@@ -95,13 +95,13 @@ function LoginPage() {
   return (
     <div className="max-w-md mx-auto animate-fade-in">
       <div className="text-center mb-8">
-        <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-500 mb-6 card-chamfered">
+        <div className="inline-flex items-center justify-center w-16 h-16 bg-accent mb-6 card-chamfered">
           <span className="text-white font-bold text-2xl font-display">TJ</span>
         </div>
-        <h1 className="text-4xl font-display font-bold text-slate-900 mb-2">
+        <h1 className="text-4xl font-display font-bold text-text-primary mb-2">
           Welcome Back
         </h1>
-        <p className="text-slate-600">
+        <p className="text-text-secondary">
           Sign in to continue to TransJakarta Routes
         </p>
       </div>
@@ -241,8 +241,8 @@ function LoginPage() {
           </Button>
 
           {loginError && (
-            <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-sm">
-              <p className="text-sm text-red-600 font-body">{loginError}</p>
+            <div className="mt-4 p-3 bg-error/10 border border-error/20 rounded-sm">
+              <p className="text-sm text-error font-body">{loginError}</p>
             </div>
           )}
         </form>
@@ -250,10 +250,10 @@ function LoginPage() {
         <div className="mt-8">
           <div className="relative">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-slate-200"></div>
+              <div className="w-full border-t border-border"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-4 bg-white text-slate-500 font-medium">
+              <span className="px-4 bg-bg-surface text-text-muted font-medium relative z-10">
                 Or continue with
               </span>
             </div>
@@ -301,11 +301,11 @@ function LoginPage() {
           </Button>
         </div>
 
-        <p className="mt-8 text-center text-sm text-slate-600">
+        <p className="mt-8 text-center text-sm text-text-secondary">
           Don't have an account?{" "}
           <a
             href="/auth/register"
-            className="text-amber-600 hover:text-amber-700 font-medium transition-colors"
+            className="text-accent hover:text-accent-hover font-medium transition-colors"
           >
             Register
           </a>

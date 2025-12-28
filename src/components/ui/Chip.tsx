@@ -9,11 +9,11 @@ interface ChipProps {
 }
 
 const variantStyles = {
-  default: 'bg-bg-hover text-text-secondary',
-  success: 'bg-success-bg text-success',
-  warning: 'bg-warning-bg text-warning',
-  error: 'bg-error-bg text-error',
-  info: 'bg-info-bg text-info',
+  default: 'bg-bg-elevated text-text-secondary',
+  success: 'bg-success/10 text-success',
+  warning: 'bg-warning/10 text-warning',
+  error: 'bg-error/10 text-error',
+  info: 'bg-info/10 text-info',
 };
 
 const sizeStyles = {

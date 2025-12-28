@@ -13,9 +13,9 @@ function NotFoundPage() {
         {/* Main 404 Content */}
         <div className="text-center">
           {/* Icon Container */}
-          <div className="inline-flex items-center justify-center w-24 h-24 bg-amber-50 mb-6 rounded-sm relative">
+          <div className="inline-flex items-center justify-center w-24 h-24 bg-accent-light mb-6 rounded-sm relative">
             <svg
-              className="w-12 h-12 text-amber-600"
+              className="w-12 h-12 text-accent"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -31,17 +31,17 @@ function NotFoundPage() {
           </div>
 
           {/* 404 Number */}
-          <h1 className="text-8xl md:text-9xl font-display font-bold text-slate-900 mb-4 leading-none">
+          <h1 className="text-8xl md:text-9xl font-display font-bold text-text-primary mb-4 leading-none">
             404
           </h1>
 
           {/* Title */}
-          <h2 className="text-3xl md:text-4xl font-display font-semibold text-slate-900 mb-3">
+          <h2 className="text-3xl md:text-4xl font-display font-semibold text-text-primary mb-3">
             Route Not Found
           </h2>
 
           {/* Description */}
-          <p className="text-lg text-slate-600 mb-8 max-w-md mx-auto">
+          <p className="text-lg text-text-secondary mb-8 max-w-md mx-auto">
             Looks like you've taken a wrong turn. This route doesn't exist in our system.
           </p>
 
@@ -76,9 +76,9 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-accent-light rounded-sm flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                 <svg
-                  className="w-5 h-5 text-amber-600"
+                  className="w-5 h-5 text-accent"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -92,10 +92,10 @@ function NotFoundPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <p className="font-display font-medium text-slate-900 group-hover:text-amber-600 transition-colors">
+                <p className="font-display font-medium text-text-primary group-hover:text-accent transition-colors">
                   Community Feed
                 </p>
-                <p className="text-sm text-slate-500">See latest reports</p>
+                <p className="text-sm text-text-muted">See latest reports</p>
               </div>
             </div>
             </Card>
@@ -107,9 +107,9 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-accent-light rounded-sm flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                 <svg
-                  className="w-5 h-5 text-amber-600"
+                  className="w-5 h-5 text-accent"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -123,10 +123,10 @@ function NotFoundPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <p className="font-display font-medium text-slate-900 group-hover:text-amber-600 transition-colors">
+                <p className="font-display font-medium text-text-primary group-hover:text-accent transition-colors">
                   All Routes
                 </p>
-                <p className="text-sm text-slate-500">Browse TransJakarta</p>
+                <p className="text-sm text-text-muted">Browse TransJakarta</p>
               </div>
             </div>
             </Card>
@@ -138,9 +138,9 @@ function NotFoundPage() {
           >
             <Card size="sm" className="group">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-amber-50 rounded-sm flex items-center justify-center group-hover:bg-amber-100 transition-colors">
+              <div className="w-10 h-10 bg-accent-light rounded-sm flex items-center justify-center group-hover:bg-accent/20 transition-colors">
                 <svg
-                  className="w-5 h-5 text-amber-600"
+                  className="w-5 h-5 text-accent"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -160,10 +160,10 @@ function NotFoundPage() {
                 </svg>
               </div>
               <div className="text-left">
-                <p className="font-display font-medium text-slate-900 group-hover:text-amber-600 transition-colors">
+                <p className="font-display font-medium text-text-primary group-hover:text-accent transition-colors">
                   Stops
                 </p>
-                <p className="text-sm text-slate-500">Browse bus stops</p>
+                <p className="text-sm text-text-muted">Browse bus stops</p>
               </div>
             </div>
             </Card>

@@ -63,12 +63,12 @@ function UploadProgress({ upload }: { upload: BulkUploadLog }) {
         <div>
           <div className="flex items-center gap-2 mb-1">
             <Chip variant={getStatusVariant()}>{current.status}</Chip>
-            <span className="text-xs text-slate-400">#{current.id}</span>
+            <span className="text-xs text-text-muted">#{current.id}</span>
           </div>
-          <p className="font-medium text-slate-900 capitalize">
+          <p className="font-medium text-text-primary capitalize">
             {current.entity_type} Import
           </p>
-          <p className="text-xs text-slate-500">
+          <p className="text-xs text-text-muted">
             {format(new Date(current.created_at), "MMM d, yyyy HH:mm")}
           </p>
         </div>
@@ -77,16 +77,16 @@ function UploadProgress({ upload }: { upload: BulkUploadLog }) {
       {(current.status === "processing" || current.status === "completed") && (
         <>
           <div className="mb-3">
-            <div className="flex justify-between text-xs text-slate-500 mb-1">
+            <div className="flex justify-between text-xs text-text-muted mb-1">
               <span>Progress</span>
               <span>{progress}%</span>
             </div>
-            <div className="h-2 bg-slate-100 rounded-sm overflow-hidden">
+            <div className="h-2 bg-bg-elevated rounded-sm overflow-hidden">
               <div
                 className={`h-full transition-all duration-500 ${
                   current.status === "completed"
-                    ? "bg-emerald-500"
-                    : "bg-blue-500"
+                    ? "bg-success"
+                    : "bg-info"
                 }`}
                 style={{ width: `${progress}%` }}
               />
@@ -95,37 +95,37 @@ function UploadProgress({ upload }: { upload: BulkUploadLog }) {
 
           <div className="grid grid-cols-4 gap-4 text-center">
             <div>
-              <p className="text-lg font-display font-bold text-slate-900">
+              <p className="text-lg font-display font-bold text-text-primary">
                 {current.total_rows}
               </p>
-              <p className="text-xs text-slate-500">Total</p>
+              <p className="text-xs text-text-muted">Total</p>
             </div>
             <div>
-              <p className="text-lg font-display font-bold text-emerald-600">
+              <p className="text-lg font-display font-bold text-success">
                 {current.success_count}
               </p>
-              <p className="text-xs text-slate-500">Success</p>
+              <p className="text-xs text-text-muted">Success</p>
             </div>
             <div>
-              <p className="text-lg font-display font-bold text-amber-600">
+              <p className="text-lg font-display font-bold text-warning">
                 {current.duplicate_count}
               </p>
-              <p className="text-xs text-slate-500">Duplicates</p>
+              <p className="text-xs text-text-muted">Duplicates</p>
             </div>
             <div>
-              <p className="text-lg font-display font-bold text-red-600">
+              <p className="text-lg font-display font-bold text-error">
                 {current.error_count}
               </p>
-              <p className="text-xs text-slate-500">Errors</p>
+              <p className="text-xs text-text-muted">Errors</p>
             </div>
           </div>
         </>
       )}
 
       {current.error_message && (
-        <div className="mt-4 p-3 bg-red-50 rounded-sm border border-red-200">
-          <p className="text-xs text-red-600 font-medium mb-1">Error:</p>
-          <p className="text-sm text-red-900">{current.error_message}</p>
+        <div className="mt-4 p-3 bg-error/10 rounded-sm border border-error/20">
+          <p className="text-xs text-error font-medium mb-1">Error:</p>
+          <p className="text-sm text-text-primary">{current.error_message}</p>
         </div>
       )}
     </Card>

@@ -47,7 +47,7 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
               Choose File
             </Button>
           </label>
-          <span className="text-sm text-text-tertiary">
+          <span className="text-sm text-text-muted">
             {props.value ? String(props.value).split('\\').pop() || 'No file chosen' : 'No file chosen'}
           </span>
         </div>
