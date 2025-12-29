@@ -55,7 +55,7 @@ function CommentItem({ comment, postId, depth = 0 }: CommentItemProps) {
           <Link
             to="/profile/$userId"
             params={{ userId: String(comment.user_id) }}
-            className="w-8 h-8 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 hover:scale-105 transition-transform"
+            className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0 hover:scale-105 transition-transform"
           >
             {comment.user?.username?.charAt(0).toUpperCase() || 'U'}
           </Link>
@@ -190,7 +190,7 @@ export const ForumPostDetail = ({
             <Link
               to="/profile/$userId"
               params={{ userId: String(post.user_id) }}
-              className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-lg hover:scale-105 transition-transform flex-shrink-0"
+              className="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-lg hover:scale-105 transition-transform flex-shrink-0"
             >
               {post.user?.username?.charAt(0).toUpperCase() || 'U'}
             </Link>

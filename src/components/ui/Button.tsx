@@ -7,13 +7,13 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className = '', variant = 'primary', size = 'md', children, ...props }, ref) => {
-    const baseStyles = 'font-display font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] inline-flex items-center justify-center rounded-button';
+    const baseStyles = 'font-display font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed active:scale-[0.98] inline-flex items-center justify-center rounded-button';
 
     const variants = {
-      primary: 'bg-accent text-white hover:bg-accent-hover focus:ring-accent',
-      secondary: 'bg-bg-surface text-text-primary border border-border hover:bg-bg-elevated focus:ring-border',
-      outline: 'bg-transparent border border-border text-text-primary hover:bg-bg-elevated focus:ring-border',
-      danger: 'bg-error text-white hover:bg-red-700 focus:ring-error',
+      primary: 'bg-accent text-white hover:bg-accent-hover focus:ring-accent disabled:bg-accent/50 disabled:text-white/70',
+      secondary: 'bg-bg-surface text-text-primary border border-border hover:bg-bg-elevated focus:ring-border disabled:opacity-50',
+      outline: 'bg-transparent border border-border text-text-primary hover:bg-bg-elevated focus:ring-border disabled:opacity-50',
+      danger: 'bg-error text-white hover:bg-red-700 focus:ring-error disabled:bg-error/50 disabled:text-white/70',
     };
 
     const sizes = {

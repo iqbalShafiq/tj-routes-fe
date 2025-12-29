@@ -1,7 +1,6 @@
 import { type ReactNode, useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileMenuButton } from './MobileMenuButton';
-import { FloatingRoutesButton } from '../FloatingRoutesButton';
 import { BottomNavigationBar } from './BottomNavigationBar';
 
 interface AppLayoutProps {
@@ -118,7 +117,6 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
         <div className="max-w-7xl mx-auto px-6 py-8">
           {children}
         </div>
-        {!isSmallScreen && <FloatingRoutesButton />}
       </main>
 
       {/* Bottom Navigation Bar - only on small screens (mobile) */}

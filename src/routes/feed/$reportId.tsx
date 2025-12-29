@@ -62,7 +62,7 @@ function CommentItem({
     <div className={`${depth > 0 ? 'ml-8 border-l-2 border-border pl-4' : ''}`}>
       <div className="py-4">
         <div className="flex items-start gap-3">
-          <div className="w-8 h-8 bg-gradient-to-br from-text-muted/40 to-text-muted/60 rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
+          <div className="w-8 h-8 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold flex-shrink-0">
             {comment.user?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div className="flex-1 min-w-0">
@@ -213,7 +213,7 @@ function ReportDetailPage() {
       <Card className="mb-6">
         {/* Author */}
         <div className="flex items-center gap-3 mb-6">
-          <div className="w-12 h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-lg">
+          <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-lg">
             {report.user?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div>

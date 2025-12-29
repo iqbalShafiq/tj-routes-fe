@@ -78,7 +78,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
                   relative flex flex-col items-center justify-center gap-1 min-w-[64px] h-full px-2
                   transition-all duration-200 active:scale-95
                   ${active
-                    ? 'text-amber-600'
+                    ? 'text-accent'
                     : 'text-slate-600 hover:text-slate-900'
                   }
                 `}
@@ -90,7 +90,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
                   {item.label}
                 </span>
                 {active && (
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-amber-600 rounded-t-full" />
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-12 h-1 bg-accent rounded-t-full" />
                 )}
               </Link>
             );
@@ -103,7 +103,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
               relative flex flex-col items-center justify-center gap-1 min-w-[64px] h-full px-2
               transition-all duration-200 active:scale-95
               ${isMenuOpen
-                ? 'text-amber-600'
+                ? 'text-accent'
                 : 'text-slate-600 hover:text-slate-900'
               }
             `}

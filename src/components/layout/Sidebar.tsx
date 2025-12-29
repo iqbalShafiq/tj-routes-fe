@@ -487,7 +487,7 @@ export const Sidebar = ({
               MAIN MENU
             </p>
           )}
-          <ul className="space-y-1">{visibleUserItems.map(renderNavItem)}</ul>
+          <ul className="space-y-0.5">{visibleUserItems.map(renderNavItem)}</ul>
 
           {/* Admin Navigation */}
           {visibleAdminItems.length > 0 && (
@@ -502,7 +502,7 @@ export const Sidebar = ({
                   </p>
                 )}
               </div>
-              <ul className="space-y-1">
+              <ul className="space-y-0.5">
                 {visibleAdminItems.map(renderNavItem)}
               </ul>
             </>
@@ -519,7 +519,7 @@ export const Sidebar = ({
               </p>
             )}
           </div>
-          <ul className="space-y-1">
+          <ul className="space-y-0.5">
             {isAuthenticated ? (
               <>
                 {/* My Profile */}

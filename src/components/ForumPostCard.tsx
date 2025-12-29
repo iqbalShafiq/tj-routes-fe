@@ -54,7 +54,7 @@ export const ForumPostCard = ({
           <Link
             to="/profile/$userId"
             params={{ userId: String(post.user_id) }}
-            className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg hover:scale-105 transition-transform flex-shrink-0"
+            className="w-10 h-10 sm:w-12 sm:h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-base sm:text-lg hover:scale-105 transition-transform flex-shrink-0"
           >
             {post.user?.username?.charAt(0).toUpperCase() || 'U'}
           </Link>

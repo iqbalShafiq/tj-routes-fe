@@ -117,7 +117,7 @@ function AdminUsersPage() {
                   const levelInfo = USER_LEVELS.find(l => l.value === user.level);
                   return (
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gradient-to-br from-slate-300 to-slate-500 rounded-full flex items-center justify-center text-white font-bold">
+                      <div className="w-10 h-10 bg-accent rounded-full flex items-center justify-center text-white font-bold">
                         {user.username.charAt(0).toUpperCase()}
                       </div>
                       <div>
