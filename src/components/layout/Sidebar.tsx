@@ -26,7 +26,7 @@ const userNavItems: NavItem[] = [
     label: "Community",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -45,7 +45,7 @@ const userNavItems: NavItem[] = [
     label: "Routes",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -64,7 +64,7 @@ const userNavItems: NavItem[] = [
     label: "Stops",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -89,7 +89,7 @@ const userNavItems: NavItem[] = [
     label: "Fleet",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -108,7 +108,7 @@ const userNavItems: NavItem[] = [
     label: "Leaderboard",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -128,7 +128,7 @@ const userNavItems: NavItem[] = [
     label: "My Reports",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -148,7 +148,7 @@ const userNavItems: NavItem[] = [
     label: "New Report",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -172,7 +172,7 @@ const adminNavItems: NavItem[] = [
     label: "Dashboard",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -192,7 +192,7 @@ const adminNavItems: NavItem[] = [
     label: "Routes",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -212,7 +212,7 @@ const adminNavItems: NavItem[] = [
     label: "Stops",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -232,7 +232,7 @@ const adminNavItems: NavItem[] = [
     label: "Vehicles",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -252,7 +252,7 @@ const adminNavItems: NavItem[] = [
     label: "Users",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -272,7 +272,7 @@ const adminNavItems: NavItem[] = [
     label: "Reports",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -292,7 +292,7 @@ const adminNavItems: NavItem[] = [
     label: "Bulk Upload",
     icon: (
       <svg
-        className="w-5 h-5"
+        className="w-4 h-4"
         fill="none"
         stroke="currentColor"
         viewBox="0 0 24 24"
@@ -355,8 +355,8 @@ export const Sidebar = ({
           to={item.path}
           onClick={handleNavClick}
           className={`
-            flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200 w-full
-            ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+            flex items-center gap-0 py-1.5 rounded-lg transition-all duration-200 w-full
+            ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-2"}
             ${
               isActive
                 ? `bg-accent-light text-accent font-medium ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
@@ -529,8 +529,8 @@ export const Sidebar = ({
                     params={{ userId: String(user?.id) }}
                     onClick={handleNavClick}
                     className={`
-                      flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200 w-full
-                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      flex items-center gap-0 py-1.5 rounded-lg transition-all duration-200 w-full
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-2"}
                       ${
                         currentPath.startsWith("/profile")
                           ? `bg-accent-light text-accent font-medium ${!isMobile && !isExpanded ? "" : "border-l-2 border-accent"}`
@@ -542,7 +542,7 @@ export const Sidebar = ({
                       className={`flex-shrink-0 ${currentPath.startsWith("/profile") ? "text-accent" : "text-text-muted"}`}
                     >
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -566,14 +566,14 @@ export const Sidebar = ({
                   <button
                     onClick={handleLogout}
                     className={`
-                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
-                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      w-full flex items-center gap-0 py-1.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-2"}
                       text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
                     <span className="flex-shrink-0 text-text-muted">
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -604,14 +604,14 @@ export const Sidebar = ({
                       window.location.href = "/auth/login";
                     }}
                     className={`
-                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
-                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      w-full flex items-center gap-0 py-1.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-2"}
                       text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
                     <span className="flex-shrink-0 text-text-muted">
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -639,14 +639,14 @@ export const Sidebar = ({
                       window.location.href = "/auth/register";
                     }}
                     className={`
-                      w-full flex items-center gap-0 py-2.5 rounded-lg transition-all duration-200
-                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-3"}
+                      w-full flex items-center gap-0 py-1.5 rounded-lg transition-all duration-200
+                      ${!isMobile && !isExpanded ? "justify-center px-2" : "px-4 gap-2"}
                       text-text-secondary hover:bg-bg-elevated hover:text-text-primary
                     `}
                   >
                     <span className="flex-shrink-0 text-text-muted">
                       <svg
-                        className="w-5 h-5"
+                        className="w-4 h-4"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
