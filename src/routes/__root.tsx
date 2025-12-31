@@ -9,6 +9,7 @@ import { AuthProvider } from "../lib/hooks/useAuth";
 import { useNavigationLoading } from "../lib/hooks/useNavigationLoading";
 import { AppLayout } from "../components/layout";
 import { ProgressBar } from "../components/ui/ProgressBar";
+import { ActiveCheckInBanner } from "../components/ActiveCheckInBanner";
 import { trackLastVisitedPage } from "../lib/utils/navigation";
 import { useEffect } from "react";
 
@@ -80,6 +81,7 @@ function RootComponent() {
   return (
     <>
       <ProgressBar isActive={isNavigating} onComplete={stopNavigation} />
+      <ActiveCheckInBanner />
       <AppLayout>
         <Outlet />
       </AppLayout>

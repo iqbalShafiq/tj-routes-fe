@@ -99,6 +99,13 @@ export const API_ENDPOINTS = {
     comments: (id: string | number) => `/api/v1/forum-posts/${id}/comments`,
     react: (id: string | number) => `/api/v1/forum-posts/${id}/react`,
   },
+  checkins: {
+    list: "/api/v1/check-ins",
+    detail: (id: string | number) => `/api/v1/check-ins/${id}`,
+    create: "/api/v1/check-ins",
+    complete: (id: string | number) => `/api/v1/check-ins/${id}/complete`,
+    stats: "/api/v1/check-ins/stats",
+  },
 } as const;
 
 export const STORAGE_KEYS = {

@@ -1,6 +1,10 @@
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
+import { useState } from 'react';
 import { useRouteWithStats } from '../../lib/hooks/useRoutes';
+import { useAuth } from '../../lib/hooks/useAuth';
+import { useActiveCheckIn } from '../../lib/hooks/useCheckIn';
 import { RouteDetail } from '../../components/RouteDetail';
+import { CheckInModal } from '../../components/CheckInModal';
 import { Loading } from '../../components/ui/Loading';
 import { Button } from '../../components/ui/Button';
 import { PageHeader } from '../../components/layout';
@@ -13,6 +17,15 @@ function RouteDetailPage() {
   const { routeId } = Route.useParams();
   const location = useLocation();
   const { data: routeDetail, isLoading, error } = useRouteWithStats(routeId);
+  const { isAuthenticated } = useAuth();
+  const { data: activeCheckIn } = useActiveCheckIn();
+
+  // Modal state
+  const [showStartCheckInModal, setShowStartCheckInModal] = useState(false);
+  const [showCompleteCheckInModal, setShowCompleteCheckInModal] = useState(false);
+
+  // Check if active check-in is for this route
+  const isCurrentRouteCheckIn = activeCheckIn?.route_id === Number(routeId);
 
   // Check if we're on a child route (forum, etc.) by checking the pathname
   const isChildRoute = location.pathname.includes('/forum');
@@ -56,13 +69,60 @@ function RouteDetailPage() {
                 View Forum
               </Button>
             </Link>
-            <Button variant="primary" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
+            {/* Check-in buttons */}
+            {isAuthenticated ? (
+              isCurrentRouteCheckIn ? (
+                <Button
+                  variant="tertiary"
+                  onClick={() => setShowCompleteCheckInModal(true)}
+                >
+                  Complete Journey
+                </Button>
+              ) : !activeCheckIn ? (
+                <Button
+                  variant="primary"
+                  onClick={() => setShowStartCheckInModal(true)}
+                >
+                  Start Check-in
+                </Button>
+              ) : null
+            ) : null}
+            <Button variant="danger" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
               Report Issue
             </Button>
           </div>
         }
       />
       <RouteDetail data={routeDetail} />
+
+      {/* Start Check-in Modal */}
+      <CheckInModal
+        isOpen={showStartCheckInModal}
+        onClose={() => setShowStartCheckInModal(false)}
+        mode="start"
+        route={routeDetail.route}
+        routeStops={routeDetail.route.route_stops}
+        onCheckInStart={(checkIn) => {
+          // Invalidate active check-in query to update the banner
+          window.dispatchEvent(new CustomEvent('invalidate-checkin'));
+        }}
+      />
+
+      {/* Complete Check-in Modal */}
+      {isCurrentRouteCheckIn && (
+        <CheckInModal
+          isOpen={showCompleteCheckInModal}
+          onClose={() => setShowCompleteCheckInModal(false)}
+          mode="complete"
+          route={activeCheckIn.route}
+          activeCheckIn={activeCheckIn}
+          routeStops={routeDetail.route.route_stops}
+          onCheckInComplete={(checkIn) => {
+            // Invalidate active check-in query to update the banner
+            window.dispatchEvent(new CustomEvent('invalidate-checkin'));
+          }}
+        />
+      )}
     </div>
   );
 }

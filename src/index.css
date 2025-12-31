@@ -33,6 +33,12 @@
     --color-error: 220 38 38;
     --color-info: 37 99 235;
 
+    /* Tertiary Color - Terracotta */
+    --color-tertiary: 193 103 75;        /* #C1674B */
+    --color-tertiary-hover: 166 81 60;   /* #A6513C */
+    --color-tertiary-light: 245 235 231; /* #F5EBE7 */
+    --color-tertiary-muted: 219 171 154; /* #DBAB9A */
+
     /* Typography */
     --font-display: 'Space Grotesk Variable', -apple-system, sans-serif;
     --font-body: 'Inter Variable', -apple-system, sans-serif;
@@ -66,6 +72,7 @@
   .bg-bg-surface { background-color: rgb(var(--color-bg-surface)); }
   .bg-bg-elevated { background-color: rgb(var(--color-bg-elevated)); }
   .bg-accent-light { background-color: rgb(var(--color-accent-light)); }
+  .bg-tertiary-light { background-color: rgb(var(--color-tertiary-light)); }
 
   /* Text utilities */
   .text-text-primary { color: rgb(var(--color-text-primary)); }
@@ -76,10 +83,12 @@
   .text-warning { color: rgb(var(--color-warning)); }
   .text-error { color: rgb(var(--color-error)); }
   .text-info { color: rgb(var(--color-info)); }
+  .text-tertiary { color: rgb(var(--color-tertiary)); }
 
   /* Border utilities */
   .border-border { border-color: rgb(var(--color-border)); }
   .border-accent { border-color: rgb(var(--color-accent)); }
+  .border-tertiary { border-color: rgb(var(--color-tertiary)); }
   .border-border-strong:hover { border-color: rgb(var(--color-text-secondary)); }
 
   /* Sidebar styles */

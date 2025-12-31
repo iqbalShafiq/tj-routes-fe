@@ -50,6 +50,12 @@ export default {
           DEFAULT: 'rgb(var(--color-info))',
           bg: 'rgb(var(--color-info-bg) / <alpha-value>)',
         },
+        /* Tertiary color - Terracotta */
+        tertiary: {
+          DEFAULT: 'rgb(var(--color-tertiary))',
+          hover: 'rgb(var(--color-tertiary-hover))',
+          muted: 'rgb(var(--color-tertiary-muted) / <alpha-value>)',
+        },
       },
       fontFamily: {
         display: ['Space Grotesk Variable', 'sans-serif'],
