@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { useReport, useComments, useCreateComment, useReactToReport, useReactToComment } from '../../lib/hooks/useReports';
 import { useAuth } from '../../lib/hooks/useAuth';
@@ -23,25 +23,34 @@ export const Route = createFileRoute('/feed/$reportId')({
   component: ReportDetailPage,
 });
 
-function CommentItem({ 
-  comment, 
+function CommentItem({
+  comment,
   reportId,
-  depth = 0 
-}: { 
-  comment: Comment; 
+  depth = 0
+}: {
+  comment: Comment;
   reportId: string;
   depth?: number;
 }) {
   const { isAuthenticated } = useAuth();
   const [showReplyForm, setShowReplyForm] = useState(false);
   const [replyContent, setReplyContent] = useState('');
+  const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
   const createComment = useCreateComment();
   const reactMutation = useReactToComment();
+
+  // Clear animation state after animation completes
+  useEffect(() => {
+    if (animatingReaction) {
+      const timer = setTimeout(() => setAnimatingReaction(null), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [animatingReaction]);
 
   const handleReply = (e: React.FormEvent) => {
     e.preventDefault();
     if (!replyContent.trim()) return;
-    
+
     createComment.mutate(
       { reportId, data: { content: replyContent, parent_id: comment.id } },
       {
@@ -55,6 +64,7 @@ function CommentItem({
 
   const handleReaction = (type: 'upvote' | 'downvote') => {
     if (!isAuthenticated) return;
+    setAnimatingReaction(type);
     reactMutation.mutate({ commentId: comment.id, type, reportId });
   };
 
@@ -84,7 +94,13 @@ function CommentItem({
               <button
                 onClick={() => handleReaction('upvote')}
                 disabled={!isAuthenticated}
-                className="flex items-center gap-1 text-xs text-text-muted hover:text-success disabled:opacity-50"
+                className={`flex items-center gap-1 text-xs transition-all duration-200 disabled:opacity-50 ${
+                  animatingReaction === 'upvote'
+                    ? 'animate-reaction-pulse text-accent'
+                    : comment.user_reaction === 'upvote'
+                    ? 'text-accent'
+                    : 'text-text-muted hover:text-accent'
+                }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -94,7 +110,13 @@ function CommentItem({
               <button
                 onClick={() => handleReaction('downvote')}
                 disabled={!isAuthenticated}
-                className="flex items-center gap-1 text-xs text-text-muted hover:text-error disabled:opacity-50"
+                className={`flex items-center gap-1 text-xs transition-all duration-200 disabled:opacity-50 ${
+                  animatingReaction === 'downvote'
+                    ? 'animate-reaction-pulse text-error'
+                    : comment.user_reaction === 'downvote'
+                    ? 'text-error'
+                    : 'text-text-muted hover:text-error'
+                }`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -145,16 +167,25 @@ function ReportDetailPage() {
   const { reportId } = Route.useParams();
   const { isAuthenticated } = useAuth();
   const [newComment, setNewComment] = useState('');
-  
+  const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
+
   const { data: report, isLoading: reportLoading, error: reportError } = useReport(reportId);
   const { data: comments, isLoading: commentsLoading } = useComments(reportId);
   const createComment = useCreateComment();
   const reactMutation = useReactToReport();
 
+  // Clear animation state after animation completes
+  useEffect(() => {
+    if (animatingReaction) {
+      const timer = setTimeout(() => setAnimatingReaction(null), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [animatingReaction]);
+
   const handleSubmitComment = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newComment.trim()) return;
-    
+
     createComment.mutate(
       { reportId, data: { content: newComment } },
       {
@@ -165,6 +196,7 @@ function ReportDetailPage() {
 
   const handleReaction = (type: 'upvote' | 'downvote') => {
     if (!isAuthenticated) return;
+    setAnimatingReaction(type);
     reactMutation.mutate({ reportId, type });
   };
 
@@ -321,7 +353,13 @@ function ReportDetailPage() {
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending}
-            className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors disabled:opacity-50"
+            className={`flex items-center gap-2 transition-all duration-200 disabled:opacity-50 ${
+              animatingReaction === 'upvote'
+                ? 'animate-reaction-pulse text-accent'
+                : report.user_reaction === 'upvote'
+                ? 'text-accent'
+                : 'text-text-muted hover:text-accent'
+            }`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -332,7 +370,13 @@ function ReportDetailPage() {
           <button
             onClick={() => handleReaction('downvote')}
             disabled={!isAuthenticated || reactMutation.isPending}
-            className="flex items-center gap-2 text-text-secondary hover:text-error transition-colors disabled:opacity-50"
+            className={`flex items-center gap-2 transition-all duration-200 disabled:opacity-50 ${
+              animatingReaction === 'downvote'
+                ? 'animate-reaction-pulse text-error'
+                : report.user_reaction === 'downvote'
+                ? 'text-error'
+                : 'text-text-muted hover:text-error'
+            }`}
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />

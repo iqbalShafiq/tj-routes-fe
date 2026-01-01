@@ -226,6 +226,18 @@
     }
   }
 
+  @keyframes reaction-pulse {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.2);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
   .animate-slide-in {
     animation: slide-in 0.3s ease-out;
   }
@@ -248,5 +260,9 @@
 
   .animate-stagger-3 {
     animation: fade-in 0.4s ease-out 0.3s both;
+  }
+
+  .animate-reaction-pulse {
+    animation: reaction-pulse 0.3s ease-out;
   }
 }

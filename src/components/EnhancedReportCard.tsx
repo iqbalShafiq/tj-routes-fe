@@ -8,7 +8,7 @@ import { FollowButton } from './FollowButton';
 import { format, formatDistanceToNow } from 'date-fns';
 import type { Report } from '../lib/api/reports';
 import { REPORT_TYPES, REPORT_STATUSES } from '../lib/utils/constants';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface EnhancedReportCardProps {
   report: Report;
@@ -19,13 +19,25 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   const reactMutation = useReactToReport();
   const removeReactionMutation = useRemoveReportReaction();
   const [imageIndex, setImageIndex] = useState(0);
+  const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
+
+  // Clear animation state after animation completes
+  useEffect(() => {
+    if (animatingReaction) {
+      const timer = setTimeout(() => setAnimatingReaction(null), 300);
+      return () => clearTimeout(timer);
+    }
+  }, [animatingReaction]);
 
   const typeInfo = REPORT_TYPES.find(t => t.value === report.type);
   const statusInfo = REPORT_STATUSES.find(s => s.value === report.status);
 
   const handleReaction = (type: 'upvote' | 'downvote') => {
     if (!isAuthenticated) return;
-    
+
+    // Trigger animation
+    setAnimatingReaction(type);
+
     // If user already has this reaction, remove it
     if (report.user_reaction === type) {
       removeReactionMutation.mutate(report.id);
@@ -233,8 +245,10 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending || removeReactionMutation.isPending}
-            className={`flex items-center gap-1.5 transition-colors disabled:opacity-50 ${
-              report.user_reaction === 'upvote'
+            className={`flex items-center gap-1.5 transition-all duration-200 disabled:opacity-50 ${
+              animatingReaction === 'upvote'
+                ? 'animate-reaction-pulse text-accent'
+                : report.user_reaction === 'upvote'
                 ? 'text-accent'
                 : 'text-text-muted hover:text-accent'
             }`}
@@ -247,8 +261,10 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           <button
             onClick={() => handleReaction('downvote')}
             disabled={!isAuthenticated || reactMutation.isPending || removeReactionMutation.isPending}
-            className={`flex items-center gap-1.5 transition-colors disabled:opacity-50 ${
-              report.user_reaction === 'downvote'
+            className={`flex items-center gap-1.5 transition-all duration-200 disabled:opacity-50 ${
+              animatingReaction === 'downvote'
+                ? 'animate-reaction-pulse text-error'
+                : report.user_reaction === 'downvote'
                 ? 'text-error'
                 : 'text-text-muted hover:text-error'
             }`}

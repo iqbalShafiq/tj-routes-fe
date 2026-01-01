@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { reportsApi, type CreateReportRequest, type UpdateReportStatusRequest } from '../api/reports';
-import { commentsApi, type CreateCommentRequest } from '../api/comments';
+import { reportsApi, type CreateReportRequest, type UpdateReportStatusRequest, type Report } from '../api/reports';
+import { commentsApi, type CreateCommentRequest, type Comment } from '../api/comments';
 import { reactionsApi, type ReactionType } from '../api/reactions';
 
 export const useReports = (
@@ -112,13 +112,79 @@ export const useDeleteComment = () => {
 // Reactions hooks
 export const useReactToReport = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ reportId, type }: { reportId: string | number; type: ReactionType }) =>
       reactionsApi.reactToReport(reportId, type),
+    onMutate: async ({ reportId, type }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['feed'] });
+      await queryClient.cancelQueries({ queryKey: ['report', reportId] });
+
+      // Snapshot previous value
+      const previousReport = queryClient.getQueryData(['report', reportId]);
+
+      // Calculate the updated report data
+      const updateReportData = (report: any) => {
+        const alreadyReacted = report.user_reaction === type;
+        if (alreadyReacted) {
+          // Removing own reaction
+          return {
+            ...report,
+            upvotes: type === 'upvote' ? report.upvotes - 1 : report.upvotes,
+            downvotes: type === 'downvote' ? report.downvotes - 1 : report.downvotes,
+            user_reaction: null,
+          };
+        } else {
+          // Adding/changing reaction
+          const wasUpvoted = report.user_reaction === 'upvote';
+          const wasDownvoted = report.user_reaction === 'downvote';
+          return {
+            ...report,
+            upvotes: type === 'upvote'
+              ? report.upvotes + 1
+              : (wasUpvoted ? report.upvotes - 1 : report.upvotes),
+            downvotes: type === 'downvote'
+              ? report.downvotes + 1
+              : (wasDownvoted ? report.downvotes - 1 : report.downvotes),
+            user_reaction: type,
+          };
+        }
+      };
+
+      // Optimistically update individual report query
+      if (previousReport) {
+        queryClient.setQueryData(['report', reportId], updateReportData(previousReport));
+      }
+
+      // Optimistically update feed
+      queryClient.setQueryData(['feed'], (old: any) => {
+        if (!old?.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((report: any) => {
+              if (report.id === reportId) {
+                return updateReportData(report);
+              }
+              return report;
+            }),
+          })),
+        };
+      });
+
+      return { previousReport };
+    },
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    },
+    onError: (_, variables, context) => {
+      // Rollback on error
+      if (context?.previousReport) {
+        queryClient.setQueryData(['report', variables.reportId], context.previousReport);
+      }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
   });
@@ -126,13 +192,59 @@ export const useReactToReport = () => {
 
 export const useRemoveReportReaction = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (reportId: string | number) =>
       reactionsApi.removeReportReaction(reportId).then(() => reportId),
+    onMutate: async (reportId) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['feed'] });
+      await queryClient.cancelQueries({ queryKey: ['report', reportId] });
+
+      // Snapshot previous value
+      const previousReport = queryClient.getQueryData(['report', reportId]);
+
+      // Calculate updated report data for removal
+      const removeReactionData = (report: any) => ({
+        ...report,
+        upvotes: report.user_reaction === 'upvote' ? report.upvotes - 1 : report.upvotes,
+        downvotes: report.user_reaction === 'downvote' ? report.downvotes - 1 : report.downvotes,
+        user_reaction: null,
+      });
+
+      // Optimistically update individual report query
+      if (previousReport && previousReport.user_reaction) {
+        queryClient.setQueryData(['report', reportId], removeReactionData(previousReport));
+      }
+
+      // Optimistically update feed
+      queryClient.setQueryData(['feed'], (old: any) => {
+        if (!old?.pages) return old;
+        return {
+          ...old,
+          pages: old.pages.map((page: any) => ({
+            ...page,
+            data: page.data.map((report: any) => {
+              if (report.id === reportId && report.user_reaction) {
+                return removeReactionData(report);
+              }
+              return report;
+            }),
+          })),
+        };
+      });
+
+      return { previousReport };
+    },
     onSuccess: (reportId) => {
       queryClient.invalidateQueries({ queryKey: ['report', reportId] });
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
+    },
+    onError: (_, reportId, context) => {
+      // Rollback on error
+      if (context?.previousReport) {
+        queryClient.setQueryData(['report', reportId], context.previousReport);
+      }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
   });

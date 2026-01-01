@@ -8,6 +8,7 @@ export interface Comment {
   content: string;
   upvotes: number;
   downvotes: number;
+  user_reaction?: 'upvote' | 'downvote' | null;
   created_at: string;
   updated_at: string;
   user?: {
