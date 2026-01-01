@@ -290,7 +290,7 @@ function LoginPage() {
         <div className="mt-6">
           <Button
             type="button"
-            variant="primary"
+            variant="tertiary"
             className="w-full"
             onClick={() => {
               startNavigation();

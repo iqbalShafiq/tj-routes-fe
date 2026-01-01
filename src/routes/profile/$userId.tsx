@@ -156,11 +156,11 @@ function UserProfilePage() {
             {/* Info */}
             <div className="flex-1 text-center md:text-left">
               <div className="flex flex-col md:flex-row items-center gap-3 mb-2">
-                <h1 className="text-3xl font-display font-bold text-slate-900">
+                <h1 className="text-3xl font-display font-bold text-text-primary">
                   {profile.user.username}
                 </h1>
                 {isOwnProfile && (
-                  <span className="px-3 py-1 text-sm bg-amber-100 text-amber-700 rounded-full">
+                  <span className="px-3 py-1 text-sm bg-warning/10 text-warning rounded-full">
                     Your Profile
                   </span>
                 )}
@@ -173,7 +173,7 @@ function UserProfilePage() {
                 `}>
                   {currentLevel?.label || profile.level}
                 </span>
-                <span className="inline-flex items-center px-4 py-1.5 text-sm font-medium bg-slate-100 text-slate-700 rounded-full">
+                <span className="inline-flex items-center px-4 py-1.5 text-sm font-medium bg-bg-elevated text-text-secondary rounded-full">
                   {profile.reputation_points.toLocaleString()} points
                 </span>
               </div>
@@ -181,17 +181,17 @@ function UserProfilePage() {
               {/* Progress to next level */}
               {nextLevel && (
                 <div className="max-w-sm mx-auto md:mx-0">
-                  <div className="flex justify-between text-xs text-slate-500 mb-1">
+                  <div className="flex justify-between text-xs text-text-muted mb-1">
                     <span>{currentLevel?.label}</span>
                     <span>{nextLevel.label}</span>
                   </div>
-                  <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div 
+                  <div className="h-2 bg-bg-elevated rounded-full overflow-hidden">
+                    <div
                       className={`h-full ${getLevelColor(profile.level)} transition-all duration-500`}
                       style={{ width: `${progressToNext}%` }}
                     />
                   </div>
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-text-muted mt-1">
                     {nextLevel.minPoints - profile.reputation_points} points to {nextLevel.label}
                   </p>
                 </div>
@@ -203,57 +203,57 @@ function UserProfilePage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
           <Card static className="text-center">
-            <p className="text-3xl font-display font-bold text-amber-600">
+            <p className="text-3xl font-display font-bold text-accent">
               {profile.reputation_points.toLocaleString()}
             </p>
-            <p className="text-sm text-slate-500">Total Points</p>
+            <p className="text-sm text-text-muted">Total Points</p>
           </Card>
           <Card static className="text-center">
-            <p className="text-3xl font-display font-bold text-slate-900">
+            <p className="text-3xl font-display font-bold text-text-primary">
               {profile.badges.length}
             </p>
-            <p className="text-sm text-slate-500">Badges Earned</p>
+            <p className="text-sm text-text-muted">Badges Earned</p>
           </Card>
           <Card static className="text-center">
-            <p className="text-3xl font-display font-bold text-blue-600">
+            <p className="text-3xl font-display font-bold text-info">
               {nextLevel ? `${nextLevel.minPoints - profile.reputation_points}` : '—'}
             </p>
-            <p className="text-sm text-slate-500">Points to Next</p>
+            <p className="text-sm text-text-muted">Points to Next</p>
           </Card>
       </div>
 
       {/* Badges */}
       <Card static className="mb-6">
-          <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">Badges</h2>
-          
+          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">Badges</h2>
+
           {profile.badges.length > 0 ? (
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {profile.badges.map((userBadge) => (
                 <div
                   key={userBadge.id}
-                  className="flex flex-col items-center p-4 bg-amber-50 rounded-sm border border-amber-200"
+                  className="flex flex-col items-center p-4 bg-warning/10 rounded-sm border border-warning"
                 >
-                  <div className="text-amber-600 mb-2">
+                  <div className="text-tertiary mb-2">
                     {getBadgeIcon(userBadge.badge.name, userBadge.badge.criteria_type)}
                   </div>
-                  <p className="font-display font-semibold text-slate-900 text-center text-sm">
+                  <p className="font-display font-semibold text-text-primary text-center text-sm">
                     {userBadge.badge.name}
                   </p>
-                  <p className="text-xs text-slate-500 text-center mt-1">
+                  <p className="text-xs text-text-muted text-center mt-1">
                     {userBadge.badge.description}
                   </p>
-                  <p className="text-xs text-amber-600 mt-2">
+                  <p className="text-xs text-tertiary mt-2">
                     {format(new Date(userBadge.earned_at), 'MMM d, yyyy')}
                   </p>
                 </div>
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-slate-500">
+            <div className="text-center py-8 text-text-muted">
               <p className="text-lg mb-2">No badges yet</p>
               <p className="text-sm">
-                {isOwnProfile 
-                  ? "Start contributing to earn badges!" 
+                {isOwnProfile
+                  ? "Start contributing to earn badges!"
                   : "This user hasn't earned any badges yet."}
               </p>
             </div>
@@ -263,7 +263,7 @@ function UserProfilePage() {
       {/* Available Badges */}
       {allBadges && (
         <Card static>
-          <h2 className="text-xl font-display font-semibold text-slate-900 mb-4">All Available Badges</h2>
+          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">All Available Badges</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
             {allBadges.map((badge) => {
               const isEarned = profile.badges.some(b => b.badge_id === badge.id);
@@ -273,22 +273,22 @@ function UserProfilePage() {
                   className={`
                     flex flex-col items-center p-4 rounded-sm border transition-all
                     ${isEarned
-                      ? 'bg-emerald-50 border-emerald-200'
-                      : 'bg-slate-50 border-slate-200 opacity-60'}
+                      ? 'bg-accent/10 border-accent'
+                      : 'bg-bg-main border-border opacity-60'}
                   `}
                 >
-                  <div className={`mb-2 ${isEarned ? 'text-emerald-600' : 'text-slate-400'}`}>
+                  <div className={`mb-2 ${isEarned ? 'text-accent' : 'text-text-muted'}`}>
                     {getBadgeIcon(badge.name, badge.criteria_type)}
                   </div>
-                  <p className="font-display font-semibold text-slate-900 text-center text-sm">
+                  <p className="font-display font-semibold text-text-primary text-center text-sm">
                     {badge.name}
                   </p>
-                  <p className="text-xs text-slate-500 text-center mt-1">
+                  <p className="text-xs text-text-muted text-center mt-1">
                     {badge.description}
                   </p>
                   {isEarned && (
-                    <span className="mt-2 px-2 py-0.5 text-xs bg-emerald-200 text-emerald-700 rounded-full">
-                      ✓ Earned
+                    <span className="mt-2 px-2 py-0.5 text-xs bg-accent/30 text-accent-hover rounded-full">
+                      Earned
                     </span>
                   )}
                 </div>

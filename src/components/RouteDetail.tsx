@@ -82,7 +82,7 @@ const StatisticsSection = ({ statistics }: { statistics: RouteStatistics }) => {
         </div>
         <div className="p-4 bg-bg-main text-center">
           <p className="text-sm text-text-muted mb-1">Activity Score</p>
-          <p className={`text-3xl font-display font-bold px-3 py-1 rounded-lg ${getActivityColor(statistics.community_activity_score)}`}>
+          <p className="text-3xl font-display font-bold text-text-primary">
             {statistics.community_activity_score.toFixed(1)}
           </p>
         </div>
@@ -196,7 +196,7 @@ const RecentReportsSection = ({ reports }: { reports: ReportSummary[] }) => {
             className="group flex items-start gap-4 p-4 border border-border hover:border-tertiary hover:bg-tertiary/5 transition-all duration-200 animate-fade-in"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <div className="flex-shrink-0 w-10 h-10 bg-bg-elevated text-white flex items-center justify-center font-display font-bold">
+            <div className="flex-shrink-0 w-10 h-10 bg-warning/10 text-warning flex items-center justify-center font-display font-bold">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
@@ -274,7 +274,7 @@ const RecentPostsSection = ({ posts }: { posts: ForumPostSummary[] }) => {
             className="group flex items-start gap-4 p-4 border border-border hover:border-accent hover:bg-accent/5 transition-all duration-200 animate-fade-in"
             style={{ animationDelay: `${index * 50}ms` }}
           >
-            <div className="flex-shrink-0 w-10 h-10 bg-bg-elevated text-white flex items-center justify-center">
+            <div className="flex-shrink-0 w-10 h-10 bg-warning/10 text-warning flex items-center justify-center">
               {postTypeIcons[post.post_type]}
             </div>
             <div className="flex-1 min-w-0">
