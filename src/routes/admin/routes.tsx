@@ -96,7 +96,7 @@ function AdminRoutesPage() {
   const startEdit = (route: any) => {
     setEditingRoute(route);
     setFormData({
-      route_number: route.route_number || route.code || '',
+      route_number: route.route_number || '',
       name: route.name,
       description: route.description || '',
       status: route.status || 'active',
@@ -216,7 +216,7 @@ function AdminRoutesPage() {
                 header: 'Route #',
                 render: (route) => (
                   <span className="font-display font-semibold text-tertiary">
-                    {route.route_number || route.code}
+                    {route.route_number}
                   </span>
                 ),
               },

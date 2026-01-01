@@ -153,7 +153,7 @@ function ForumPage() {
     return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
   });
 
-  const routeName = `${route.code || route.route_number} - ${route.name}`;
+  const routeName = `${route.route_number} - ${route.name}`;
 
   // If we're on a child route, just render the outlet
   if (isChildRoute) {
@@ -167,7 +167,7 @@ function ForumPage() {
         subtitle={`Discussion forum for ${routeName}`}
         breadcrumbs={[
           { label: 'Routes', path: '/' },
-          { label: route.code || route.route_number || String(route.id), path: `/routes/${routeId}` },
+          { label: route.route_number || String(route.id), path: `/routes/${routeId}` },
           { label: 'Forum' },
         ]}
         actions={

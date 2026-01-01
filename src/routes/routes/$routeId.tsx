@@ -56,11 +56,11 @@ function RouteDetailPage() {
   return (
     <div className="animate-fade-in">
       <PageHeader
-        title={`${routeDetail.route.code} - ${routeDetail.route.name}`}
+        title={`${routeDetail.route.route_number} - ${routeDetail.route.name}`}
         subtitle={routeDetail.route.description}
         breadcrumbs={[
           { label: 'Routes', path: '/' },
-          { label: routeDetail.route.code },
+          { label: routeDetail.route.route_number },
         ]}
         actions={
           <div className="flex items-center gap-3">

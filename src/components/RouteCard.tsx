@@ -16,7 +16,7 @@ export const RouteCard = ({ route }: RouteCardProps) => {
         {/* Header: Number and Status */}
         <div className="flex items-start justify-between mb-3">
           <span className="text-4xl font-display font-bold text-text-primary leading-none">
-            {route.code}
+            {route.route_number}
           </span>
           {route.status === "active" && (
             <Chip variant="success">

@@ -12,8 +12,8 @@ const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | nu
   <Card className="mb-6">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-4">
-        <div className="w-16 h-16 bg-bg-elevated flex items-center justify-center">
-          <span className="text-white font-display font-bold text-xl">{route.code}</span>
+        <div className="w-16 h-16 bg-accent/10 flex items-center justify-center">
+          <span className="text-accent font-display font-bold text-xl">{route.route_number}</span>
         </div>
         <div>
           <h1 className="text-2xl font-display font-bold text-text-primary">{route.name}</h1>

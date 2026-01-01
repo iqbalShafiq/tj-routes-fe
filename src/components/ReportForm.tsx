@@ -180,7 +180,7 @@ export const ReportForm = ({ initialRouteId, initialStopId }: ReportFormProps) =
     { value: "", label: "Select a route" },
     ...routesData.data.map(route => ({
       value: route.id,
-      label: `${route.route_number || route.code} - ${route.name}`,
+      label: `${route.route_number} - ${route.name}`,
     })),
   ];
 

@@ -119,6 +119,7 @@ export const useReactToReport = () => {
     onSuccess: (_, variables) => {
       queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
   });
 };
@@ -132,6 +133,7 @@ export const useRemoveReportReaction = () => {
     onSuccess: (reportId) => {
       queryClient.invalidateQueries({ queryKey: ['report', reportId] });
       queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
   });
 };

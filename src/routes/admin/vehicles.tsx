@@ -184,7 +184,7 @@ function AdminVehiclesPage() {
                   <option value={0}>Select a route</option>
                   {routesData?.data.map((route) => (
                     <option key={route.id} value={route.id}>
-                      {route.route_number || route.code} - {route.name}
+                      {route.route_number} - {route.name}
                     </option>
                   ))}
                 </Select>

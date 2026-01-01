@@ -147,7 +147,7 @@ function ReportsPage() {
                   {report.route && (
                     <div className="mb-3 p-3 bg-bg-main rounded-sm">
                       <p className="text-sm text-text-secondary mb-1">
-                        <span className="font-medium">Route:</span> {report.route.code} - {report.route.name}
+                        <span className="font-medium">Route:</span> {report.route.route_number} - {report.route.name}
                       </p>
                     </div>
                   )}

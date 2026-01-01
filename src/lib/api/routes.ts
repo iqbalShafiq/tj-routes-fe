@@ -64,7 +64,6 @@ export interface RouteDetailResponse {
 
 export interface Route {
   id: number;
-  code?: string; // For frontend compatibility
   route_number: string;
   name: string;
   description?: string;
@@ -131,7 +130,6 @@ export const routesApi = {
     if (response.data.success && response.data.data.routes) {
       const routes = response.data.data.routes.map((route) => ({
         ...route,
-        code: route.route_number || route.code, // Map route_number to code for compatibility
       }));
       
       const total = response.data.data.total;
@@ -151,11 +149,7 @@ export const routesApi = {
 
   getRoute: async (id: string | number): Promise<Route> => {
     const response = await apiClient.get<RouteResponse>(API_ENDPOINTS.routes.detail(id));
-    const route = response.data.data;
-    return {
-      ...route,
-      code: route.route_number || (route as any).code,
-    };
+    return response.data.data;
   },
 
   getRouteWithStats: async (id: string | number): Promise<RouteDetailResponse> => {

@@ -85,7 +85,7 @@ function ForumPostDetailPage() {
     );
   }
 
-  const routeName = `${route.code || route.route_number} - ${route.name}`;
+  const routeName = `${route.route_number} - ${route.name}`;
 
   return (
     <div className="animate-fade-in">
@@ -93,7 +93,7 @@ function ForumPostDetailPage() {
         title=""
         breadcrumbs={[
           { label: 'Routes', path: '/' },
-          { label: route.code || route.route_number || String(route.id), path: `/routes/${routeId}` },
+          { label: route.route_number || String(route.id), path: `/routes/${routeId}` },
           { label: 'Forum', path: `/routes/${routeId}/forum` },
           { label: post.title },
         ]}
