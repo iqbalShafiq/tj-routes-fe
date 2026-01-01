@@ -37,8 +37,8 @@ export const FollowButton = ({ userId, className, variant = 'default' }: FollowB
         disabled={isLoading}
         className={`text-sm font-medium transition-colors ${
           isFollowing
-            ? 'text-slate-600 hover:text-red-600'
-            : 'text-amber-600 hover:text-amber-700'
+            ? 'text-text-secondary hover:text-error'
+            : 'text-tertiary hover:text-tertiary-hover'
         } disabled:opacity-50 ${className || ''}`}
       >
         {isLoading ? '...' : isFollowing ? 'Unfollow' : 'Follow'}

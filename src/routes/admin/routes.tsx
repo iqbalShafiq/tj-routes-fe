@@ -157,7 +157,7 @@ function AdminRoutesPage() {
       >
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Route Number</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Route Number</label>
             <Input
               value={formData.route_number}
               onChange={(e) => setFormData({ ...formData, route_number: e.target.value })}
@@ -167,7 +167,7 @@ function AdminRoutesPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+            <label className="block text-sm font-medium text-text-secondary mb-1">Name</label>
             <Input
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -215,7 +215,7 @@ function AdminRoutesPage() {
                 key: 'route_number',
                 header: 'Route #',
                 render: (route) => (
-                  <span className="font-display font-semibold text-amber-600">
+                  <span className="font-display font-semibold text-tertiary">
                     {route.route_number || route.code}
                   </span>
                 ),
@@ -264,7 +264,7 @@ function AdminRoutesPage() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm font-medium">
+            <span className="text-text-secondary text-sm font-medium">
               Page {page} of {data.total_pages}
             </span>
             <Button
@@ -279,7 +279,7 @@ function AdminRoutesPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <p className="text-slate-600">No routes found</p>
+            <p className="text-text-secondary">No routes found</p>
             <Button variant="primary" className="mt-4" onClick={() => setShowForm(true)}>
               Add Your First Route
             </Button>

@@ -23,14 +23,14 @@ export const ForumMembersList = ({
   return (
     <div>
       <div className="mb-4">
-        <h2 className="text-2xl font-display font-bold text-slate-900 mb-2">Forum Members</h2>
-        <p className="text-slate-600">{total} member{total !== 1 ? 's' : ''} total</p>
+        <h2 className="text-2xl font-display font-bold text-text-primary mb-2">Forum Members</h2>
+        <p className="text-text-secondary">{total} member{total !== 1 ? 's' : ''} total</p>
       </div>
 
       {members.length === 0 ? (
         <Card static>
           <div className="text-center py-12">
-            <p className="text-slate-600">No members yet</p>
+            <p className="text-text-secondary">No members yet</p>
           </div>
         </Card>
       ) : (
@@ -50,20 +50,20 @@ export const ForumMembersList = ({
                     <Link
                       to="/profile/$userId"
                       params={{ userId: String(member.user_id) }}
-                      className="font-semibold text-slate-900 hover:text-amber-600 transition-colors block"
+                      className="font-semibold text-text-primary hover:text-accent transition-colors block"
                     >
                       {member.user.username}
                     </Link>
                     {member.user.level && (
-                      <p className="text-sm text-slate-500 capitalize">{member.user.level}</p>
+                      <p className="text-sm text-text-muted capitalize">{member.user.level}</p>
                     )}
                   </div>
                   {member.user.reputation_points !== undefined && (
                     <div className="text-right">
-                      <p className="text-sm font-medium text-slate-900">
+                      <p className="text-sm font-medium text-text-primary">
                         {member.user.reputation_points}
                       </p>
-                      <p className="text-xs text-slate-500">points</p>
+                      <p className="text-xs text-text-muted">points</p>
                     </div>
                   )}
                 </div>
@@ -82,7 +82,7 @@ export const ForumMembersList = ({
               >
                 Previous
               </Button>
-              <span className="text-sm text-slate-600">
+              <span className="text-sm text-text-secondary">
                 Page {page} of {totalPages}
               </span>
               <Button

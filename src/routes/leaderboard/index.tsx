@@ -18,12 +18,12 @@ export const Route = createFileRoute('/leaderboard/')({
   component: LeaderboardPage,
 });
 
-function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'purple' | 'warning' {
+function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'tertiary' | 'warning' {
   switch (level) {
     case 'newcomer': return 'default';
     case 'contributor': return 'success';
     case 'trusted': return 'info';
-    case 'expert': return 'purple';
+    case 'expert': return 'tertiary';
     case 'legend': return 'warning';
     default: return 'default';
   }

@@ -70,14 +70,14 @@ export const Modal = ({
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h2 id="modal-title" className="text-xl font-display font-semibold text-slate-900">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-border">
+          <h2 id="modal-title" className="text-xl font-display font-semibold text-text-primary">
             {title}
           </h2>
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-2 text-text-muted hover:text-text-primary hover:bg-bg-elevated rounded-lg transition-colors"
               aria-label="Close modal"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

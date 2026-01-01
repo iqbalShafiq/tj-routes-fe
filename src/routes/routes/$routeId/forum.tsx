@@ -190,13 +190,13 @@ function ForumPage() {
       {/* Filters and Create Button */}
       <div className="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex gap-2 bg-slate-100 p-1 rounded-sm">
+          <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm">
             <button
               onClick={() => setPostTypeFilter(undefined)}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 !postTypeFilter
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-tertiary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               All
@@ -211,8 +211,8 @@ function ForumPage() {
                 }
                 className={`px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2 ${
                   postTypeFilter === type.value
-                    ? 'bg-white text-amber-600 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900'
+                    ? 'bg-white text-tertiary shadow-sm'
+                    : 'text-text-secondary hover:text-text-primary'
                 }`}
               >
                 <PostTypeIcon type={type.icon as any} className="w-4 h-4" />
@@ -225,7 +225,7 @@ function ForumPage() {
             placeholder="Search posts..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-2 border-2 border-slate-200 bg-white rounded focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+            className="px-4 py-2 border-2 border-border bg-white rounded focus:outline-none focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary"
           />
         </div>
         {isAuthenticated && forumData.is_member && (
@@ -275,7 +275,7 @@ function ForumPage() {
           {/* Infinite scroll trigger */}
           <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
             {isFetchingNextPage && (
-              <div className="flex items-center gap-2 text-slate-500">
+              <div className="flex items-center gap-2 text-text-muted">
                 <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path
@@ -291,8 +291,8 @@ function ForumPage() {
         </>
       ) : (
         <div className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+            <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -301,8 +301,8 @@ function ForumPage() {
               />
             </svg>
           </div>
-          <p className="text-slate-600 font-display text-lg">No posts yet</p>
-          <p className="text-slate-500 text-sm mt-2 mb-6">
+          <p className="text-text-secondary font-display text-lg">No posts yet</p>
+          <p className="text-text-muted text-sm mt-2 mb-6">
             {forumData.is_member
               ? "Be the first to start a discussion!"
               : 'Join the forum to create posts'}

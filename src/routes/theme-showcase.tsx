@@ -91,14 +91,14 @@ function ThemeShowcase() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8 px-4">
+    <div className="min-h-screen bg-bg-main py-8 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="mb-8">
-          <h1 className="text-4xl font-display font-bold text-slate-900 mb-2">
+          <h1 className="text-4xl font-display font-bold text-text-primary mb-2">
             Border Style Theme Showcase
           </h1>
-          <p className="text-slate-600 text-lg">
-            Explore different border style options for cards, buttons, and forms. 
+          <p className="text-text-secondary text-lg">
+            Explore different border style options for cards, buttons, and forms.
             Each option maintains your brand identity while offering a more familiar user experience.
           </p>
         </div>
@@ -115,25 +115,25 @@ function ThemeShowcase() {
         </div>
 
         {selectedStyle && (
-          <div className="mt-8 p-6 bg-amber-50 border border-amber-200 rounded-xl">
-            <h2 className="text-xl font-display font-semibold text-amber-900 mb-2">
+          <div className="mt-8 p-6 bg-tertiary/10 border border-tertiary rounded-xl">
+            <h2 className="text-xl font-display font-semibold text-tertiary mb-2">
               Style Selected: {borderStyles.find(s => s.id === selectedStyle)?.name}
             </h2>
-            <p className="text-amber-800 mb-4">
+            <p className="text-text-primary mb-4">
               To apply this style across the application, update the component classes:
             </p>
-            <div className="bg-white p-4 rounded-lg font-mono text-sm">
+            <div className="bg-bg-surface p-4 rounded-lg font-mono text-sm">
               <div className="mb-2">
-                <span className="text-slate-600">Card:</span>{' '}
-                <span className="text-slate-900">.{borderStyles.find(s => s.id === selectedStyle)?.cardClass}</span>
+                <span className="text-text-secondary">Card:</span>{' '}
+                <span className="text-text-primary">.{borderStyles.find(s => s.id === selectedStyle)?.cardClass}</span>
               </div>
               <div className="mb-2">
-                <span className="text-slate-600">Button:</span>{' '}
-                <span className="text-slate-900">.{borderStyles.find(s => s.id === selectedStyle)?.buttonClass}</span>
+                <span className="text-text-secondary">Button:</span>{' '}
+                <span className="text-text-primary">.{borderStyles.find(s => s.id === selectedStyle)?.buttonClass}</span>
               </div>
               <div>
-                <span className="text-slate-600">Input:</span>{' '}
-                <span className="text-slate-900">.{borderStyles.find(s => s.id === selectedStyle)?.inputClass}</span>
+                <span className="text-text-secondary">Input:</span>{' '}
+                <span className="text-text-primary">.{borderStyles.find(s => s.id === selectedStyle)?.inputClass}</span>
               </div>
             </div>
           </div>
@@ -151,30 +151,30 @@ interface StyleCardProps {
 
 function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
   return (
-    <div className="bg-white p-6 rounded-xl shadow-md border border-slate-200">
+    <div className="bg-bg-surface p-6 rounded-xl shadow-md border border-border">
       <div className="mb-4">
-        <h2 className="text-2xl font-display font-semibold text-slate-900 mb-1">
+        <h2 className="text-2xl font-display font-semibold text-text-primary mb-1">
           {style.name}
         </h2>
-        <p className="text-slate-600 text-sm">{style.description}</p>
+        <p className="text-text-secondary text-sm">{style.description}</p>
       </div>
 
       {/* Card Example */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-slate-700 mb-2 font-display">Card Example</h3>
+        <h3 className="text-sm font-medium text-text-secondary mb-2 font-display">Card Example</h3>
         <div
           className={`
             ${style.cardClass}
-            ${style.id !== 'gradient-border' ? 'bg-white shadow-md border border-slate-200' : ''}
+            ${style.id !== 'gradient-border' ? 'bg-bg-surface shadow-md border border-border' : ''}
             transition-all duration-300
             p-6 hover:shadow-lg hover:-translate-y-0.5
-            ${style.id !== 'gradient-border' ? 'hover:border-amber-200' : ''}
-            ${style.id === 'offset-shadow' ? 'hover:border-amber-200' : ''}
+            ${style.id !== 'gradient-border' ? 'hover:border-tertiary' : ''}
+            ${style.id === 'offset-shadow' ? 'hover:border-tertiary' : ''}
           `}
         >
           <div className={`relative ${style.id === 'notched' ? 'z-10' : 'z-0'}`}>
-            <h4 className="font-display font-semibold text-slate-900 mb-2">Sample Card Title</h4>
-            <p className="text-slate-600 text-sm">
+            <h4 className="font-display font-semibold text-text-primary mb-2">Sample Card Title</h4>
+            <p className="text-text-secondary text-sm">
               This is an example card demonstrating the {style.name.toLowerCase()} border style.
               Hover over it to see the interaction effects.
             </p>
@@ -184,7 +184,7 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
 
       {/* Button Examples */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-slate-700 mb-2 font-display">Button Examples</h3>
+        <h3 className="text-sm font-medium text-text-secondary mb-2 font-display">Button Examples</h3>
         <div className="flex flex-wrap gap-3">
           <button
             className={`
@@ -193,8 +193,8 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
               focus:outline-none focus:ring-2 focus:ring-offset-2
               disabled:opacity-50 disabled:cursor-not-allowed
               active:scale-[0.98] inline-flex items-center justify-center
-              bg-slate-900 text-white hover:bg-slate-800
-              focus:ring-slate-500
+              bg-text-primary text-white hover:bg-text-secondary
+              focus:ring-text-muted
               ${style.id === 'offset-shadow' ? '' : 'shadow-sm hover:shadow-md'}
               ${style.id === 'gradient-border' ? 'relative z-0' : ''}
               px-6 py-3 text-base
@@ -209,8 +209,8 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
               focus:outline-none focus:ring-2 focus:ring-offset-2
               disabled:opacity-50 disabled:cursor-not-allowed
               active:scale-[0.98] inline-flex items-center justify-center
-              bg-amber-500 text-white hover:bg-amber-600
-              focus:ring-amber-500
+              bg-tertiary text-white hover:bg-tertiary-hover
+              focus:ring-tertiary
               ${style.id === 'offset-shadow' ? '' : 'shadow-sm hover:shadow-md'}
               ${style.id === 'gradient-border' ? 'relative z-0' : ''}
               px-6 py-3 text-base
@@ -225,8 +225,8 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
               focus:outline-none focus:ring-2 focus:ring-offset-2
               disabled:opacity-50 disabled:cursor-not-allowed
               active:scale-[0.98] inline-flex items-center justify-center
-              bg-transparent border-2 border-slate-300 text-slate-700
-              hover:border-slate-400 hover:bg-slate-50 focus:ring-slate-500
+              bg-transparent border-2 border-border text-text-secondary
+              hover:border-text-muted hover:bg-bg-main focus:ring-text-muted
               ${style.id === 'offset-shadow' ? '' : ''}
               ${style.id === 'gradient-border' ? 'relative z-0' : ''}
               px-6 py-3 text-base
@@ -239,10 +239,10 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
 
       {/* Form Input Examples */}
       <div className="mb-6">
-        <h3 className="text-sm font-medium text-slate-700 mb-2 font-display">Form Input Examples</h3>
+        <h3 className="text-sm font-medium text-text-secondary mb-2 font-display">Form Input Examples</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2 font-display">
+            <label className="block text-sm font-medium text-text-secondary mb-2 font-display">
               Text Input
             </label>
             <input
@@ -251,17 +251,17 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
               className={`
                 ${style.inputClass}
                 w-full px-4 py-3
-                ${style.id !== 'gradient-border' ? 'border-2 border-slate-200 bg-white' : 'bg-white'}
-                text-slate-900 placeholder:text-slate-400
+                ${style.id !== 'gradient-border' ? 'border-2 border-border bg-bg-surface' : 'bg-bg-surface'}
+                text-text-primary placeholder:text-text-muted
                 transition-all duration-200
-                focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
-                ${style.id !== 'gradient-border' ? 'hover:border-slate-300' : ''}
+                focus:outline-none focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary
+                ${style.id !== 'gradient-border' ? 'hover:border-text-muted' : ''}
                 ${style.id === 'gradient-border' ? 'relative z-0' : ''}
               `}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-2 font-display">
+            <label className="block text-sm font-medium text-text-secondary mb-2 font-display">
               Textarea
             </label>
             <textarea
@@ -270,11 +270,11 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
               className={`
                 ${style.inputClass}
                 w-full px-4 py-3 resize-none
-                ${style.id !== 'gradient-border' ? 'border-2 border-slate-200 bg-white' : 'bg-white'}
-                text-slate-900 placeholder:text-slate-400
+                ${style.id !== 'gradient-border' ? 'border-2 border-border bg-bg-surface' : 'bg-bg-surface'}
+                text-text-primary placeholder:text-text-muted
                 transition-all duration-200
-                focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500
-                ${style.id !== 'gradient-border' ? 'hover:border-slate-300' : ''}
+                focus:outline-none focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary
+                ${style.id !== 'gradient-border' ? 'hover:border-text-muted' : ''}
                 ${style.id === 'gradient-border' ? 'relative z-0' : ''}
               `}
             />
@@ -289,8 +289,8 @@ function StyleCard({ style, isSelected, onSelect }: StyleCardProps) {
           w-full py-3 px-4 rounded-lg font-display font-medium
           transition-all duration-200
           ${isSelected
-            ? 'bg-amber-500 text-white hover:bg-amber-600'
-            : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+            ? 'bg-tertiary text-white hover:bg-tertiary-hover'
+            : 'bg-bg-elevated text-text-secondary hover:bg-border'
           }
         `}
       >

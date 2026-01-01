@@ -49,8 +49,8 @@ function RoutesListing() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">Error loading routes</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-error font-display text-lg mb-2">Error loading routes</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -94,7 +94,7 @@ function RoutesListing() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm sm:text-base font-medium px-4">
+            <span className="text-text-secondary text-sm sm:text-base font-medium px-4">
               Page {page} of {data.total_pages}
             </span>
             <Button
@@ -109,13 +109,13 @@ function RoutesListing() {
         </>
       ) : (
         <div className="text-center py-20 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+            <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
           </div>
-          <p className="text-slate-600 font-display text-lg">No routes found</p>
-          <p className="text-slate-500 text-sm mt-2">Try adjusting your search terms</p>
+          <p className="text-text-secondary font-display text-lg">No routes found</p>
+          <p className="text-text-muted text-sm mt-2">Try adjusting your search terms</p>
         </div>
       )}
     </div>

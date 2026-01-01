@@ -29,7 +29,7 @@ export const HashtagFilter = ({ selectedHashtag, onHashtagSelect }: HashtagFilte
         {selectedHashtag && (
           <button
             onClick={() => onHashtagSelect(undefined)}
-            className="px-3 py-1.5 bg-amber-500 text-white text-sm font-medium rounded-full hover:bg-amber-600 transition-colors flex items-center gap-1"
+            className="px-3 py-1.5 bg-tertiary text-white text-sm font-medium rounded-full hover:bg-tertiary-hover transition-colors flex items-center gap-1"
           >
             #{selectedHashtag}
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -45,8 +45,8 @@ export const HashtagFilter = ({ selectedHashtag, onHashtagSelect }: HashtagFilte
                 onClick={() => onHashtagSelect(hashtag.name)}
                 className={`px-3 py-1.5 text-sm font-medium rounded-full transition-colors ${
                   selectedHashtag === hashtag.name
-                    ? 'bg-amber-500 text-white'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                    ? 'bg-tertiary text-white'
+                    : 'bg-bg-elevated text-text-secondary hover:bg-bg-elevated/80'
                 }`}
               >
                 #{hashtag.name}

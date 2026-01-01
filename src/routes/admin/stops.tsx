@@ -191,7 +191,7 @@ function AdminStopsPage() {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="col-span-2">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Name</label>
                 <Input
                   value={formData.name}
                   onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -221,7 +221,7 @@ function AdminStopsPage() {
                   </Select>
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Latitude</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Latitude</label>
                   <Input
                     type="number"
                     step="any"
@@ -231,7 +231,7 @@ function AdminStopsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Longitude</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Longitude</label>
                   <Input
                     type="number"
                     step="any"
@@ -241,7 +241,7 @@ function AdminStopsPage() {
                   />
                 </div>
                 <div className="col-span-2">
-                  <label className="block text-sm font-medium text-slate-700 mb-1">Address</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">Address</label>
                   <Input
                     value={formData.address}
                     onChange={(e) => setFormData({ ...formData, address: e.target.value })}
@@ -249,7 +249,7 @@ function AdminStopsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">City</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">City</label>
                   <Input
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -257,7 +257,7 @@ function AdminStopsPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-slate-700 mb-1">District</label>
+                  <label className="block text-sm font-medium text-text-secondary mb-1">District</label>
                   <Input
                     value={formData.district}
                     onChange={(e) => setFormData({ ...formData, district: e.target.value })}
@@ -303,13 +303,13 @@ function AdminStopsPage() {
                     {stop.photo_url ? (
                       <img src={stop.photo_url} alt={stop.name} className="w-10 h-10 rounded-sm object-cover" />
                     ) : (
-                      <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
-                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-bg-elevated rounded-sm flex items-center justify-center">
+                        <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                         </svg>
                       </div>
                     )}
-                    <span className="font-medium text-slate-900">{stop.name}</span>
+                    <span className="font-medium text-text-primary">{stop.name}</span>
                   </div>
                 ),
               },
@@ -359,7 +359,7 @@ function AdminStopsPage() {
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm font-medium">Page {page} of {data.total_pages}</span>
+            <span className="text-text-secondary text-sm font-medium">Page {page} of {data.total_pages}</span>
             <Button variant="outline" onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))} disabled={page >= data.total_pages}>
               Next →
             </Button>
@@ -368,7 +368,7 @@ function AdminStopsPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <p className="text-slate-600">No stops found</p>
+            <p className="text-text-secondary">No stops found</p>
             <Button variant="primary" className="mt-4" onClick={() => setShowForm(true)}>
               Add Your First Stop
             </Button>

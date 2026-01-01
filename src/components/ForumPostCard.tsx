@@ -63,7 +63,7 @@ export const ForumPostCard = ({
               <Link
                 to="/profile/$userId"
                 params={{ userId: String(post.user_id) }}
-                className="font-semibold text-sm sm:text-base text-slate-900 hover:text-amber-600 transition-colors truncate"
+                className="font-semibold text-sm sm:text-base text-text-primary hover:text-accent transition-colors truncate"
               >
                 {post.user?.username || 'Anonymous'}
               </Link>
@@ -82,7 +82,7 @@ export const ForumPostCard = ({
                 </span>
               )}
             </div>
-            <p className="text-xs text-slate-500 mt-0.5">
+            <p className="text-xs text-text-muted mt-0.5">
               {formatDistanceToNow(new Date(post.created_at), { addSuffix: true })}
             </p>
           </div>
@@ -137,10 +137,10 @@ export const ForumPostCard = ({
         className="block"
       >
         <div className="mb-4">
-          <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-2 hover:text-amber-600 transition-colors">
+          <h3 className="text-xl sm:text-2xl font-display font-bold text-text-primary mb-2 hover:text-accent transition-colors">
             {post.title}
           </h3>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-2 line-clamp-3">
+          <p className="text-sm sm:text-base text-text-secondary leading-relaxed mb-2 line-clamp-3">
             {post.content}
           </p>
 
@@ -256,7 +256,7 @@ export const ForumPostCard = ({
       </Link>
 
       {/* Actions */}
-      <div className="flex items-center justify-between pt-4 border-t border-slate-100">
+      <div className="flex items-center justify-between pt-4 border-t border-border">
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-2">
             <button
@@ -266,7 +266,7 @@ export const ForumPostCard = ({
                 handleReaction('upvote');
               }}
               disabled={!isAuthenticated || reactMutation.isPending}
-              className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-text-secondary hover:text-accent transition-colors disabled:opacity-50"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -280,7 +280,7 @@ export const ForumPostCard = ({
                 handleReaction('downvote');
               }}
               disabled={!isAuthenticated || reactMutation.isPending}
-              className="flex items-center gap-1 text-slate-600 hover:text-red-600 transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 text-text-secondary hover:text-error transition-colors disabled:opacity-50"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -292,7 +292,7 @@ export const ForumPostCard = ({
             to="/routes/$routeId/forum/posts/$postId"
             params={{ routeId: String(forumId), postId: String(post.id) }}
             onClick={(e) => e.stopPropagation()}
-            className="flex items-center gap-1 text-slate-600 hover:text-amber-600 transition-colors"
+            className="flex items-center gap-1 text-text-secondary hover:text-accent transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

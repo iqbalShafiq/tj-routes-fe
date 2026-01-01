@@ -45,7 +45,7 @@ export const ShareButton = ({ url, title, text, className }: ShareButtonProps) =
   return (
     <button
       onClick={handleShare}
-      className={`flex items-center gap-1.5 text-slate-500 hover:text-amber-600 transition-colors ${className || ''}`}
+      className={`flex items-center gap-1.5 text-text-muted hover:text-accent transition-colors ${className || ''}`}
       title={copied ? 'Copied!' : 'Share'}
     >
       {copied ? (

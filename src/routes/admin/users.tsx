@@ -81,26 +81,26 @@ function AdminUsersPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         <Card static className="text-center">
-          <p className="text-2xl font-display font-bold text-slate-900">{data?.total || 0}</p>
-          <p className="text-sm text-slate-500">Total Users</p>
+          <p className="text-2xl font-display font-bold text-text-primary">{data?.total || 0}</p>
+          <p className="text-sm text-text-muted">Total Users</p>
         </Card>
         <Card static className="text-center">
-          <p className="text-2xl font-display font-bold text-amber-600">
+          <p className="text-2xl font-display font-bold text-tertiary">
             {data?.data.filter(u => u.role === 'admin').length || 0}
           </p>
-          <p className="text-sm text-slate-500">Admins</p>
+          <p className="text-sm text-text-muted">Admins</p>
         </Card>
         <Card static className="text-center">
-          <p className="text-2xl font-display font-bold text-emerald-600">
+          <p className="text-2xl font-display font-bold text-success">
             {data?.data.filter(u => u.level !== 'newcomer').length || 0}
           </p>
-          <p className="text-sm text-slate-500">Active Contributors</p>
+          <p className="text-sm text-text-muted">Active Contributors</p>
         </Card>
         <Card static className="text-center">
-          <p className="text-2xl font-display font-bold text-blue-600">
+          <p className="text-2xl font-display font-bold text-info">
             {data?.data.filter(u => u.oauth_provider).length || 0}
           </p>
-          <p className="text-sm text-slate-500">OAuth Users</p>
+          <p className="text-sm text-text-muted">OAuth Users</p>
         </Card>
       </div>
 
@@ -124,12 +124,12 @@ function AdminUsersPage() {
                         <Link
                           to="/profile/$userId"
                           params={{ userId: String(user.id) }}
-                          className="font-medium text-slate-900 hover:text-amber-600"
+                          className="font-medium text-text-primary hover:text-accent"
                         >
                           {user.username}
                         </Link>
                         {user.oauth_provider && (
-                          <span className="ml-2 text-xs text-slate-400">({user.oauth_provider})</span>
+                          <span className="ml-2 text-xs text-text-muted">({user.oauth_provider})</span>
                         )}
                       </div>
                     </div>
@@ -191,7 +191,7 @@ function AdminUsersPage() {
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm font-medium">Page {page} of {data.total_pages}</span>
+            <span className="text-text-secondary text-sm font-medium">Page {page} of {data.total_pages}</span>
             <Button variant="outline" onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))} disabled={page >= data.total_pages}>
               Next →
             </Button>
@@ -200,7 +200,7 @@ function AdminUsersPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <p className="text-slate-600">No users found</p>
+            <p className="text-text-secondary">No users found</p>
           </div>
         </Card>
       )}

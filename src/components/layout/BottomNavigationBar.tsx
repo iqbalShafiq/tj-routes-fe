@@ -62,7 +62,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
   };
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-slate-200 shadow-lg">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-border shadow-lg">
       {/* Material 3 rounded top corners */}
       <div className="rounded-t-3xl overflow-hidden bg-white">
         <div className="flex items-center justify-around h-20 px-2 pb-safe">
@@ -79,7 +79,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
                   transition-all duration-200 active:scale-95
                   ${active
                     ? 'text-accent'
-                    : 'text-slate-600 hover:text-slate-900'
+                    : 'text-text-secondary hover:text-text-primary'
                   }
                 `}
               >
@@ -104,7 +104,7 @@ export const BottomNavigationBar = ({ onMenuToggle, isMenuOpen }: BottomNavigati
               transition-all duration-200 active:scale-95
               ${isMenuOpen
                 ? 'text-accent'
-                : 'text-slate-600 hover:text-slate-900'
+                : 'text-text-secondary hover:text-text-primary'
               }
             `}
             aria-label={isMenuOpen ? 'Close menu' : 'Open menu'}

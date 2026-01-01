@@ -15,7 +15,7 @@ export const TrendingSection = () => {
     return (
       <div className="mb-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-display font-bold text-slate-900">Trending Now</h2>
+          <h2 className="text-xl font-display font-bold text-text-primary">Trending Now</h2>
           <Skeleton className="h-8 w-32" />
         </div>
         <div className="-mx-6">
@@ -78,22 +78,22 @@ function TrendingCard({ report }: { report: Report }) {
             />
           </div>
         )}
-        <h3 className="font-display font-semibold text-slate-900 mb-2 line-clamp-1">
+        <h3 className="font-display font-semibold text-text-primary mb-2 line-clamp-1">
           {report.title}
         </h3>
-        <div className="flex items-center gap-2 text-xs text-slate-500 mb-2">
+        <div className="flex items-center gap-2 text-xs text-text-muted mb-2">
           <span>{report.user?.username || 'Anonymous'}</span>
           <span>•</span>
           <span>{formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}</span>
         </div>
         <div className="flex items-center gap-3 text-sm mt-auto">
-          <div className="flex items-center gap-1 text-emerald-600">
+          <div className="flex items-center gap-1 text-accent">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
             </svg>
             <span className="font-medium">{report.upvotes}</span>
           </div>
-          <div className="flex items-center gap-1 text-slate-500">
+          <div className="flex items-center gap-1 text-text-muted">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>

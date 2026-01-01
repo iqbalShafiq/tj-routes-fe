@@ -59,10 +59,10 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           </Link>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <Link 
-                to="/profile/$userId" 
+              <Link
+                to="/profile/$userId"
                 params={{ userId: String(report.user_id) }}
-                className="font-semibold text-sm sm:text-base text-slate-900 hover:text-amber-600 transition-colors truncate"
+                className="font-semibold text-sm sm:text-base text-text-primary hover:text-accent transition-colors truncate"
               >
                 {report.user?.username || 'Anonymous'}
               </Link>
@@ -78,13 +78,13 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
               )}
             </div>
             <div className="flex items-center gap-2 flex-wrap mt-0.5 sm:block">
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-text-muted">
                 {formatDistanceToNow(new Date(report.created_at), { addSuffix: true })}
               </p>
               <div className="flex items-center gap-1.5 sm:hidden">
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-text-muted">·</span>
                 <FollowButton userId={report.user_id} variant="minimal" className="text-xs" />
-                <span className="text-xs text-slate-400">·</span>
+                <span className="text-xs text-text-muted">·</span>
                 <span className="text-xs font-medium whitespace-nowrap">
                   {statusInfo?.label || report.status}
                 </span>
@@ -103,13 +103,13 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       {/* Content */}
       <Link to="/feed/$reportId" params={{ reportId: String(report.id) }} className="block">
         <div className="mb-4">
-          <span className="text-[10px] sm:text-xs font-medium text-slate-500 uppercase tracking-wider mb-1 block">
+          <span className="text-[10px] sm:text-xs font-medium text-text-muted uppercase tracking-wider mb-1 block">
             {typeInfo?.label || report.type}
           </span>
-          <h3 className="text-xl sm:text-2xl font-display font-bold text-slate-900 mb-2 hover:text-amber-600 transition-colors">
+          <h3 className="text-xl sm:text-2xl font-display font-bold text-text-primary mb-2 hover:text-accent transition-colors">
             {report.title}
           </h3>
-          <p className="text-sm sm:text-base text-slate-600 leading-relaxed mb-2">{report.description}</p>
+          <p className="text-sm sm:text-base text-text-secondary leading-relaxed mb-2">{report.description}</p>
 
           {/* Hashtags */}
           {report.hashtags && report.hashtags.length > 0 && (
@@ -122,7 +122,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                     e.stopPropagation();
                     window.location.href = `/feed?hashtag=${encodeURIComponent(hashtag)}`;
                   }}
-                  className="text-amber-600 hover:text-amber-700 text-sm font-medium"
+                  className="text-tertiary hover:text-tertiary-hover text-sm font-medium"
                 >
                   #{hashtag}
                 </button>
@@ -206,7 +206,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                   to="/routes/$routeId"
                   params={{ routeId: String(report.route.id) }}
                   onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-amber-50 text-amber-700 text-sm rounded-lg hover:bg-amber-100 transition-colors"
+                  className="inline-flex items-center gap-1 px-3 py-1.5 bg-tertiary/10 text-tertiary text-sm rounded-lg hover:bg-tertiary/20 transition-colors"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -215,7 +215,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                 </Link>
               )}
               {report.stop && (
-                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-slate-100 text-slate-700 text-sm rounded-lg">
+                <span className="inline-flex items-center gap-1 px-3 py-1.5 bg-bg-elevated text-text-secondary text-sm rounded-lg">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
@@ -228,15 +228,15 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       </Link>
 
       {/* Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-slate-100">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-4 border-t border-border">
         <div className="flex items-center gap-4 sm:gap-6 flex-wrap">
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending || removeReactionMutation.isPending}
             className={`flex items-center gap-1.5 transition-colors disabled:opacity-50 ${
               report.user_reaction === 'upvote'
-                ? 'text-emerald-600'
-                : 'text-slate-500 hover:text-emerald-600'
+                ? 'text-accent'
+                : 'text-text-muted hover:text-accent'
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,8 +249,8 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
             disabled={!isAuthenticated || reactMutation.isPending || removeReactionMutation.isPending}
             className={`flex items-center gap-1.5 transition-colors disabled:opacity-50 ${
               report.user_reaction === 'downvote'
-                ? 'text-red-600'
-                : 'text-slate-500 hover:text-red-600'
+                ? 'text-error'
+                : 'text-text-muted hover:text-error'
             }`}
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -258,10 +258,10 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
             </svg>
             <span className="text-sm font-medium">{report.downvotes}</span>
           </button>
-          <Link 
-            to="/feed/$reportId" 
+          <Link
+            to="/feed/$reportId"
             params={{ reportId: String(report.id) }}
-            className="flex items-center gap-1.5 text-slate-500 hover:text-amber-600 transition-colors"
+            className="flex items-center gap-1.5 text-text-muted hover:text-accent transition-colors"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />

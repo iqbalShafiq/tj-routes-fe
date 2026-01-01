@@ -40,13 +40,13 @@ function ReportsPage() {
       <div className="max-w-md mx-auto animate-fade-in">
         <Card>
           <div className="text-center py-8">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-amber-100 mb-4 card-chamfered">
-              <svg className="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-warning/10 mb-4 card-chamfered">
+              <svg className="w-8 h-8 text-warning" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
             </div>
-            <h2 className="text-2xl font-display font-bold text-slate-900 mb-2">Authentication Required</h2>
-            <p className="text-slate-600 mb-6">
+            <h2 className="text-2xl font-display font-bold text-text-primary mb-2">Authentication Required</h2>
+            <p className="text-text-secondary mb-6">
               You need to be logged in to view your reports.
             </p>
             <Button variant="primary" onClick={() => navigate({ to: '/auth/login' })}>
@@ -82,8 +82,8 @@ function ReportsPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">Error loading reports</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-error font-display text-lg mb-2">Error loading reports</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -132,7 +132,7 @@ function ReportsPage() {
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex-1">
                     <div className="flex items-center gap-3 mb-3">
-                      <h3 className="text-xl font-display font-semibold text-slate-900">Report #{report.id}</h3>
+                      <h3 className="text-xl font-display font-semibold text-text-primary">Report #{report.id}</h3>
                       <Chip variant={getStatusVariant(report.status)}>
                         {report.status}
                       </Chip>
@@ -140,29 +140,29 @@ function ReportsPage() {
                         {getTypeLabel(report.type)}
                       </Chip>
                     </div>
-                    <p className="text-sm text-slate-500 mb-4">{format(new Date(report.created_at), 'PPp')}</p>
+                    <p className="text-sm text-text-muted mb-4">{format(new Date(report.created_at), 'PPp')}</p>
                   </div>
                 </div>
                 <CardBody>
                   {report.route && (
-                    <div className="mb-3 p-3 bg-slate-50 rounded-sm">
-                      <p className="text-sm text-slate-600 mb-1">
+                    <div className="mb-3 p-3 bg-bg-main rounded-sm">
+                      <p className="text-sm text-text-secondary mb-1">
                         <span className="font-medium">Route:</span> {report.route.code} - {report.route.name}
                       </p>
                     </div>
                   )}
                   {report.stop && (
-                    <div className="mb-3 p-3 bg-slate-50 rounded-sm">
-                      <p className="text-sm text-slate-600">
+                    <div className="mb-3 p-3 bg-bg-main rounded-sm">
+                      <p className="text-sm text-text-secondary">
                         <span className="font-medium">Stop:</span> {report.stop.name}
                       </p>
                     </div>
                   )}
-                  <p className="text-slate-700 mb-4 leading-relaxed">{report.description}</p>
+                  <p className="text-text-secondary mb-4 leading-relaxed">{report.description}</p>
                   {report.admin_notes && (
-                    <div className="mt-4 p-4 bg-slate-50 border border-slate-200 card-chamfered-sm">
-                      <p className="text-sm font-display font-medium text-slate-900 mb-2">Admin Notes:</p>
-                      <p className="text-sm text-slate-700 leading-relaxed">{report.admin_notes}</p>
+                    <div className="mt-4 p-4 bg-bg-main border border-border card-chamfered-sm">
+                      <p className="text-sm font-display font-medium text-text-primary mb-2">Admin Notes:</p>
+                      <p className="text-sm text-text-secondary leading-relaxed">{report.admin_notes}</p>
                     </div>
                   )}
                 </CardBody>
@@ -179,7 +179,7 @@ function ReportsPage() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm sm:text-base font-medium px-4">
+            <span className="text-text-secondary text-sm sm:text-base font-medium px-4">
               Page {page} of {data.total_pages}
             </span>
             <Button
@@ -195,13 +195,13 @@ function ReportsPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+              <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
               </svg>
             </div>
-            <p className="text-slate-600 font-display text-lg mb-2">No reports yet</p>
-            <p className="text-slate-500 text-sm mb-6">Start by submitting your first report</p>
+            <p className="text-text-secondary font-display text-lg mb-2">No reports yet</p>
+            <p className="text-text-muted text-sm mb-6">Start by submitting your first report</p>
             <Button variant="primary" onClick={() => navigate({ to: '/reports/new' })}>
               Submit Your First Report
             </Button>

@@ -28,7 +28,7 @@ export const ForumHeader = ({
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex-1">
           <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-display font-bold text-slate-900">Forum: {routeName}</h1>
+            <h1 className="text-2xl font-display font-bold text-text-primary">Forum: {routeName}</h1>
             <Chip variant="warning">
               <svg className="w-3.5 h-3.5 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
@@ -41,11 +41,11 @@ export const ForumHeader = ({
               Forum
             </Chip>
           </div>
-          <p className="text-slate-600">
+          <p className="text-text-secondary">
             Join the discussion about this route. Share updates, ask questions, and help fellow commuters.
           </p>
           <div className="flex items-center gap-4 mt-3">
-            <div className="flex items-center gap-2 text-sm text-slate-600">
+            <div className="flex items-center gap-2 text-sm text-text-secondary">
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -61,7 +61,7 @@ export const ForumHeader = ({
               <Link
                 to="/routes/$routeId/forum/members"
                 params={{ routeId: String(forum.route_id) }}
-                className="text-sm text-amber-600 hover:text-amber-700 font-medium"
+                className="text-sm text-tertiary hover:text-tertiary-hover font-medium"
               >
                 View all members →
               </Link>

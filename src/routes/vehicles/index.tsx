@@ -25,8 +25,8 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
             className="w-24 h-24 object-cover rounded-sm flex-shrink-0"
           />
         ) : (
-          <div className="w-24 h-24 bg-slate-100 flex items-center justify-center rounded-sm flex-shrink-0">
-            <svg className="w-12 h-12 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="w-24 h-24 bg-bg-elevated flex items-center justify-center rounded-sm flex-shrink-0">
+            <svg className="w-12 h-12 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
           </div>
@@ -37,26 +37,26 @@ function VehicleCard({ vehicle }: { vehicle: Vehicle }) {
               {vehicle.status}
             </Chip>
           </div>
-          <h3 className="font-display font-bold text-slate-900 text-xl">{vehicle.vehicle_plate}</h3>
+          <h3 className="font-display font-bold text-text-primary text-xl">{vehicle.vehicle_plate}</h3>
           {vehicle.vehicle_type && (
-            <p className="text-sm text-slate-600 mt-1">{vehicle.vehicle_type}</p>
+            <p className="text-sm text-text-secondary mt-1">{vehicle.vehicle_type}</p>
           )}
         </div>
       </div>
       
       <CardBody>
-        <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-100">
+        <div className="grid grid-cols-2 gap-4 mt-4 pt-4 border-t border-border">
           {vehicle.capacity && (
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Capacity</p>
-              <p className="text-lg font-display font-semibold text-slate-900">{vehicle.capacity}</p>
+              <p className="text-xs text-text-muted uppercase tracking-wider">Capacity</p>
+              <p className="text-lg font-display font-semibold text-text-primary">{vehicle.capacity}</p>
             </div>
           )}
           {vehicle.route && (
             <div>
-              <p className="text-xs text-slate-500 uppercase tracking-wider">Route</p>
-              <p className="text-sm font-medium text-amber-600">{vehicle.route.route_number}</p>
-              <p className="text-xs text-slate-500 truncate">{vehicle.route.name}</p>
+              <p className="text-xs text-text-muted uppercase tracking-wider">Route</p>
+              <p className="text-sm font-medium text-tertiary">{vehicle.route.route_number}</p>
+              <p className="text-xs text-text-muted truncate">{vehicle.route.name}</p>
             </div>
           )}
         </div>
@@ -108,7 +108,7 @@ function VehiclesPage() {
           </svg>
         </div>
         <p className="text-red-600 font-display text-lg mb-2">Error loading vehicles</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -184,7 +184,7 @@ function VehiclesPage() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm sm:text-base font-medium px-4">
+            <span className="text-text-secondary text-sm sm:text-base font-medium px-4">
               Page {page} of {data.total_pages}
             </span>
             <Button
@@ -199,13 +199,13 @@ function VehiclesPage() {
         </>
       ) : (
         <div className="text-center py-20 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+            <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
             </svg>
           </div>
-          <p className="text-slate-600 font-display text-lg">No vehicles found</p>
-          <p className="text-slate-500 text-sm mt-2">Try adjusting your search</p>
+          <p className="text-text-secondary font-display text-lg">No vehicles found</p>
+          <p className="text-text-muted text-sm mt-2">Try adjusting your search</p>
         </div>
       )}
     </div>

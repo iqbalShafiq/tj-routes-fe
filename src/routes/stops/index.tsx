@@ -33,9 +33,9 @@ function StopCard({ stop }: { stop: Stop }) {
           />
         ) : (
           <div className={`w-20 h-20 flex items-center justify-center rounded-sm flex-shrink-0 ${
-            isTerminal ? 'bg-amber-100' : 'bg-slate-100'
+            isTerminal ? 'bg-warning/10' : 'bg-bg-elevated'
           }`}>
-            <svg className={`w-10 h-10 ${isTerminal ? 'text-amber-600' : 'text-slate-400'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className={`w-10 h-10 ${isTerminal ? 'text-warning' : 'text-text-muted'}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isTerminal ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
               ) : (
@@ -53,12 +53,12 @@ function StopCard({ stop }: { stop: Stop }) {
               {stop.status}
             </Chip>
           </div>
-          <h3 className="font-display font-semibold text-slate-900 text-lg truncate">{stop.name}</h3>
+          <h3 className="font-display font-semibold text-text-primary text-lg truncate">{stop.name}</h3>
           {stop.address && (
-            <p className="text-sm text-slate-500 mt-1 line-clamp-2">{stop.address}</p>
+            <p className="text-sm text-text-muted mt-1 line-clamp-2">{stop.address}</p>
           )}
           {stop.city && (
-            <p className="text-xs text-slate-400 mt-1">
+            <p className="text-xs text-text-muted mt-1">
               {stop.district ? `${stop.district}, ` : ''}{stop.city}
             </p>
           )}
@@ -133,8 +133,8 @@ function StopsPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">Error loading stops</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-error font-display text-lg mb-2">Error loading stops</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -224,7 +224,7 @@ function StopsPage() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm sm:text-base font-medium px-4">
+            <span className="text-text-secondary text-sm sm:text-base font-medium px-4">
               Page {page} of {data.total_pages}
             </span>
             <Button
@@ -239,13 +239,13 @@ function StopsPage() {
         </>
       ) : (
         <div className="text-center py-20 animate-fade-in">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-            <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+            <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
             </svg>
           </div>
-          <p className="text-slate-600 font-display text-lg">No stops found</p>
-          <p className="text-slate-500 text-sm mt-2">Try adjusting your filters</p>
+          <p className="text-text-secondary font-display text-lg">No stops found</p>
+          <p className="text-text-muted text-sm mt-2">Try adjusting your filters</p>
         </div>
       )}
     </div>

@@ -15,7 +15,7 @@ export const RouteCard = ({ route }: RouteCardProps) => {
       <Card className="h-full group cursor-pointer hover:shadow-lg transition-all duration-200" size="md">
         {/* Header: Number and Status */}
         <div className="flex items-start justify-between mb-3">
-          <span className="text-4xl font-display font-bold text-slate-900 leading-none">
+          <span className="text-4xl font-display font-bold text-text-primary leading-none">
             {route.code}
           </span>
           {route.status === "active" && (
@@ -29,13 +29,13 @@ export const RouteCard = ({ route }: RouteCardProps) => {
         </div>
 
         {/* Route Name */}
-        <h3 className="text-lg font-display font-bold text-slate-900 mb-2 group-hover:text-amber-600 transition-colors truncate">
+        <h3 className="text-lg font-display font-bold text-text-primary mb-2 group-hover:text-accent transition-colors truncate">
           {route.name}
         </h3>
 
         {/* Description */}
         {route.description && (
-          <p className="text-sm text-slate-600 mb-4 line-clamp-1 leading-relaxed">
+          <p className="text-sm text-text-secondary mb-4 line-clamp-1 leading-relaxed">
             {route.description}
           </p>
         )}
@@ -43,7 +43,7 @@ export const RouteCard = ({ route }: RouteCardProps) => {
         {/* Footer: Stops and Details */}
         <div className="flex items-center justify-between mt-auto pt-2">
           {stopsCount > 0 && (
-            <div className="flex items-center gap-1.5 text-sm text-slate-500">
+            <div className="flex items-center gap-1.5 text-sm text-text-muted">
               <svg
                 className="w-4 h-4"
                 fill="none"
@@ -62,7 +62,7 @@ export const RouteCard = ({ route }: RouteCardProps) => {
               </span>
             </div>
           )}
-          <span className="text-sm font-medium text-amber-600 group-hover:text-amber-700 transition-colors flex items-center gap-1 ml-auto">
+          <span className="text-sm font-medium text-tertiary group-hover:text-tertiary-hover transition-colors flex items-center gap-1 ml-auto">
             Details
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />

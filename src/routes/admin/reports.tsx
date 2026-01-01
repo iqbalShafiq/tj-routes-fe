@@ -150,8 +150,8 @@ function AdminReportsPage() {
         {selectedReport && (
           <>
             <div className="mb-4">
-              <p className="text-sm text-slate-500 mb-2">Report #{selectedReport.id}</p>
-              <p className="font-medium text-slate-900">{selectedReport.title}</p>
+              <p className="text-sm text-text-muted mb-2">Report #{selectedReport.id}</p>
+              <p className="font-medium text-text-primary">{selectedReport.title}</p>
             </div>
             <div className="space-y-4">
               <div>
@@ -199,7 +199,7 @@ function AdminReportsPage() {
             {data.data.map((report) => {
               const typeInfo = REPORT_TYPES.find(t => t.value === report.type);
               return (
-                <Card key={report.id} className="hover:border-slate-300">
+                <Card key={report.id} className="hover:border-text-muted">
                   <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div className="flex-1 min-w-0">
                       <div className="flex flex-wrap items-center gap-2 mb-2">
@@ -209,17 +209,17 @@ function AdminReportsPage() {
                         <Chip variant="default">
                           {typeInfo?.label || report.type}
                         </Chip>
-                        <span className="text-xs text-slate-400">#{report.id}</span>
+                        <span className="text-xs text-text-muted">#{report.id}</span>
                       </div>
-                      <Link 
-                        to="/feed/$reportId" 
+                      <Link
+                        to="/feed/$reportId"
                         params={{ reportId: String(report.id) }}
-                        className="font-display font-semibold text-lg text-slate-900 hover:text-amber-600 block truncate"
+                        className="font-display font-semibold text-lg text-text-primary hover:text-accent block truncate"
                       >
                         {report.title}
                       </Link>
-                      <p className="text-slate-500 text-sm mt-1 line-clamp-2">{report.description}</p>
-                      <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-slate-400">
+                      <p className="text-text-muted text-sm mt-1 line-clamp-2">{report.description}</p>
+                      <div className="flex flex-wrap items-center gap-4 mt-3 text-xs text-text-muted">
                         <span>By: {report.user?.username || 'Anonymous'}</span>
                         <span>{format(new Date(report.created_at), 'MMM d, yyyy HH:mm')}</span>
                         <div className="flex items-center gap-3">

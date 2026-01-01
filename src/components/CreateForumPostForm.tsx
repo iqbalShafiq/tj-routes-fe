@@ -168,7 +168,7 @@ export const CreateForumPostForm = ({
         onFileChange={handlePhotoChange}
       />
       {photos.length > 0 && (
-        <p className="text-sm text-slate-600">{photos.length} photo(s) selected</p>
+        <p className="text-sm text-text-secondary">{photos.length} photo(s) selected</p>
       )}
 
       {/* PDFs */}
@@ -179,7 +179,7 @@ export const CreateForumPostForm = ({
         onFileChange={handlePdfChange}
       />
       {pdfs.length > 0 && (
-        <p className="text-sm text-slate-600">{pdfs.length} PDF(s) selected</p>
+        <p className="text-sm text-text-secondary">{pdfs.length} PDF(s) selected</p>
       )}
 
       {/* Error Message */}

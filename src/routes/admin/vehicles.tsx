@@ -165,7 +165,7 @@ function AdminVehiclesPage() {
         >
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Plate Number</label>
+              <label className="block text-sm font-medium text-text-secondary mb-1">Plate Number</label>
               <Input
                 value={formData.vehicle_plate}
                 onChange={(e) => setFormData({ ...formData, vehicle_plate: e.target.value })}
@@ -190,7 +190,7 @@ function AdminVehiclesPage() {
                 </Select>
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Vehicle Type</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Vehicle Type</label>
                 <Input
                   value={formData.vehicle_type}
                   onChange={(e) => setFormData({ ...formData, vehicle_type: e.target.value })}
@@ -198,7 +198,7 @@ function AdminVehiclesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-1">Capacity</label>
+                <label className="block text-sm font-medium text-text-secondary mb-1">Capacity</label>
                 <Input
                   type="number"
                   value={formData.capacity}
@@ -254,13 +254,13 @@ function AdminVehiclesPage() {
                     {vehicle.photo_url ? (
                       <img src={vehicle.photo_url} alt={vehicle.vehicle_plate} className="w-10 h-10 rounded-sm object-cover" />
                     ) : (
-                      <div className="w-10 h-10 bg-slate-100 rounded-sm flex items-center justify-center">
-                        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-bg-elevated rounded-sm flex items-center justify-center">
+                        <svg className="w-5 h-5 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
                         </svg>
                       </div>
                     )}
-                    <span className="font-display font-semibold text-slate-900">{vehicle.vehicle_plate}</span>
+                    <span className="font-display font-semibold text-text-primary">{vehicle.vehicle_plate}</span>
                   </div>
                 ),
               },
@@ -308,7 +308,7 @@ function AdminVehiclesPage() {
             <Button variant="outline" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm font-medium">Page {page} of {data.total_pages}</span>
+            <span className="text-text-secondary text-sm font-medium">Page {page} of {data.total_pages}</span>
             <Button variant="outline" onClick={() => setPage((p) => Math.min(data.total_pages, p + 1))} disabled={page >= data.total_pages}>
               Next →
             </Button>
@@ -317,7 +317,7 @@ function AdminVehiclesPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <p className="text-slate-600">No vehicles found</p>
+            <p className="text-text-secondary">No vehicles found</p>
             <Button variant="primary" className="mt-4" onClick={() => setShowForm(true)}>
               Add Your First Vehicle
             </Button>

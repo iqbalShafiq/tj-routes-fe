@@ -101,7 +101,7 @@ function FeedPage() {
           </svg>
         </div>
         <p className="text-red-600 font-display text-lg mb-2">Error loading feed</p>
-        <p className="text-slate-600 text-sm">Please try again later.</p>
+        <p className="text-text-secondary text-sm">Please try again later.</p>
       </div>
     );
   }
@@ -126,13 +126,13 @@ function FeedPage() {
       >
         {/* Feed Sorting Tabs */}
         <div className="flex flex-wrap items-center gap-3 mb-4">
-          <div className="flex gap-2 bg-slate-100 p-1 rounded-sm">
+          <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm">
             <button
               onClick={() => setSort('recent')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'recent'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-tertiary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Recent
@@ -141,8 +141,8 @@ function FeedPage() {
               onClick={() => setSort('popular')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'popular'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-tertiary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Popular
@@ -151,8 +151,8 @@ function FeedPage() {
               onClick={() => setSort('trending')}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'trending'
-                  ? 'bg-white text-amber-600 shadow-sm'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-white text-tertiary shadow-sm'
+                  : 'text-text-secondary hover:text-text-primary'
               }`}
             >
               Trending
@@ -163,8 +163,8 @@ function FeedPage() {
               onClick={() => setFollowed(followed ? undefined : true)}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 followed
-                  ? 'bg-amber-500 text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  ? 'bg-tertiary text-white hover:bg-tertiary-hover'
+                  : 'bg-bg-elevated text-text-secondary hover:bg-border'
               }`}
             >
               Following
@@ -199,7 +199,7 @@ function FeedPage() {
           {/* Infinite scroll trigger */}
           <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
             {isFetchingNextPage && (
-              <div className="flex items-center gap-2 text-slate-500">
+              <div className="flex items-center gap-2 text-text-muted">
                 <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
                   <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
@@ -211,13 +211,13 @@ function FeedPage() {
         </>
       ) : (
         <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 card-chamfered">
-              <svg className="w-8 h-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+              <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
               </svg>
             </div>
-            <p className="text-slate-600 font-display text-lg">No reports yet</p>
-            <p className="text-slate-500 text-sm mt-2 mb-6">Be the first to share something!</p>
+            <p className="text-text-secondary font-display text-lg">No reports yet</p>
+            <p className="text-text-muted text-sm mt-2 mb-6">Be the first to share something!</p>
             {isAuthenticated && (
               <Link to="/reports/new">
                 <Button variant="primary">Create Report</Button>

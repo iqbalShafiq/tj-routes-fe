@@ -217,14 +217,14 @@ function ReportDetailPage() {
             {report.user?.username?.charAt(0).toUpperCase() || 'U'}
           </div>
           <div>
-            <Link 
-              to="/profile/$userId" 
+            <Link
+              to="/profile/$userId"
               params={{ userId: String(report.user_id) }}
-              className="font-medium text-slate-900 hover:text-amber-600"
+              className="font-medium text-text-primary hover:text-accent"
             >
               {report.user?.username || 'Anonymous'}
             </Link>
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-text-muted">
               {format(new Date(report.created_at), 'PPp')}
             </p>
           </div>
@@ -241,8 +241,8 @@ function ReportDetailPage() {
         </div>
 
         {/* Title & Description */}
-        <h1 className="text-2xl font-display font-bold text-slate-900 mb-4">{report.title}</h1>
-        <p className="text-slate-700 leading-relaxed mb-6 whitespace-pre-wrap">{report.description}</p>
+        <h1 className="text-2xl font-display font-bold text-text-primary mb-4">{report.title}</h1>
+        <p className="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap">{report.description}</p>
 
         {/* Images */}
         {report.photo_urls && report.photo_urls.length > 0 && (
@@ -268,12 +268,12 @@ function ReportDetailPage() {
                 href={url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-3 py-2 bg-slate-100 hover:bg-slate-200 rounded-sm transition-colors"
+                className="inline-flex items-center gap-2 px-3 py-2 bg-bg-elevated hover:bg-border rounded-sm transition-colors"
               >
-                <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-error" fill="currentColor" viewBox="0 0 24 24">
                   <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zm4 18H6V4h7v5h5v11z"/>
                 </svg>
-                <span className="text-sm text-slate-700">Document {idx + 1}</span>
+                <span className="text-sm text-text-secondary">Document {idx + 1}</span>
               </a>
             ))}
           </div>
@@ -281,14 +281,14 @@ function ReportDetailPage() {
 
         {/* Related info */}
         {(report.route || report.stop) && (
-          <div className="p-4 bg-slate-50 rounded-sm mb-6">
-            <p className="text-xs text-slate-500 uppercase tracking-wider mb-2">Related to</p>
+          <div className="p-4 bg-bg-main rounded-sm mb-6">
+            <p className="text-xs text-text-muted uppercase tracking-wider mb-2">Related to</p>
             <div className="flex flex-wrap gap-3">
               {report.route && (
-                <Link 
-                  to="/routes/$routeId" 
+                <Link
+                  to="/routes/$routeId"
                   params={{ routeId: String(report.related_route_id) }}
-                  className="inline-flex items-center gap-2 text-amber-700 hover:text-amber-800"
+                  className="inline-flex items-center gap-2 text-tertiary hover:text-tertiary-hover"
                 >
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
@@ -297,7 +297,7 @@ function ReportDetailPage() {
                 </Link>
               )}
               {report.stop && (
-                <span className="inline-flex items-center gap-2 text-slate-700">
+                <span className="inline-flex items-center gap-2 text-text-secondary">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                   </svg>
@@ -317,11 +317,11 @@ function ReportDetailPage() {
         )}
 
         {/* Reactions */}
-        <div className="flex items-center gap-4 sm:gap-6 pt-4 border-t border-slate-100">
+        <div className="flex items-center gap-4 sm:gap-6 pt-4 border-t border-border">
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending}
-            className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors disabled:opacity-50"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -332,7 +332,7 @@ function ReportDetailPage() {
           <button
             onClick={() => handleReaction('downvote')}
             disabled={!isAuthenticated || reactMutation.isPending}
-            className="flex items-center gap-2 text-slate-600 hover:text-red-600 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 text-text-secondary hover:text-error transition-colors disabled:opacity-50"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -340,7 +340,7 @@ function ReportDetailPage() {
             <span className="font-medium hidden sm:inline">{report.downvotes} Downvotes</span>
             <span className="font-medium sm:hidden">{report.downvotes}</span>
           </button>
-          <span className="flex items-center gap-2 text-slate-500">
+          <span className="flex items-center gap-2 text-text-muted">
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -353,7 +353,7 @@ function ReportDetailPage() {
       {/* Comment Input */}
       {isAuthenticated && (
         <Card className="mb-6">
-          <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Add a Comment</h2>
+          <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Add a Comment</h2>
           <form onSubmit={handleSubmitComment}>
             <Textarea
               value={newComment}
@@ -372,18 +372,18 @@ function ReportDetailPage() {
 
       {/* Comments Section */}
       <Card static>
-        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Comments</h2>
-        
+        <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Comments</h2>
+
         {commentsLoading ? (
-          <div className="py-8 text-center text-slate-500">Loading comments...</div>
+          <div className="py-8 text-center text-text-muted">Loading comments...</div>
         ) : comments && comments.length > 0 ? (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-border">
             {comments.map((comment) => (
               <CommentItem key={comment.id} comment={comment} reportId={reportId} />
             ))}
           </div>
         ) : (
-          <div className="py-8 text-center text-slate-500">
+          <div className="py-8 text-center text-text-muted">
             <p>No comments yet. Be the first to comment!</p>
           </div>
         )}

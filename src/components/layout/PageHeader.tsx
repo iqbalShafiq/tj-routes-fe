@@ -24,19 +24,19 @@ export const PageHeader = ({ title, subtitle, breadcrumbs, actions, children }: 
             {breadcrumbs.map((crumb, index) => (
               <li key={index} className="flex items-center gap-2">
                 {index > 0 && (
-                  <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 )}
                 {crumb.path ? (
                   <Link
                     to={crumb.path}
-                    className="text-amber-600 hover:text-amber-700 font-medium transition-colors"
+                    className="text-tertiary hover:text-tertiary-hover font-medium transition-colors"
                   >
                     {crumb.label}
                   </Link>
                 ) : (
-                  <span className="text-slate-600">{crumb.label}</span>
+                  <span className="text-text-secondary">{crumb.label}</span>
                 )}
               </li>
             ))}
@@ -47,11 +47,11 @@ export const PageHeader = ({ title, subtitle, breadcrumbs, actions, children }: 
       {/* Title and actions row */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-slate-900">
+          <h1 className="text-3xl md:text-4xl font-display font-bold text-text-primary">
             {title}
           </h1>
           {subtitle && (
-            <p className="mt-2 text-slate-600 text-lg max-w-2xl">
+            <p className="mt-2 text-text-secondary text-lg max-w-2xl">
               {subtitle}
             </p>
           )}

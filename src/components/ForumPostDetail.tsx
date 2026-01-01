@@ -64,21 +64,21 @@ function CommentItem({ comment, postId, depth = 0 }: CommentItemProps) {
               <Link
                 to="/profile/$userId"
                 params={{ userId: String(comment.user_id) }}
-                className="font-medium text-slate-900 hover:text-amber-600 text-sm"
+                className="font-medium text-text-primary hover:text-accent text-sm"
               >
                 {comment.user?.username || 'Anonymous'}
               </Link>
-              <span className="text-xs text-slate-400">
+              <span className="text-xs text-text-muted">
                 {formatDistanceToNow(new Date(comment.created_at), { addSuffix: true })}
               </span>
             </div>
-            <p className="text-slate-700 text-sm whitespace-pre-wrap">{comment.content}</p>
+            <p className="text-text-secondary text-sm whitespace-pre-wrap">{comment.content}</p>
 
             <div className="flex items-center gap-4 mt-2">
               <button
                 onClick={() => handleReaction('upvote')}
                 disabled={!isAuthenticated}
-                className="flex items-center gap-1 text-xs text-slate-500 hover:text-emerald-600 disabled:opacity-50"
+                className="flex items-center gap-1 text-xs text-text-muted hover:text-accent disabled:opacity-50"
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -98,7 +98,7 @@ function CommentItem({ comment, postId, depth = 0 }: CommentItemProps) {
               {depth < 2 && isAuthenticated && (
                 <button
                   onClick={() => setShowReplyForm(!showReplyForm)}
-                  className="text-xs text-slate-500 hover:text-amber-600"
+                  className="text-xs text-text-muted hover:text-accent"
                 >
                   Reply
                 </button>
@@ -199,7 +199,7 @@ export const ForumPostDetail = ({
                 <Link
                   to="/profile/$userId"
                   params={{ userId: String(post.user_id) }}
-                  className="font-medium text-slate-900 hover:text-amber-600"
+                  className="font-medium text-text-primary hover:text-accent"
                 >
                   {post.user?.username || 'Anonymous'}
                 </Link>
@@ -218,7 +218,7 @@ export const ForumPostDetail = ({
                   </Chip>
                 )}
               </div>
-              <p className="text-sm text-slate-500">{format(new Date(post.created_at), 'PPp')}</p>
+              <p className="text-sm text-text-muted">{format(new Date(post.created_at), 'PPp')}</p>
             </div>
           </div>
           {(isOwner || isAdmin) && (
@@ -255,8 +255,8 @@ export const ForumPostDetail = ({
         </div>
 
         {/* Title & Content */}
-        <h1 className="text-3xl font-display font-bold text-slate-900 mb-4">{post.title}</h1>
-        <p className="text-slate-700 leading-relaxed mb-6 whitespace-pre-wrap">{post.content}</p>
+        <h1 className="text-3xl font-display font-bold text-text-primary mb-4">{post.title}</h1>
+        <p className="text-text-secondary leading-relaxed mb-6 whitespace-pre-wrap">{post.content}</p>
 
         {/* Linked Report */}
         {post.linked_report && (
@@ -312,7 +312,7 @@ export const ForumPostDetail = ({
           <button
             onClick={() => handleReaction('upvote')}
             disabled={!isAuthenticated || reactMutation.isPending}
-            className="flex items-center gap-2 text-slate-600 hover:text-emerald-600 transition-colors disabled:opacity-50"
+            className="flex items-center gap-2 text-text-secondary hover:text-accent transition-colors disabled:opacity-50"
           >
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 15l7-7 7 7" />
@@ -349,7 +349,7 @@ export const ForumPostDetail = ({
       {/* Comment Input */}
       {isAuthenticated && (
         <Card className="mb-6">
-          <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Add a Comment</h2>
+          <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Add a Comment</h2>
           <form onSubmit={handleSubmitComment}>
             <Textarea
               value={newComment}
@@ -368,18 +368,18 @@ export const ForumPostDetail = ({
 
       {/* Comments Section */}
       <Card static>
-        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">Comments</h2>
+        <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Comments</h2>
 
         {commentsLoading ? (
-          <div className="py-8 text-center text-slate-500">Loading comments...</div>
+          <div className="py-8 text-center text-text-muted">Loading comments...</div>
         ) : comments && comments.length > 0 ? (
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-border">
             {comments.map((comment) => (
               <CommentItem key={comment.id} comment={comment} postId={post.id} />
             ))}
           </div>
         ) : (
-          <div className="py-8 text-center text-slate-500">
+          <div className="py-8 text-center text-text-muted">
             <p>No comments yet. Be the first to comment!</p>
           </div>
         )}

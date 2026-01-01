@@ -10,8 +10,8 @@ interface FilterSelectProps {
 
 export const FilterSelect = ({ label, value, onChange, options, className = '' }: FilterSelectProps) => {
   return (
-    <div className={`flex items-center gap-2 bg-white px-3 py-2 rounded border border-slate-200 ${className}`}>
-      <span className="text-sm text-slate-600 whitespace-nowrap">{label}:</span>
+    <div className={`flex items-center gap-2 bg-white px-3 py-2 rounded border border-border ${className}`}>
+      <span className="text-sm text-text-secondary whitespace-nowrap">{label}:</span>
       <Select
         value={value}
         onChange={onChange}
