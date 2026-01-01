@@ -5,6 +5,7 @@ import { useAuth } from '../../lib/hooks/useAuth';
 import { useActiveCheckIn } from '../../lib/hooks/useCheckIn';
 import { RouteDetail } from '../../components/RouteDetail';
 import { CheckInModal } from '../../components/CheckInModal';
+import { ReportModal } from '../../components/ReportModal';
 import { Loading } from '../../components/ui/Loading';
 import { Button } from '../../components/ui/Button';
 import { PageHeader } from '../../components/layout';
@@ -23,6 +24,7 @@ function RouteDetailPage() {
   // Modal state
   const [showStartCheckInModal, setShowStartCheckInModal] = useState(false);
   const [showCompleteCheckInModal, setShowCompleteCheckInModal] = useState(false);
+  const [showReportModal, setShowReportModal] = useState(false);
 
   // Check if active check-in is for this route
   const isCurrentRouteCheckIn = activeCheckIn?.route_id === Number(routeId);
@@ -87,7 +89,7 @@ function RouteDetailPage() {
                 </Button>
               ) : null
             ) : null}
-            <Button variant="danger" onClick={() => window.location.href = `/reports/new?routeId=${routeDetail.route.id}`}>
+            <Button variant="danger" onClick={() => setShowReportModal(true)}>
               Report Issue
             </Button>
           </div>
@@ -123,6 +125,13 @@ function RouteDetailPage() {
           }}
         />
       )}
+
+      {/* Report Modal */}
+      <ReportModal
+        isOpen={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        initialRouteId={routeDetail.route.id}
+      />
     </div>
   );
 }

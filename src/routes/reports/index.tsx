@@ -9,6 +9,7 @@ import { Button } from '../../components/ui/Button';
 import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
+import { ReportModal } from '../../components/ReportModal';
 import { format } from 'date-fns';
 
 export const Route = createFileRoute('/reports/')({
@@ -28,6 +29,7 @@ function ReportsPage() {
   const navigate = useNavigate();
   const [page, setPage] = useState(1);
   const limit = 20;
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['reports', page],
@@ -118,7 +120,7 @@ function ReportsPage() {
         title="My Reports"
         subtitle="Track the status of your submitted reports"
         actions={
-          <Button variant="primary" onClick={() => navigate({ to: '/reports/new' })}>
+          <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
             New Report
           </Button>
         }
@@ -202,12 +204,20 @@ function ReportsPage() {
             </div>
             <p className="text-text-secondary font-display text-lg mb-2">No reports yet</p>
             <p className="text-text-muted text-sm mb-6">Start by submitting your first report</p>
-            <Button variant="primary" onClick={() => navigate({ to: '/reports/new' })}>
+            <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
               Submit Your First Report
             </Button>
           </div>
         </Card>
       )}
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+        onSuccess={() => {
+          // Optionally refresh data or show notification
+        }}
+      />
     </div>
   );
 }

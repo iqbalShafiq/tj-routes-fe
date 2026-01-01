@@ -1,4 +1,4 @@
-import { type InputHTMLAttributes, forwardRef } from 'react';
+import { useId, type InputHTMLAttributes, forwardRef } from 'react';
 import { Button } from './Button';
 
 interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type'> {
@@ -8,10 +8,14 @@ interface FileInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, 'ty
   multiple?: boolean;
   onFileChange?: (files: FileList | null) => void;
   buttonSize?: 'sm' | 'md' | 'lg';
+  id?: string;
 }
 
 export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
-  ({ className = '', label, error, accept, multiple, onFileChange, onChange, buttonSize = 'sm', ...props }, ref) => {
+  ({ className = '', label, error, accept, multiple, onFileChange, onChange, buttonSize = 'sm', id: providedId, ...props }, ref) => {
+    const generatedId = useId();
+    const inputId = providedId || `file-upload-${generatedId}`;
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       if (onFileChange) {
         onFileChange(e.target.files);
@@ -35,12 +39,12 @@ export const FileInput = forwardRef<HTMLInputElement, FileInputProps>(
             accept={accept}
             multiple={multiple}
             onChange={handleChange}
-            id="file-upload"
+            id={inputId}
             className="sr-only"
             {...props}
           />
           <label
-            htmlFor="file-upload"
+            htmlFor={inputId}
             className="cursor-pointer inline-block"
           >
             <Button variant="primary" size={buttonSize}>

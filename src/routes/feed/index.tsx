@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { createFileRoute, Link, useSearch } from '@tanstack/react-router';
+import { createFileRoute, useSearch } from '@tanstack/react-router';
 import { useFeed } from '../../lib/hooks/useFeed';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { Button } from '../../components/ui/Button';
@@ -9,6 +9,7 @@ import { EnhancedReportCard } from '../../components/EnhancedReportCard';
 import { StoriesBar } from '../../components/StoriesBar';
 import { TrendingSection } from '../../components/TrendingSection';
 import { HashtagFilter } from '../../components/HashtagFilter';
+import { ReportModal } from '../../components/ReportModal';
 
 export const Route = createFileRoute('/feed/')({
   component: FeedPage,
@@ -29,6 +30,7 @@ function FeedPage() {
   const [followed, setFollowed] = useState<boolean | undefined>(
     search.followed ? true : undefined
   );
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const limit = 20;
 
   const {
@@ -113,14 +115,12 @@ function FeedPage() {
         subtitle="See what's happening on TransJakarta routes and stops. Share updates and help fellow commuters."
         actions={
           isAuthenticated && (
-            <Link to="/reports/new">
-              <Button variant="primary">
-                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-                </svg>
-                New Report
-              </Button>
-            </Link>
+            <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
+              <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              New Report
+            </Button>
           )
         }
       >
@@ -219,12 +219,17 @@ function FeedPage() {
             <p className="text-text-secondary font-display text-lg">No reports yet</p>
             <p className="text-text-muted text-sm mt-2 mb-6">Be the first to share something!</p>
             {isAuthenticated && (
-              <Link to="/reports/new">
-                <Button variant="primary">Create Report</Button>
-              </Link>
+              <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
+                Create Report
+              </Button>
             )}
           </div>
       )}
+
+      <ReportModal
+        isOpen={isReportModalOpen}
+        onClose={() => setIsReportModalOpen(false)}
+      />
     </div>
   );
 }

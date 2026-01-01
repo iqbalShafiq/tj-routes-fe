@@ -20,7 +20,6 @@ import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index
 import { Route as FeedIndexRouteImport } from './routes/feed/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as RoutesRouteIdRouteImport } from './routes/routes/$routeId'
-import { Route as ReportsNewRouteImport } from './routes/reports/new'
 import { Route as ProfileUserIdRouteImport } from './routes/profile/$userId'
 import { Route as FeedReportIdRouteImport } from './routes/feed/$reportId'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
@@ -88,11 +87,6 @@ const AdminIndexRoute = AdminIndexRouteImport.update({
 const RoutesRouteIdRoute = RoutesRouteIdRouteImport.update({
   id: '/routes/$routeId',
   path: '/routes/$routeId',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReportsNewRoute = ReportsNewRouteImport.update({
-  id: '/reports/new',
-  path: '/reports/new',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileUserIdRoute = ProfileUserIdRouteImport.update({
@@ -177,7 +171,6 @@ export interface FileRoutesByFullPath {
   '/auth/register': typeof AuthRegisterRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
-  '/reports/new': typeof ReportsNewRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
@@ -204,7 +197,6 @@ export interface FileRoutesByTo {
   '/auth/register': typeof AuthRegisterRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
-  '/reports/new': typeof ReportsNewRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
@@ -232,7 +224,6 @@ export interface FileRoutesById {
   '/auth/register': typeof AuthRegisterRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
-  '/reports/new': typeof ReportsNewRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/admin/': typeof AdminIndexRoute
   '/feed/': typeof FeedIndexRoute
@@ -261,7 +252,6 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/feed/$reportId'
     | '/profile/$userId'
-    | '/reports/new'
     | '/routes/$routeId'
     | '/admin'
     | '/feed'
@@ -288,7 +278,6 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/feed/$reportId'
     | '/profile/$userId'
-    | '/reports/new'
     | '/routes/$routeId'
     | '/admin'
     | '/feed'
@@ -315,7 +304,6 @@ export interface FileRouteTypes {
     | '/auth/register'
     | '/feed/$reportId'
     | '/profile/$userId'
-    | '/reports/new'
     | '/routes/$routeId'
     | '/admin/'
     | '/feed/'
@@ -343,7 +331,6 @@ export interface RootRouteChildren {
   AuthRegisterRoute: typeof AuthRegisterRoute
   FeedReportIdRoute: typeof FeedReportIdRoute
   ProfileUserIdRoute: typeof ProfileUserIdRoute
-  ReportsNewRoute: typeof ReportsNewRoute
   RoutesRouteIdRoute: typeof RoutesRouteIdRouteWithChildren
   AdminIndexRoute: typeof AdminIndexRoute
   FeedIndexRoute: typeof FeedIndexRoute
@@ -431,13 +418,6 @@ declare module '@tanstack/react-router' {
       path: '/routes/$routeId'
       fullPath: '/routes/$routeId'
       preLoaderRoute: typeof RoutesRouteIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/reports/new': {
-      id: '/reports/new'
-      path: '/reports/new'
-      fullPath: '/reports/new'
-      preLoaderRoute: typeof ReportsNewRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile/$userId': {
@@ -573,7 +553,6 @@ const rootRouteChildren: RootRouteChildren = {
   AuthRegisterRoute: AuthRegisterRoute,
   FeedReportIdRoute: FeedReportIdRoute,
   ProfileUserIdRoute: ProfileUserIdRoute,
-  ReportsNewRoute: ReportsNewRoute,
   RoutesRouteIdRoute: RoutesRouteIdRouteWithChildren,
   AdminIndexRoute: AdminIndexRoute,
   FeedIndexRoute: FeedIndexRoute,
