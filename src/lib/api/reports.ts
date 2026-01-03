@@ -244,10 +244,52 @@ export const reportsApi = {
         stories: Report[];
       };
     }>(`${API_ENDPOINTS.reports.stories}?${params}`);
-    
+
     if (response.data.success && response.data.data.stories) {
       return response.data.data.stories;
     }
     return [];
+  },
+
+  // Get reports for a specific user
+  getUserReports: async (
+    userId: string | number,
+    page: number = 1,
+    limit: number = 10,
+    options?: {
+      status?: 'pending' | 'reviewed' | 'resolved';
+      type?: string;
+      search?: string;
+    }
+  ): Promise<{
+    data: Report[];
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  }> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      user_id: userId.toString(),
+    });
+    if (options?.status) params.append('status', options.status);
+    if (options?.type) params.append('type', options.type);
+    if (options?.search) params.append('search', options.search);
+
+    const response = await apiClient.get<ReportsResponse>(`${API_ENDPOINTS.reports.list}?${params}`);
+
+    if (response.data.success && response.data.data.reports) {
+      const total = response.data.data.total;
+      const total_pages = Math.ceil(total / limit);
+      return {
+        data: response.data.data.reports,
+        total,
+        page: response.data.data.page,
+        limit: response.data.data.limit,
+        total_pages,
+      };
+    }
+    return { data: [], total: 0, page, limit, total_pages: 0 };
   },
 };

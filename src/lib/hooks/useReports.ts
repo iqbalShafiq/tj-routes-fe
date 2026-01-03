@@ -252,7 +252,7 @@ export const useRemoveReportReaction = () => {
 
 export const useReactToComment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ commentId, type, reportId }: { commentId: string | number; type: ReactionType; reportId: string | number }) =>
       reactionsApi.reactToComment(commentId, type).then(() => reportId),
@@ -264,12 +264,30 @@ export const useReactToComment = () => {
 
 export const useRemoveCommentReaction = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ commentId, reportId }: { commentId: string | number; reportId: string | number }) =>
       reactionsApi.removeCommentReaction(commentId).then(() => reportId),
     onSuccess: (reportId) => {
       queryClient.invalidateQueries({ queryKey: ['comments', reportId] });
     },
+  });
+};
+
+// Hook to get reports for a specific user (for profile page)
+export const useUserReports = (
+  userId: string | number | undefined,
+  page: number = 1,
+  limit: number = 10,
+  options?: {
+    status?: 'pending' | 'reviewed' | 'resolved';
+    type?: string;
+    search?: string;
+  }
+) => {
+  return useQuery({
+    queryKey: ['userReports', userId, page, limit, options],
+    queryFn: () => reportsApi.getUserReports(userId!, page, limit, options),
+    enabled: !!userId,
   });
 };

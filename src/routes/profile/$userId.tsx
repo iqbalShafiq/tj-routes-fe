@@ -1,12 +1,17 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { useUserProfile, useBadges } from '../../lib/hooks/useLeaderboard';
 import { useAuth } from '../../lib/hooks/useAuth';
+import { useUserReports } from '../../lib/hooks/useReports';
+import { useCheckIns, useCheckInStats } from '../../lib/hooks/useCheckIn';
 import { authApi } from '../../lib/api/auth';
 import { Card } from '../../components/ui/Card';
 import { Loading } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
+import { ReportListCard } from '../../components/ReportListCard';
+import { CheckInHistoryList } from '../../components/CheckInHistoryList';
 import { format } from 'date-fns';
 import { USER_LEVELS } from '../../lib/utils/constants';
+import { useState } from 'react';
 
 export const Route = createFileRoute('/profile/$userId')({
   beforeLoad: async () => {
@@ -103,8 +108,15 @@ function UserProfilePage() {
   const { user: currentUser } = useAuth();
   const { data: profile, isLoading: profileLoading, error: profileError } = useUserProfile(userId);
   const { data: allBadges } = useBadges();
+  const [activeTab, setActiveTab] = useState<'reports' | 'checkins' | 'badges'>('reports');
 
   const isOwnProfile = currentUser?.id === Number(userId);
+
+  // Fetch user's reports
+  const { data: userReports, isLoading: reportsLoading } = useUserReports(userId, 1, 10);
+
+  // Fetch check-ins only for own profile (only used when isOwnProfile is true)
+  const { data: checkInStats } = useCheckInStats();
 
   if (profileLoading) {
     return <Loading />;
@@ -222,80 +234,211 @@ function UserProfilePage() {
           </Card>
       </div>
 
-      {/* Badges */}
-      <Card static className="mb-6">
-          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">Badges</h2>
+      {/* Tab Navigation */}
+      <div className="flex border-b border-border mb-6">
+        <button
+          className={`px-4 py-3 border-b-2 transition-colors ${
+            activeTab === 'reports'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-text-secondary hover:text-text-primary'
+          }`}
+          onClick={() => setActiveTab('reports')}
+        >
+          <span className="font-display font-medium">Reports</span>
+          <span className="ml-2 px-2 py-0.5 text-xs bg-bg-elevated rounded-full">
+            {userReports?.total || 0}
+          </span>
+        </button>
+        {isOwnProfile && (
+          <button
+            className={`px-4 py-3 border-b-2 transition-colors ${
+              activeTab === 'checkins'
+                ? 'border-accent text-accent'
+                : 'border-transparent text-text-secondary hover:text-text-primary'
+            }`}
+            onClick={() => setActiveTab('checkins')}
+          >
+            <span className="font-display font-medium">Check-in History</span>
+          </button>
+        )}
+        <button
+          className={`px-4 py-3 border-b-2 transition-colors ml-auto ${
+            activeTab === 'badges'
+              ? 'border-accent text-accent'
+              : 'border-transparent text-text-secondary hover:text-text-primary'
+          }`}
+          onClick={() => setActiveTab('badges')}
+        >
+          <span className="font-display font-medium">Badges</span>
+        </button>
+      </div>
 
-          {profile.badges.length > 0 ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {profile.badges.map((userBadge) => (
-                <div
-                  key={userBadge.id}
-                  className="flex flex-col items-center p-4 bg-warning/10 rounded-sm border border-warning"
-                >
-                  <div className="text-tertiary mb-2">
-                    {getBadgeIcon(userBadge.badge.name, userBadge.badge.criteria_type)}
+      {/* Tab Content */}
+      {activeTab === 'reports' && (
+        <div className="animate-fade-in">
+          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">
+            Reports ({userReports?.total || 0})
+          </h2>
+
+          {reportsLoading ? (
+            <div className="grid gap-4">
+              {[1, 2, 3].map((i) => (
+                <Card key={i} size="sm" className="p-4 animate-pulse">
+                  <div className="flex items-start gap-3">
+                    <div className="w-10 h-10 rounded-full bg-bg-elevated" />
+                    <div className="flex-1">
+                      <div className="h-5 bg-bg-elevated rounded mb-2 w-1/3" />
+                      <div className="h-4 bg-bg-elevated rounded w-2/3" />
+                    </div>
                   </div>
-                  <p className="font-display font-semibold text-text-primary text-center text-sm">
-                    {userBadge.badge.name}
-                  </p>
-                  <p className="text-xs text-text-muted text-center mt-1">
-                    {userBadge.badge.description}
-                  </p>
-                  <p className="text-xs text-tertiary mt-2">
-                    {format(new Date(userBadge.earned_at), 'MMM d, yyyy')}
-                  </p>
-                </div>
+                </Card>
+              ))}
+            </div>
+          ) : userReports?.data && userReports.data.length > 0 ? (
+            <div className="grid gap-3">
+              {userReports.data.map((report) => (
+                <ReportListCard key={report.id} report={report} />
               ))}
             </div>
           ) : (
-            <div className="text-center py-8 text-text-muted">
-              <p className="text-lg mb-2">No badges yet</p>
-              <p className="text-sm">
+            <Card className="p-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated rounded-full mb-4">
+                <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+              </div>
+              <h3 className="text-lg font-display font-semibold text-text-primary mb-2">
+                No reports yet
+              </h3>
+              <p className="text-sm text-text-muted">
                 {isOwnProfile
-                  ? "Start contributing to earn badges!"
-                  : "This user hasn't earned any badges yet."}
+                  ? "Start reporting issues to see them here"
+                  : "This user hasn't submitted any reports yet."}
               </p>
+            </Card>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'checkins' && isOwnProfile && (
+        <div className="animate-fade-in">
+          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">
+            Check-in History
+          </h2>
+
+          {/* Check-in Stats */}
+          {checkInStats && (
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+              <Card static className="text-center">
+                <p className="text-2xl font-display font-bold text-accent">
+                  {checkInStats.total_check_ins}
+                </p>
+                <p className="text-sm text-text-muted">Total Check-ins</p>
+              </Card>
+              <Card static className="text-center">
+                <p className="text-2xl font-display font-bold text-success">
+                  {checkInStats.completed_check_ins}
+                </p>
+                <p className="text-sm text-text-muted">Completed</p>
+              </Card>
+              <Card static className="text-center">
+                <p className="text-2xl font-display font-bold text-warning">
+                  {checkInStats.current_streak_days}
+                </p>
+                <p className="text-sm text-text-muted">Current Streak</p>
+              </Card>
+              <Card static className="text-center">
+                <p className="text-2xl font-display font-bold text-info">
+                  {checkInStats.total_points_earned}
+                </p>
+                <p className="text-sm text-text-muted">Points Earned</p>
+              </Card>
             </div>
           )}
-      </Card>
 
-      {/* Available Badges */}
-      {allBadges && (
-        <Card static>
-          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">All Available Badges</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {allBadges.map((badge) => {
-              const isEarned = profile.badges.some(b => b.badge_id === badge.id);
-              return (
-                <div
-                  key={badge.id}
-                  className={`
-                    flex flex-col items-center p-4 rounded-sm border transition-all
-                    ${isEarned
-                      ? 'bg-accent/10 border-accent'
-                      : 'bg-bg-main border-border opacity-60'}
-                  `}
-                >
-                  <div className={`mb-2 ${isEarned ? 'text-accent' : 'text-text-muted'}`}>
-                    {getBadgeIcon(badge.name, badge.criteria_type)}
+          {/* Check-in History List */}
+          <CheckInHistoryList />
+        </div>
+      )}
+
+      {activeTab === 'badges' && (
+        <div className="animate-fade-in">
+          {/* Badges */}
+          <Card static className="mb-6">
+            <h2 className="text-xl font-display font-semibold text-text-primary mb-4">Earned Badges</h2>
+
+            {profile.badges.length > 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {profile.badges.map((userBadge) => (
+                  <div
+                    key={userBadge.id}
+                    className="flex flex-col items-center p-4 bg-warning/10 rounded-sm border border-warning"
+                  >
+                    <div className="text-tertiary mb-2">
+                      {getBadgeIcon(userBadge.badge.name, userBadge.badge.criteria_type)}
+                    </div>
+                    <p className="font-display font-semibold text-text-primary text-center text-sm">
+                      {userBadge.badge.name}
+                    </p>
+                    <p className="text-xs text-text-muted text-center mt-1">
+                      {userBadge.badge.description}
+                    </p>
+                    <p className="text-xs text-tertiary mt-2">
+                      {format(new Date(userBadge.earned_at), 'MMM d, yyyy')}
+                    </p>
                   </div>
-                  <p className="font-display font-semibold text-text-primary text-center text-sm">
-                    {badge.name}
-                  </p>
-                  <p className="text-xs text-text-muted text-center mt-1">
-                    {badge.description}
-                  </p>
-                  {isEarned && (
-                    <span className="mt-2 px-2 py-0.5 text-xs bg-accent/30 text-accent-hover rounded-full">
-                      Earned
-                    </span>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </Card>
+                ))}
+              </div>
+            ) : (
+              <div className="text-center py-8 text-text-muted">
+                <p className="text-lg mb-2">No badges yet</p>
+                <p className="text-sm">
+                  {isOwnProfile
+                    ? "Start contributing to earn badges!"
+                    : "This user hasn't earned any badges yet."}
+                </p>
+              </div>
+            )}
+          </Card>
+
+          {/* Available Badges */}
+          {allBadges && (
+            <Card static>
+              <h2 className="text-xl font-display font-semibold text-text-primary mb-4">All Available Badges</h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                {allBadges.map((badge) => {
+                  const isEarned = profile.badges.some(b => b.badge_id === badge.id);
+                  return (
+                    <div
+                      key={badge.id}
+                      className={`
+                        flex flex-col items-center p-4 rounded-sm border transition-all
+                        ${isEarned
+                          ? 'bg-accent/10 border-accent'
+                          : 'bg-bg-main border-border opacity-60'}
+                      `}
+                    >
+                      <div className={`mb-2 ${isEarned ? 'text-accent' : 'text-text-muted'}`}>
+                        {getBadgeIcon(badge.name, badge.criteria_type)}
+                      </div>
+                      <p className="font-display font-semibold text-text-primary text-center text-sm">
+                        {badge.name}
+                      </p>
+                      <p className="text-xs text-text-muted text-center mt-1">
+                        {badge.description}
+                      </p>
+                      {isEarned && (
+                        <span className="mt-2 px-2 py-0.5 text-xs bg-accent/30 text-accent-hover rounded-full">
+                          Earned
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </Card>
+          )}
+        </div>
       )}
     </div>
   );
