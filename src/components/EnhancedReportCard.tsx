@@ -5,6 +5,7 @@ import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
 import { ShareButton } from './ShareButton';
 import { FollowButton } from './FollowButton';
+import { ImageViewer } from './ui/ImageViewer';
 import { format, formatDistanceToNow } from 'date-fns';
 import type { Report } from '../lib/api/reports';
 import { REPORT_TYPES, REPORT_STATUSES } from '../lib/utils/constants';
@@ -20,6 +21,8 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   const removeReactionMutation = useRemoveReportReaction();
   const [imageIndex, setImageIndex] = useState(0);
   const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
+  const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
 
   // Clear animation state after animation completes
   useEffect(() => {
@@ -58,7 +61,8 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   const reportUrl = `${window.location.origin}/feed/${report.id}`;
 
   return (
-    <Card size="sm" className="mb-6 hover:shadow-lg transition-shadow sm:p-6">
+    <>
+      <Card size="sm" className="mb-6 hover:shadow-lg transition-shadow sm:p-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-2">
         <div className="flex items-center gap-3 flex-1 min-w-0">
@@ -146,31 +150,45 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           {report.photo_urls && report.photo_urls.length > 0 && (
             <div className="mb-4">
               {report.photo_urls.length === 1 ? (
-                <div className="w-full rounded-lg overflow-hidden">
-                  <img 
-                    src={report.photo_urls[0]} 
+                <button
+                  onClick={() => {
+                    setViewerInitialIndex(0);
+                    setIsImageViewerOpen(true);
+                  }}
+                  className="w-full rounded-lg overflow-hidden cursor-zoom-in"
+                  aria-label="View image fullscreen"
+                >
+                  <img
+                    src={report.photo_urls[0]}
                     alt={report.title}
-                    className="w-full h-auto max-h-96 object-cover"
+                    className="w-full h-auto max-h-96 object-cover hover:opacity-95 transition-opacity"
                   />
-                </div>
+                </button>
               ) : (
                 <div className="relative">
-                  <div className="w-full rounded-lg overflow-hidden">
-                    <img 
-                      src={report.photo_urls[imageIndex]} 
+                  <button
+                    onClick={() => {
+                      setViewerInitialIndex(imageIndex);
+                      setIsImageViewerOpen(true);
+                    }}
+                    className="w-full rounded-lg overflow-hidden cursor-zoom-in"
+                    aria-label="View images fullscreen"
+                  >
+                    <img
+                      src={report.photo_urls[imageIndex]}
                       alt={`${report.title} - Image ${imageIndex + 1}`}
-                      className="w-full h-auto max-h-96 object-cover"
+                      className="w-full h-auto max-h-96 object-cover hover:opacity-95 transition-opacity"
                     />
-                  </div>
+                  </button>
                   {report.photo_urls.length > 1 && (
                     <>
                       <button
                         onClick={(e) => {
-                          e.preventDefault();
                           e.stopPropagation();
                           setImageIndex((prev) => (prev > 0 ? prev - 1 : report.photo_urls!.length - 1));
                         }}
                         className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
+                        aria-label="Previous image"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -178,11 +196,11 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                       </button>
                       <button
                         onClick={(e) => {
-                          e.preventDefault();
                           e.stopPropagation();
                           setImageIndex((prev) => (prev < report.photo_urls!.length - 1 ? prev + 1 : 0));
                         }}
                         className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
+                        aria-label="Next image"
                       >
                         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -193,13 +211,13 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
                           <button
                             key={idx}
                             onClick={(e) => {
-                              e.preventDefault();
                               e.stopPropagation();
                               setImageIndex(idx);
                             }}
                             className={`w-2 h-2 rounded-full transition-colors ${
                               idx === imageIndex ? 'bg-white' : 'bg-white/50'
                             }`}
+                            aria-label={`Go to image ${idx + 1}`}
                           />
                         ))}
                       </div>
@@ -287,7 +305,19 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
           <ShareButton url={reportUrl} title={report.title} text={report.description} />
         </div>
       </div>
-    </Card>
+      {/* Close Card */}
+      </Card>
+
+      {/* Image Viewer Portal */}
+      {report.photo_urls && (
+        <ImageViewer
+          images={report.photo_urls.map((url) => ({ url, alt: report.title }))}
+          initialIndex={viewerInitialIndex}
+          isOpen={isImageViewerOpen}
+          onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
+    </>
   );
 };
 

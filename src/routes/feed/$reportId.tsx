@@ -10,6 +10,7 @@ import { Textarea } from '../../components/ui/Textarea';
 import { Chip } from '../../components/ui/Chip';
 import { Loading } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
+import { ImageViewer } from '../../components/ui/ImageViewer';
 import { format, formatDistanceToNow } from 'date-fns';
 import type { Comment } from '../../lib/api/comments';
 import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
@@ -168,6 +169,8 @@ function ReportDetailPage() {
   const { isAuthenticated } = useAuth();
   const [newComment, setNewComment] = useState('');
   const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
+  const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
+  const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
 
   const { data: report, isLoading: reportLoading, error: reportError } = useReport(reportId);
   const { data: comments, isLoading: commentsLoading } = useComments(reportId);
@@ -280,13 +283,21 @@ function ReportDetailPage() {
         {report.photo_urls && report.photo_urls.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
             {report.photo_urls.map((url, idx) => (
-              <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
+              <button
+                key={idx}
+                onClick={() => {
+                  setViewerInitialIndex(idx);
+                  setIsImageViewerOpen(true);
+                }}
+                className="w-full cursor-zoom-in focus:outline-none focus:ring-2 focus:ring-accent rounded-sm overflow-hidden"
+                aria-label={`View image ${idx + 1} fullscreen`}
+              >
                 <img
                   src={url}
                   alt={`Report image ${idx + 1}`}
                   className="w-full h-40 object-cover rounded-sm hover:opacity-90 transition-opacity"
                 />
-              </a>
+              </button>
             ))}
           </div>
         )}
@@ -432,6 +443,16 @@ function ReportDetailPage() {
           </div>
         )}
       </Card>
+
+      {/* Image Viewer Portal */}
+      {report.photo_urls && (
+        <ImageViewer
+          images={report.photo_urls.map((url) => ({ url, alt: report.title }))}
+          initialIndex={viewerInitialIndex}
+          isOpen={isImageViewerOpen}
+          onClose={() => setIsImageViewerOpen(false)}
+        />
+      )}
     </div>
   );
 }
