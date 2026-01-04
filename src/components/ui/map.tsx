@@ -195,9 +195,12 @@ interface MapMarkerProps extends Omit<MarkerOptions, "element"> {
   longitude: number;
   latitude: number;
   children?: React.ReactNode;
-  onClick?: (e: maplibregl.MapMouseEvent) => void;
-  onMouseEnter?: (e: maplibregl.MapMouseEvent) => void;
-  onMouseLeave?: (e: maplibregl.MapMouseEvent) => void;
+  stopId?: number;
+  isHighlighted?: boolean;
+  isFocused?: boolean;
+  onClick?: (stopId: number, e: maplibregl.MapMouseEvent) => void;
+  onMouseEnter?: (stopId: number, e: maplibregl.MapMouseEvent) => void;
+  onMouseLeave?: (stopId: number, e: maplibregl.MapMouseEvent) => void;
   onDragStart?: (lngLat: { lng: number; lat: number }) => void;
   onDrag?: (lngLat: { lng: number; lat: number }) => void;
   onDragEnd?: (lngLat: { lng: number; lat: number }) => void;
@@ -231,6 +234,9 @@ export function MapMarker({
   longitude,
   latitude,
   children,
+  stopId,
+  isHighlighted = false,
+  isFocused = false,
   onClick,
   onMouseEnter,
   onMouseLeave,
@@ -241,7 +247,6 @@ export function MapMarker({
 }: MapMarkerProps) {
   const { map, isLoaded } = useMap();
   const markerRef = React.useRef<maplibregl.Marker | null>(null);
-  const elementRef = React.useRef<HTMLDivElement>(null);
   const popupRef = React.useRef<maplibregl.Popup | null>(null);
 
   // Extract tooltip content from children
@@ -250,35 +255,61 @@ export function MapMarker({
     (child) => !isMarkerTooltip(child)
   );
 
+  // Create marker element on mount, remove on unmount - don't render anything in React tree
   useEffect(() => {
-    if (!map || !isLoaded || !elementRef.current) return;
+    if (!map || !isLoaded) return;
+
+    // Helper to extract text/number from React nodes
+    const extractNodeText = (node: React.ReactNode): string => {
+      if (node === null || node === undefined) return "";
+      if (typeof node === "string") return node;
+      if (typeof node === "number") return String(node);
+      if (Array.isArray(node)) return node.map(extractNodeText).join("");
+      if (React.isValidElement(node)) {
+        const props = node.props as { children?: React.ReactNode };
+        return extractNodeText(props.children);
+      }
+      return "";
+    };
+
+    // Create marker element programmatically
+    const markerElement = document.createElement("div");
+    markerElement.className = "maplibre-marker-wrapper cursor-pointer";
+    markerElement.style.width = "auto";
+    markerElement.style.height = "auto";
+
+    // Create content element with proper styling
+    const contentElement = document.createElement("div");
+    contentElement.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg bg-accent text-white";
+    contentElement.textContent = markerContent.length > 0 ? extractNodeText(markerContent[0]) : "?";
+    markerElement.appendChild(contentElement);
 
     const marker = new maplibregl.Marker({
-      element: elementRef.current,
+      element: markerElement,
       ...options,
     })
       .setLngLat([longitude, latitude])
       .addTo(map);
 
-    if (onClick) {
+    if (onClick && stopId !== undefined) {
       marker
         .getElement()
         .addEventListener("click", (e) =>
-          onClick(e as unknown as maplibregl.MapMouseEvent)
+          onClick(stopId, e as unknown as maplibregl.MapMouseEvent)
         );
     }
-    if (onMouseEnter) {
+    if (onMouseEnter && stopId !== undefined) {
       marker
         .getElement()
         .addEventListener("mouseenter", (e) =>
-          onMouseEnter(e as unknown as maplibregl.MapMouseEvent)
+          onMouseEnter(stopId, e as unknown as maplibregl.MapMouseEvent)
         );
     }
-    if (onMouseLeave) {
+    if (onMouseLeave && stopId !== undefined) {
       marker
         .getElement()
         .addEventListener("mouseleave", (e) =>
-          onMouseLeave(e as unknown as maplibregl.MapMouseEvent)
+          onMouseLeave(stopId, e as unknown as maplibregl.MapMouseEvent)
         );
     }
 
@@ -352,12 +383,25 @@ export function MapMarker({
     markerRef.current = marker;
 
     return () => {
-      if (popupRef.current) {
-        popupRef.current.remove();
+      // Safely clean up popup with try-catch to handle already-removed elements
+      try {
+        if (popupRef.current) {
+          popupRef.current.remove();
+          popupRef.current = null;
+        }
+      } catch {
         popupRef.current = null;
       }
-      marker.remove();
-      markerRef.current = null;
+
+      // Safely remove marker with try-catch
+      try {
+        if (markerRef.current) {
+          markerRef.current.remove();
+          markerRef.current = null;
+        }
+      } catch {
+        markerRef.current = null;
+      }
     };
   }, [
     map,
@@ -373,12 +417,8 @@ export function MapMarker({
     tooltipContent,
     options,
   ]);
-
-  return (
-    <div ref={elementRef} className="maplibre-marker-wrapper cursor-pointer">
-      {markerContent}
-    </div>
-  );
+  // Return null - MapLibre manages the DOM, React should not render anything
+  return null;
 }
 
 interface MarkerContentProps {
@@ -537,11 +577,20 @@ export function MapRoute({
     }
 
     return () => {
-      if (map.getLayer(layerId)) {
-        map.removeLayer(layerId);
+      if (!map) return;
+      try {
+        if (layerId && typeof map.getLayer === 'function' && map.getLayer(layerId)) {
+          map.removeLayer(layerId);
+        }
+      } catch {
+        // Layer might not exist or already removed
       }
-      if (map.getSource(sourceId)) {
-        map.removeSource(sourceId);
+      try {
+        if (sourceId && typeof map.getSource === 'function' && map.getSource(sourceId)) {
+          map.removeSource(sourceId);
+        }
+      } catch {
+        // Source might not exist or already removed
       }
     };
   }, [map, isLoaded, coordinates, color, width, opacity, dashArray]);

@@ -1,12 +1,20 @@
 import { Link } from '@tanstack/react-router';
+import { useState, useMemo } from 'react';
 import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
-import { Map, MapControls, MapMarker, MapRoute, MarkerContent, MarkerTooltip } from './ui/map';
 import type { Stop } from '../lib/api/stops';
-import type { Route, RouteDetailResponse, RouteStatistics, ReportSummary, ForumPostSummary } from '../lib/api/routes';
+import type { Route, RouteStop, RouteStatistics, ReportSummary, ForumPostSummary } from '../lib/api/routes';
+import { StopsListPanel } from './StopsListPanel';
+import { InteractiveMap } from './InteractiveMap';
+import { MobileStopsDrawer } from './MobileStopsDrawer';
 
 interface RouteDetailProps {
-  data: RouteDetailResponse;
+  data: {
+    route: Route;
+    statistics: RouteStatistics;
+    recent_reports: ReportSummary[];
+    recent_posts: ForumPostSummary[];
+  };
 }
 
 // Section 1: Route Info Card
@@ -59,11 +67,6 @@ const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | nu
 // Section 2: Statistics Dashboard
 const StatisticsSection = ({ statistics }: { statistics: RouteStatistics }) => {
   const formatPercent = (value: number) => `${Math.round(value * 100)}%`;
-  const getActivityColor = (score: number) => {
-    if (score >= 7) return 'text-accent bg-accent/10';
-    if (score >= 4) return 'text-warning bg-warning/10';
-    return 'text-error bg-error/10';
-  };
 
   return (
     <Card className="mb-6">
@@ -236,7 +239,7 @@ const RecentPostsSection = ({ posts }: { posts: ForumPostSummary[] }) => {
     return null;
   }
 
-  const postTypeIcons: Record<string, JSX.Element> = {
+  const postTypeIcons: Record<string, React.ReactElement> = {
     discussion: (
       <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
@@ -305,140 +308,151 @@ const RecentPostsSection = ({ posts }: { posts: ForumPostSummary[] }) => {
   );
 };
 
-// Section 5: Route Stops (existing)
-const RouteStopsSection = ({ stops }: { stops?: any[] }) => {
-  if (!stops || stops.length === 0) {
-    return null;
-  }
-
-  return (
-    <Card>
-      <div className="mb-6">
-        <h2 className="text-xl font-display font-bold text-text-primary">Route Stops</h2>
-        <p className="text-text-secondary">{stops.length} stops in sequence</p>
-      </div>
-      <div className="space-y-3">
-        {stops
-          .sort((a, b) => (a.sequence || 0) - (b.sequence || 0))
-          .map((stop, index) => (
-            <div
-              key={stop.id}
-              className="group relative flex items-start gap-4 p-5 border border-border hover:border-tertiary hover:bg-tertiary/5 transition-all duration-200 animate-fade-in"
-              style={{ animationDelay: `${index * 50}ms` }}
-            >
-              <div className="flex-shrink-0 w-12 h-12 bg-bg-elevated text-white flex items-center justify-center font-display font-bold text-lg shadow-md group-hover:shadow-lg transition-shadow">
-                {index + 1}
-              </div>
-              <div className="flex-1 min-w-0">
-                <h4 className="font-display font-semibold text-text-primary text-lg mb-1 group-hover:text-tertiary-hover transition-colors">
-                  {stop.name}
-                </h4>
-                {stop.code && (
-                  <p className="text-sm text-text-muted font-mono mb-2">Code: {stop.code}</p>
-                )}
-                {stop.address && (
-                  <div className="flex items-start gap-2 mt-2">
-                    <svg className="w-4 h-4 text-text-muted mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <p className="text-sm text-text-secondary leading-relaxed">{stop.address}</p>
-                  </div>
-                )}
-                {stop.facilities && stop.facilities.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {stop.facilities.map((facility: string, i: number) => (
-                      <Chip key={i} variant="warning">
-                        {facility}
-                      </Chip>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
-      </div>
-    </Card>
-  );
-};
-
-// Section 6: Route Map
-const RouteMapSection = ({ stops }: { stops: Stop[] }) => {
-  // Filter stops with valid coordinates
-  const validStops = stops.filter(stop =>
-    typeof stop.latitude === 'number' &&
-    typeof stop.longitude === 'number' &&
-    !isNaN(stop.latitude) &&
-    !isNaN(stop.longitude)
-  );
-
-  if (validStops.length === 0) {
-    return null;
-  }
-
-  // Calculate center from all stops
-  const center: [number, number] = [
-    validStops.reduce((sum, s) => sum + s.longitude, 0) / validStops.length,
-    validStops.reduce((sum, s) => sum + s.latitude, 0) / validStops.length,
-  ];
-
-  // Convert stops to coordinates for route line
-  const routeCoordinates: [number, number][] = validStops.map(stop => [stop.longitude, stop.latitude]);
-
-  return (
-    <Card className="mb-6 p-0 overflow-hidden border-0 shadow-md">
-      <Map center={center} zoom={13} style={{ height: '400px' }}>
-        <MapRoute
-          coordinates={routeCoordinates}
-          color="#1B4D3E"
-          width={4}
-          opacity={0.8}
-        />
-        {validStops.map((stop, index) => (
-          <MapMarker
-            key={stop.id}
-            longitude={stop.longitude}
-            latitude={stop.latitude}
-          >
-            <MarkerContent>
-              <div className="w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white">
-                {index + 1}
-              </div>
-            </MarkerContent>
-            <MarkerTooltip>
-              <span className="text-sm font-medium whitespace-nowrap">{index + 1}. {stop.name}</span>
-            </MarkerTooltip>
-          </MapMarker>
-        ))}
-        <MapControls position="bottom-right" showZoom={true} showCompass={true} />
-      </Map>
-    </Card>
-  );
-};
-
 export const RouteDetail = ({ data }: RouteDetailProps) => {
   const { route, statistics, recent_reports, recent_posts } = data;
 
   // Extract and sort stops
-  const stops = route.route_stops
-    ?.map(rs => rs.stop)
-    .filter((stop): stop is Stop => stop !== undefined)
-    .sort((a, b) => {
-      const seqA = a.sequence ?? (route.route_stops?.find(rs => rs.stop_id === a.id)?.sequence_order ?? 0);
-      const seqB = b.sequence ?? (route.route_stops?.find(rs => rs.stop_id === b.id)?.sequence_order ?? 0);
-      return seqA - seqB;
-    })
-    ?? route.stops
-    ?? [];
+  const stops: Stop[] = useMemo(() => {
+    if (!route.route_stops) {
+      return route.stops ?? [];
+    }
+    return route.route_stops
+      .map((rs: RouteStop) => rs.stop)
+      .filter((stop: Stop | undefined): stop is Stop => stop !== undefined)
+      .sort((a: Stop, b: Stop) => {
+        const seqA = a.sequence ?? (route.route_stops?.find((rs: RouteStop) => rs.stop_id === a.id)?.sequence_order ?? 0);
+        const seqB = b.sequence ?? (route.route_stops?.find((rs: RouteStop) => rs.stop_id === b.id)?.sequence_order ?? 0);
+        return seqA - seqB;
+      });
+  }, [route]);
+
+  // Search and filter state
+  const [searchQuery, setSearchQuery] = useState('');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'stop' | 'terminal'>('all');
+  const [facilityFilter, setFacilityFilter] = useState<string | null>(null);
+
+  // Interaction state
+  const [hoveredStopId, setHoveredStopId] = useState<number | null>(null);
+  const [focusedStopId, setFocusedStopId] = useState<number | null>(null);
+  const [expandedStopId, setExpandedStopId] = useState<number | null>(null);
+
+  // Mobile drawer state
+  const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
+
+  // Filter stops based on search and filters
+  const filteredStops = useMemo(() => {
+    let result = [...stops];
+
+    // Search filter
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      result = result.filter(stop =>
+        stop.name.toLowerCase().includes(q) ||
+        stop.address?.toLowerCase().includes(q) ||
+        (Array.isArray(stop.facilities) &&
+          stop.facilities.some(f => f.toLowerCase().includes(q)))
+      );
+    }
+
+    // Type filter
+    if (typeFilter !== 'all') {
+      result = result.filter(stop => stop.type === typeFilter);
+    }
+
+    // Facility filter
+    if (facilityFilter) {
+      result = result.filter(stop =>
+        Array.isArray(stop.facilities) && stop.facilities.includes(facilityFilter)
+      );
+    }
+
+    return result;
+  }, [stops, searchQuery, typeFilter, facilityFilter]);
+
+  // Get all unique facilities for filter dropdown
+  const allFacilities = useMemo(() => {
+    const facilities = new Set<string>();
+    stops.forEach(stop => {
+      if (Array.isArray(stop.facilities)) {
+        stop.facilities.forEach(f => facilities.add(f));
+      }
+    });
+    return Array.from(facilities).sort();
+  }, [stops]);
+
+  // Handle stop focus from list
+  const handleStopFocus = (stopId: number | null) => {
+    if (stopId === null) {
+      setFocusedStopId(null);
+      return;
+    }
+    setFocusedStopId(stopId === focusedStopId ? null : stopId);
+    if (stopId !== focusedStopId) {
+      setExpandedStopId(stopId);
+    }
+  };
 
   return (
     <div className="w-full animate-fade-in">
       {/* Section 1: Route Info Card */}
       <RouteInfoCard route={route} forumId={statistics.forum_id} />
 
-      {/* Section 1.5: Route Map Section */}
+      {/* Split View Container */}
       {stops.length > 0 && (
-        <RouteMapSection stops={stops} />
+        <div className="flex flex-col lg:flex-row gap-4 lg:gap-0 mb-6 lg:h-[calc(100vh-220px)]">
+          {/* Stops List Panel - Desktop */}
+          <div className="hidden lg:flex w-[380px] xl:w-[420px] flex-col bg-bg-surface rounded-l-card border border-r-0 border-border overflow-hidden">
+            <StopsListPanel
+              stops={filteredStops}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              typeFilter={typeFilter}
+              onTypeFilterChange={setTypeFilter}
+              facilityFilter={facilityFilter}
+              onFacilityFilterChange={setFacilityFilter}
+              allFacilities={allFacilities}
+              hoveredStopId={hoveredStopId}
+              onHoverStopIdChange={setHoveredStopId}
+              focusedStopId={focusedStopId}
+              onFocusedStopIdChange={setFocusedStopId}
+              expandedStopId={expandedStopId}
+              onExpandedStopIdChange={setExpandedStopId}
+            />
+          </div>
+
+          {/* Map Section */}
+          <div className="flex-1 min-h-[400px] lg:min-h-0 rounded-card overflow-hidden border border-border">
+            <InteractiveMap
+              stops={filteredStops}
+              hoveredStopId={hoveredStopId}
+              onHoverStopIdChange={setHoveredStopId}
+              focusedStopId={focusedStopId}
+              onFocusedStopIdChange={setFocusedStopId}
+            />
+          </div>
+
+          {/* Mobile Bottom Sheet Drawer */}
+          <div className="lg:hidden">
+            <MobileStopsDrawer
+              isExpanded={isDrawerExpanded}
+              onToggleExpand={() => setIsDrawerExpanded(!isDrawerExpanded)}
+              stops={filteredStops}
+              searchQuery={searchQuery}
+              onSearchChange={setSearchQuery}
+              typeFilter={typeFilter}
+              onTypeFilterChange={setTypeFilter}
+              facilityFilter={facilityFilter}
+              onFacilityFilterChange={setFacilityFilter}
+              allFacilities={allFacilities}
+              hoveredStopId={hoveredStopId}
+              onHoverStopIdChange={setHoveredStopId}
+              focusedStopId={focusedStopId}
+              onFocusedStopIdChange={handleStopFocus}
+              expandedStopId={expandedStopId}
+              onExpandedStopIdChange={setExpandedStopId}
+            />
+          </div>
+        </div>
       )}
 
       {/* Section 2: Statistics Dashboard */}
@@ -450,8 +464,7 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
       {/* Section 4: Recent Forum Posts */}
       <RecentPostsSection posts={recent_posts} />
 
-      {/* Section 5: Route Stops */}
-      <RouteStopsSection stops={route.stops} />
+      {/* NOTE: Old RouteStopsSection removed - replaced with new interactive stops list above */}
     </div>
   );
 };
