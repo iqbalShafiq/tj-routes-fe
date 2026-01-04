@@ -135,10 +135,10 @@ export function MobileStopsDrawer({
       className={`
         fixed bottom-0 left-0 right-0 z-[60]
         bg-bg-surface rounded-t-2xl shadow-elevated
-        transition-transform duration-300 ease-out
-        transform
-        ${isExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-80px)]'}
+        transition-all duration-300 ease-out
+        ${isExpanded ? 'h-[50vh]' : 'h-[80px]'}
         pb-safe
+        flex flex-col
       `}
     >
       {/* Drag Handle / Header */}
@@ -190,10 +190,9 @@ export function MobileStopsDrawer({
       </div>
 
       {/* Expanded Content */}
-      {isExpanded && (
-        <div className="px-4 pb-4 overflow-hidden flex flex-col animate-fade-in">
-          {/* Search */}
-          <StopSearchInput
+      <div className={`px-4 pb-4 flex flex-col overflow-hidden animate-fade-in ${isExpanded ? 'flex-1' : 'hidden'}`}>
+        {/* Search */}
+        <StopSearchInput
             value={searchQuery}
             onChange={onSearchChange}
             onClear={handleClearSearch}
@@ -210,11 +209,10 @@ export function MobileStopsDrawer({
             className="mb-3"
           />
 
-          {/* Stops List - with explicit height for scroll */}
+          {/* Stops List - scrollable */}
           <div
             className="flex-1 overflow-y-auto space-y-3 scrollbar-thin pb-4"
             style={{
-              maxHeight: 'calc(65vh - 140px)',
               contain: 'strict'
             }}
           >
@@ -255,7 +253,6 @@ export function MobileStopsDrawer({
             )}
           </div>
         </div>
-      )}
     </div>
   );
 }
