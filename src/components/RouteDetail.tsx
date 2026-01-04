@@ -420,8 +420,8 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
             />
           </div>
 
-          {/* Map Section */}
-          <div className="flex-1 min-h-[400px] lg:min-h-0 rounded-card overflow-hidden border border-border">
+          {/* Desktop Map Container */}
+          <div className="hidden lg:flex flex-1 min-h-0 rounded-r-card overflow-hidden border border-border">
             <InteractiveMap
               stops={filteredStops}
               hoveredStopId={hoveredStopId}
@@ -431,8 +431,21 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
             />
           </div>
 
-          {/* Mobile Bottom Sheet Drawer */}
-          <div className="lg:hidden">
+          {/* Mobile Map Container */}
+          <div className="lg:hidden relative h-[calc(100vh-160px)] transition-all duration-300 ease-out">
+            <div className={`h-full transition-all duration-300 ease-out ${isDrawerExpanded ? 'h-[50%]' : 'h-full'}`}>
+              <div className="h-full rounded-t-card overflow-hidden border border-border">
+                <InteractiveMap
+                  stops={filteredStops}
+                  hoveredStopId={hoveredStopId}
+                  onHoverStopIdChange={setHoveredStopId}
+                  focusedStopId={focusedStopId}
+                  onFocusedStopIdChange={setFocusedStopId}
+                />
+              </div>
+            </div>
+
+            {/* Mobile Bottom Sheet Drawer - fixed at viewport bottom */}
             <MobileStopsDrawer
               isExpanded={isDrawerExpanded}
               onToggleExpand={() => setIsDrawerExpanded(!isDrawerExpanded)}

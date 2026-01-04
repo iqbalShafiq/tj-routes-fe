@@ -117,6 +117,33 @@ export function MobileStopsDrawer({
     }
   }, [isExpanded, onToggleExpand]);
 
+  // Lock body scroll when drawer is expanded
+  useEffect(() => {
+    if (isExpanded) {
+      const scrollY = window.scrollY;
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.top = `-${scrollY}px`;
+      document.body.style.width = '100%';
+    } else {
+      const scrollY = document.body.style.top;
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+      if (scrollY) {
+        window.scrollTo(0, parseInt(scrollY.replace('-', '') || '0'));
+      }
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      document.body.style.position = '';
+      document.body.style.top = '';
+      document.body.style.width = '';
+    };
+  }, [isExpanded]);
+
   return (
     <div
       ref={drawerRef}
@@ -126,12 +153,8 @@ export function MobileStopsDrawer({
         transition-transform duration-300 ease-out
         transform
         ${isExpanded ? 'translate-y-0' : 'translate-y-[calc(100%-80px)]'}
-        ${isExpanded ? 'max-h-[70vh]' : 'max-h-[100px]'}
         pb-safe
       `}
-      style={{
-        maxHeight: isExpanded ? '70vh' : '100px',
-      }}
     >
       {/* Drag Handle / Header */}
       <div
@@ -164,7 +187,7 @@ export function MobileStopsDrawer({
           >
             <svg
               className={`w-5 h-5 transition-transform duration-200 ${
-                isExpanded ? 'rotate-180' : ''
+                isExpanded ? '' : 'rotate-180'
               }`}
               fill="none"
               stroke="currentColor"
@@ -202,8 +225,14 @@ export function MobileStopsDrawer({
             className="mb-3"
           />
 
-          {/* Stops List */}
-          <div className="flex-1 overflow-y-auto space-y-3 scrollbar-thin pb-4">
+          {/* Stops List - with explicit height for scroll */}
+          <div
+            className="flex-1 overflow-y-auto space-y-3 scrollbar-thin pb-4"
+            style={{
+              maxHeight: 'calc(50vh - 120px)',
+              contain: 'strict'
+            }}
+          >
             {stops.length === 0 ? (
               <div className="flex flex-col items-center justify-center py-12 text-center">
                 <svg
