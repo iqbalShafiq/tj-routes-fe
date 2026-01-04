@@ -453,9 +453,9 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
           </div>
 
           {/* Mobile Map Container */}
-          <div ref={mapContainerRef} className="lg:hidden relative h-[calc(100vh-160px)] transition-all duration-300 ease-out">
+          <div ref={mapContainerRef} className={`lg:hidden relative h-[calc(100vh-160px)] transition-all duration-300 ease-out ${isDrawerExpanded ? 'mx-[-24px]' : ''}`}>
             <div className={`h-full transition-all duration-300 ease-out ${isDrawerExpanded ? 'h-[50%]' : 'h-full'}`}>
-              <div className="h-full rounded-t-card overflow-hidden border border-border">
+              <div className={`h-full transition-all duration-300 ease-out ${isDrawerExpanded ? 'rounded-none border-x-0 border-t-0' : 'rounded-t-card overflow-hidden border border-border'}`}>
                 <InteractiveMap
                   stops={filteredStops}
                   hoveredStopId={hoveredStopId}
