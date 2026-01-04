@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { Map, MapMarker, MapRoute, MapControls } from './ui/map';
+import { useEffect } from 'react';
+import { Map, MapMarker, MapRoute, MapControls, useMap } from './ui/map';
 import type { Stop } from '../lib/api/stops';
 
 interface InteractiveMapProps {
@@ -14,6 +14,33 @@ interface InteractiveMapProps {
   initialZoom?: number;
 }
 
+// Nested component that accesses the map via useMap hook
+function MapFlyController({
+  focusedStopId,
+  validStops,
+}: {
+  focusedStopId: number | null;
+  validStops: Stop[];
+}) {
+  const { map, isLoaded } = useMap();
+
+  useEffect(() => {
+    if (!map || !isLoaded || focusedStopId === null) return;
+
+    const focusedStop = validStops.find((s) => s.id === focusedStopId);
+    if (focusedStop && typeof focusedStop.latitude === 'number' && typeof focusedStop.longitude === 'number') {
+      map.flyTo({
+        center: [focusedStop.longitude, focusedStop.latitude],
+        zoom: 15,
+        duration: 800,
+        essential: true,
+      });
+    }
+  }, [focusedStopId, validStops, map, isLoaded]);
+
+  return null;
+}
+
 export function InteractiveMap({
   stops,
   hoveredStopId,
@@ -25,8 +52,6 @@ export function InteractiveMap({
   routeColor = '#1B4D3E',
   initialZoom = 13,
 }: InteractiveMapProps) {
-  const mapRef = useRef<maplibregl.Map | null>(null);
-
   // Filter stops with valid coordinates
   const validStops = stops.filter(
     (stop) =>
@@ -49,25 +74,6 @@ export function InteractiveMap({
     stop.longitude,
     stop.latitude,
   ]);
-
-  // Fly to focused stop when it changes
-  useEffect(() => {
-    if (!mapRef.current || focusedStopId === null) return;
-
-    const focusedStop = validStops.find((s) => s.id === focusedStopId);
-    if (
-      focusedStop &&
-      typeof focusedStop.latitude === 'number' &&
-      typeof focusedStop.longitude === 'number'
-    ) {
-      mapRef.current.flyTo({
-        center: [focusedStop.longitude, focusedStop.latitude],
-        zoom: 15,
-        duration: 800,
-        essential: true,
-      });
-    }
-  }, [focusedStopId, validStops]);
 
   // Handle marker click
   const handleMarkerClick = (stopId: number) => {
@@ -111,7 +117,6 @@ export function InteractiveMap({
 
   return (
     <Map
-      ref={mapRef}
       center={center}
       zoom={initialZoom}
       className={className}
@@ -162,6 +167,9 @@ export function InteractiveMap({
           </MapMarker>
         );
       })}
+
+      {/* Controller for flyTo behavior */}
+      <MapFlyController focusedStopId={focusedStopId} validStops={validStops} />
 
       <MapControls position="bottom-right" showZoom={true} showCompass={true} />
     </Map>

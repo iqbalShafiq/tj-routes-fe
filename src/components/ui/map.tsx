@@ -87,12 +87,6 @@ export function Map({
     };
   }, []);
 
-  // Update center and zoom when props change
-  useEffect(() => {
-    if (!map || !isLoaded) return;
-    map.flyTo({ center, zoom, duration: 1000 });
-  }, [map, isLoaded, center, zoom]);
-
   // Watch for theme changes
   useEffect(() => {
     if (!map || !isLoaded) return;
@@ -248,6 +242,7 @@ export function MapMarker({
   const { map, isLoaded } = useMap();
   const markerRef = React.useRef<maplibregl.Marker | null>(null);
   const popupRef = React.useRef<maplibregl.Popup | null>(null);
+  const contentElementRef = React.useRef<HTMLDivElement | null>(null);
 
   // Extract tooltip content from children
   const tooltipContent = extractTooltipContent(children);
@@ -278,11 +273,29 @@ export function MapMarker({
     markerElement.style.width = "auto";
     markerElement.style.height = "auto";
 
-    // Create content element with proper styling
+    // Create content element with base styling (hover/focus classes added dynamically)
     const contentElement = document.createElement("div");
-    contentElement.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg bg-accent text-white";
+    contentElement.className = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg bg-accent text-white transition-all duration-200";
     contentElement.textContent = markerContent.length > 0 ? extractNodeText(markerContent[0]) : "?";
     markerElement.appendChild(contentElement);
+
+    // Store ref to content element for use in other effects
+    contentElementRef.current = contentElement;
+
+    // Helper to update content element classes based on state
+    const updateContentClasses = (highlighted: boolean, focused: boolean) => {
+      const baseClasses = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg transition-all duration-200";
+      if (focused) {
+        contentElement.className = `${baseClasses} bg-accent text-white scale-125 shadow-xl z-10`;
+      } else if (highlighted) {
+        contentElement.className = `${baseClasses} bg-accent-light text-accent scale-110 shadow-lg border-accent`;
+      } else {
+        contentElement.className = `${baseClasses} bg-accent text-white hover:scale-110`;
+      }
+    };
+
+    // Initialize with current props
+    updateContentClasses(isHighlighted || false, isFocused || false);
 
     const marker = new maplibregl.Marker({
       element: markerElement,
@@ -298,20 +311,31 @@ export function MapMarker({
           onClick(stopId, e as unknown as maplibregl.MapMouseEvent)
         );
     }
-    if (onMouseEnter && stopId !== undefined) {
-      marker
-        .getElement()
-        .addEventListener("mouseenter", (e) =>
-          onMouseEnter(stopId, e as unknown as maplibregl.MapMouseEvent)
-        );
-    }
-    if (onMouseLeave && stopId !== undefined) {
-      marker
-        .getElement()
-        .addEventListener("mouseleave", (e) =>
-          onMouseLeave(stopId, e as unknown as maplibregl.MapMouseEvent)
-        );
-    }
+
+    // Track hover state for dynamic styling
+    let isCurrentlyHighlighted = isHighlighted || false;
+    let isCurrentlyFocused = isFocused || false;
+
+    // Update state trackers and classes on mouse events
+    marker
+      .getElement()
+      .addEventListener("mouseenter", () => {
+        isCurrentlyHighlighted = true;
+        updateContentClasses(isCurrentlyHighlighted, isCurrentlyFocused);
+        if (onMouseEnter && stopId !== undefined) {
+          onMouseEnter(stopId, {} as maplibregl.MapMouseEvent);
+        }
+      });
+
+    marker
+      .getElement()
+      .addEventListener("mouseleave", () => {
+        isCurrentlyHighlighted = false;
+        updateContentClasses(isCurrentlyHighlighted, isCurrentlyFocused);
+        if (onMouseLeave && stopId !== undefined) {
+          onMouseLeave(stopId, {} as maplibregl.MapMouseEvent);
+        }
+      });
 
     // Tooltip functionality - show popup on hover
     if (tooltipContent) {
@@ -416,7 +440,26 @@ export function MapMarker({
     onDragEnd,
     tooltipContent,
     options,
+    isHighlighted,
+    isFocused,
+    stopId,
   ]);
+
+  // Update marker styling when isHighlighted or isFocused props change
+  useEffect(() => {
+    if (!markerRef.current || !contentElementRef.current) return;
+
+    const contentEl = contentElementRef.current;
+    const baseClasses = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg transition-all duration-200";
+
+    if (isFocused) {
+      contentEl.className = `${baseClasses} bg-accent text-white scale-125 shadow-xl z-10`;
+    } else if (isHighlighted) {
+      contentEl.className = `${baseClasses} bg-accent-light text-accent scale-110 shadow-lg border-accent`;
+    } else {
+      contentEl.className = `${baseClasses} bg-accent text-white hover:scale-110`;
+    }
+  }, [isHighlighted, isFocused]);
   // Return null - MapLibre manages the DOM, React should not render anything
   return null;
 }
