@@ -65,7 +65,7 @@ function RouteDetailPage() {
           { label: routeDetail.route.route_number },
         ]}
         actions={
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 flex-wrap sm:flex-nowrap">
             <Link to="/routes/$routeId/forum" params={{ routeId }}>
               <Button variant="outline">
                 View Forum
@@ -89,7 +89,7 @@ function RouteDetailPage() {
                 </Button>
               ) : null
             ) : null}
-            <Button variant="danger" onClick={() => setShowReportModal(true)}>
+            <Button className="sm:ml-auto" variant="danger" onClick={() => setShowReportModal(true)}>
               Report Issue
             </Button>
           </div>
