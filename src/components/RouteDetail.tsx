@@ -18,7 +18,7 @@ interface RouteDetailProps {
 }
 
 // Section 1: Route Info Card
-const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | null }) => (
+const RouteInfoCard = ({ route, forumId, statistics }: { route: Route; forumId?: number | null; statistics?: RouteStatistics }) => (
   <Card className="mb-6">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-4">
@@ -50,14 +50,10 @@ const RouteInfoCard = ({ route, forumId }: { route: Route; forumId?: number | nu
       </div>
       {forumId !== undefined && forumId !== null && (
         <div className="p-4 bg-bg-main">
-          <p className="text-sm text-text-muted mb-1">Forum</p>
-          <Link
-            to="/routes/$routeId/forum"
-            params={{ routeId: route.id.toString() }}
-            className="text-2xl font-display font-bold text-tertiary hover:text-tertiary-hover"
-          >
-            View
-          </Link>
+          <p className="text-sm text-text-muted mb-1">Members</p>
+          <p className="text-2xl font-display font-bold text-text-primary">
+            {statistics?.forum_member_count || 0}
+          </p>
         </div>
       )}
     </div>
@@ -416,7 +412,7 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
   return (
     <div className="w-full animate-fade-in">
       {/* Section 1: Route Info Card */}
-      <RouteInfoCard route={route} forumId={statistics.forum_id} />
+      <RouteInfoCard route={route} forumId={statistics.forum_id} statistics={statistics} />
 
       {/* Split View Container */}
       {stops.length > 0 && (
