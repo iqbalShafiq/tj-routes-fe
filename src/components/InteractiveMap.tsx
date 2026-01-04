@@ -1,6 +1,7 @@
-import React, { useEffect, useCallback, useRef } from 'react';
+import React, { useEffect, useCallback, useRef, useState } from 'react';
 import { Map, MapMarker, MapRoute, MapControls, useMap } from './ui/map';
 import type { Stop } from '../lib/api/stops';
+import type { UserPlace } from '../lib/api/personalized';
 
 interface InteractiveMapProps {
   stops: Stop[];
@@ -12,6 +13,9 @@ interface InteractiveMapProps {
   showRoute?: boolean;
   routeColor?: string;
   initialZoom?: number;
+  savedPlaces?: UserPlace[];
+  showSavedPlaces?: boolean;
+  onSavedPlaceClick?: (place: UserPlace) => void;
 }
 
 // Nested component that accesses the map via useMap hook
@@ -69,6 +73,9 @@ export function InteractiveMap({
   showRoute = true,
   routeColor = '#1B4D3E',
   initialZoom = 13,
+  savedPlaces = [],
+  showSavedPlaces = false,
+  onSavedPlaceClick,
 }: InteractiveMapProps) {
   // Filter stops with valid coordinates
   const validStops = stops.filter(
@@ -79,11 +86,21 @@ export function InteractiveMap({
       !isNaN(stop.longitude)
   );
 
-  // Calculate center from all valid stops
-  const center: [number, number] = validStops.length > 0
+  // Filter saved places with valid coordinates
+  const validSavedPlaces = savedPlaces.filter(
+    (place) =>
+      typeof place.latitude === 'number' &&
+      typeof place.longitude === 'number' &&
+      !isNaN(place.latitude) &&
+      !isNaN(place.longitude)
+  );
+
+  // Calculate center from all valid stops and saved places
+  const allLocations = [...validStops, ...validSavedPlaces];
+  const center: [number, number] = allLocations.length > 0
     ? [
-        validStops.reduce((sum, s) => sum + s.longitude, 0) / validStops.length,
-        validStops.reduce((sum, s) => sum + s.latitude, 0) / validStops.length,
+        allLocations.reduce((sum, s) => sum + (s as any).longitude, 0) / allLocations.length,
+        allLocations.reduce((sum, s) => sum + (s as any).latitude, 0) / allLocations.length,
       ]
     : [0, 0];
 
@@ -194,6 +211,52 @@ export function InteractiveMap({
       <MapFlyController focusedStopId={focusedStopId} validStops={validStops} />
 
       <MapControls position="bottom-right" showZoom={true} showCompass={true} />
+
+      {/* Saved Places Toggle Button */}
+      {validSavedPlaces.length > 0 && (
+        <div className="absolute top-4 left-4 z-10">
+          <button
+            onClick={() => {
+              // This would be controlled by parent, but for now just show saved places when requested
+            }}
+            className={`
+              flex items-center gap-2 px-3 py-2 rounded-lg font-medium text-sm shadow-lg
+              transition-all duration-200
+              ${showSavedPlaces
+                ? 'bg-accent text-white'
+                : 'bg-bg-surface text-text-primary hover:bg-bg-elevated'
+              }
+            `}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+            </svg>
+            <span>Saved Places ({validSavedPlaces.length})</span>
+          </button>
+        </div>
+      )}
+
+      {/* Saved Places Markers */}
+      {showSavedPlaces && validSavedPlaces.map((place) => (
+        <MapMarker
+          key={place.id}
+          longitude={place.longitude}
+          latitude={place.latitude}
+          onClick={() => onSavedPlaceClick?.(place)}
+        >
+          <div
+            className={`
+              w-8 h-8 rounded-full flex items-center justify-center
+              font-bold text-xs transition-all duration-200 cursor-pointer
+              border-2 border-white shadow-lg bg-tertiary text-white hover:scale-110
+            `}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
+            </svg>
+          </div>
+        </MapMarker>
+      ))}
     </Map>
   );
 }

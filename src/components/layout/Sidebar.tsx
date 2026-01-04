@@ -145,6 +145,50 @@ const userNavItems: NavItem[] = [
   },
 ];
 
+// Saved navigation items
+const savedNavItems: NavItem[] = [
+  {
+    path: "/saved",
+    label: "Saved",
+    icon: (
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
+        />
+      </svg>
+    ),
+    requiresAuth: true,
+  },
+  {
+    path: "/saved/recent",
+    label: "Recent",
+    icon: (
+      <svg
+        className="w-4 h-4"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+    ),
+    requiresAuth: true,
+  },
+];
+
 // Admin navigation items
 const adminNavItems: NavItem[] = [
   {
@@ -320,14 +364,18 @@ export const Sidebar = ({
     return true;
   });
 
+  const visibleSavedItems = isAuthenticated ? savedNavItems : [];
   const visibleAdminItems = isAdmin ? adminNavItems : [];
 
   const renderNavItem = (item: NavItem) => {
-    const isActive =
-      currentPath === item.path ||
-      (item.path !== "/" &&
-        item.path !== "/admin" &&
-        currentPath.startsWith(item.path));
+    // For /saved, only match exact path to avoid matching /saved/recent
+    const isExactMatchOnly = item.path === "/saved";
+    const isActive = isExactMatchOnly
+      ? currentPath === item.path
+      : currentPath === item.path ||
+        (item.path !== "/" &&
+          item.path !== "/admin" &&
+          currentPath.startsWith(item.path));
 
     return (
       <li key={item.path}>
@@ -484,6 +532,25 @@ export const Sidebar = ({
               </div>
               <ul className="space-y-0.5">
                 {visibleAdminItems.map(renderNavItem)}
+              </ul>
+            </>
+          )}
+
+          {/* SAVED Section */}
+          {visibleSavedItems.length > 0 && (
+            <>
+              <div
+                className={`my-4 ${!isMobile && !isExpanded ? "mx-2" : "mx-0"}`}
+              >
+                <div className="border-t border-border" />
+                {(isMobile || isExpanded) && (
+                  <p className="text-xs font-medium text-text-muted uppercase tracking-wider mt-4 mb-3 px-3 whitespace-nowrap">
+                    SAVED
+                  </p>
+                )}
+              </div>
+              <ul className="space-y-0.5">
+                {visibleSavedItems.map(renderNavItem)}
               </ul>
             </>
           )}

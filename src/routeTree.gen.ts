@@ -14,11 +14,13 @@ import { Route as SplatRouteImport } from './routes/$'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as VehiclesIndexRouteImport } from './routes/vehicles/index'
 import { Route as StopsIndexRouteImport } from './routes/stops/index'
+import { Route as SavedIndexRouteImport } from './routes/saved/index'
 import { Route as RoutesIndexRouteImport } from './routes/routes/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
 import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
 import { Route as FeedIndexRouteImport } from './routes/feed/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
+import { Route as SavedRecentRouteImport } from './routes/saved/recent'
 import { Route as RoutesRouteIdRouteImport } from './routes/routes/$routeId'
 import { Route as ProfileUserIdRouteImport } from './routes/profile/$userId'
 import { Route as FeedReportIdRouteImport } from './routes/feed/$reportId'
@@ -59,6 +61,11 @@ const StopsIndexRoute = StopsIndexRouteImport.update({
   path: '/stops/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SavedIndexRoute = SavedIndexRouteImport.update({
+  id: '/saved/',
+  path: '/saved/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const RoutesIndexRoute = RoutesIndexRouteImport.update({
   id: '/routes/',
   path: '/routes/',
@@ -82,6 +89,11 @@ const FeedIndexRoute = FeedIndexRouteImport.update({
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const SavedRecentRoute = SavedRecentRouteImport.update({
+  id: '/saved/recent',
+  path: '/saved/recent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const RoutesRouteIdRoute = RoutesRouteIdRouteImport.update({
@@ -172,11 +184,13 @@ export interface FileRoutesByFullPath {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
+  '/saved/recent': typeof SavedRecentRoute
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
   '/routes': typeof RoutesIndexRoute
+  '/saved': typeof SavedIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
@@ -198,11 +212,13 @@ export interface FileRoutesByTo {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
+  '/saved/recent': typeof SavedRecentRoute
   '/admin': typeof AdminIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
   '/routes': typeof RoutesIndexRoute
+  '/saved': typeof SavedIndexRoute
   '/stops': typeof StopsIndexRoute
   '/vehicles': typeof VehiclesIndexRoute
   '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
@@ -225,11 +241,13 @@ export interface FileRoutesById {
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
+  '/saved/recent': typeof SavedRecentRoute
   '/admin/': typeof AdminIndexRoute
   '/feed/': typeof FeedIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/reports/': typeof ReportsIndexRoute
   '/routes/': typeof RoutesIndexRoute
+  '/saved/': typeof SavedIndexRoute
   '/stops/': typeof StopsIndexRoute
   '/vehicles/': typeof VehiclesIndexRoute
   '/routes/$routeId/forum': typeof RoutesRouteIdForumRouteWithChildren
@@ -253,11 +271,13 @@ export interface FileRouteTypes {
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
+    | '/saved/recent'
     | '/admin'
     | '/feed'
     | '/leaderboard'
     | '/reports'
     | '/routes'
+    | '/saved'
     | '/stops'
     | '/vehicles'
     | '/routes/$routeId/forum'
@@ -279,11 +299,13 @@ export interface FileRouteTypes {
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
+    | '/saved/recent'
     | '/admin'
     | '/feed'
     | '/leaderboard'
     | '/reports'
     | '/routes'
+    | '/saved'
     | '/stops'
     | '/vehicles'
     | '/routes/$routeId/forum'
@@ -305,11 +327,13 @@ export interface FileRouteTypes {
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
+    | '/saved/recent'
     | '/admin/'
     | '/feed/'
     | '/leaderboard/'
     | '/reports/'
     | '/routes/'
+    | '/saved/'
     | '/stops/'
     | '/vehicles/'
     | '/routes/$routeId/forum'
@@ -332,11 +356,13 @@ export interface RootRouteChildren {
   FeedReportIdRoute: typeof FeedReportIdRoute
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   RoutesRouteIdRoute: typeof RoutesRouteIdRouteWithChildren
+  SavedRecentRoute: typeof SavedRecentRoute
   AdminIndexRoute: typeof AdminIndexRoute
   FeedIndexRoute: typeof FeedIndexRoute
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
   RoutesIndexRoute: typeof RoutesIndexRoute
+  SavedIndexRoute: typeof SavedIndexRoute
   StopsIndexRoute: typeof StopsIndexRoute
   VehiclesIndexRoute: typeof VehiclesIndexRoute
 }
@@ -378,6 +404,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof StopsIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/saved/': {
+      id: '/saved/'
+      path: '/saved'
+      fullPath: '/saved'
+      preLoaderRoute: typeof SavedIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/routes/': {
       id: '/routes/'
       path: '/routes'
@@ -411,6 +444,13 @@ declare module '@tanstack/react-router' {
       path: '/admin'
       fullPath: '/admin'
       preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/saved/recent': {
+      id: '/saved/recent'
+      path: '/saved/recent'
+      fullPath: '/saved/recent'
+      preLoaderRoute: typeof SavedRecentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/routes/$routeId': {
@@ -554,11 +594,13 @@ const rootRouteChildren: RootRouteChildren = {
   FeedReportIdRoute: FeedReportIdRoute,
   ProfileUserIdRoute: ProfileUserIdRoute,
   RoutesRouteIdRoute: RoutesRouteIdRouteWithChildren,
+  SavedRecentRoute: SavedRecentRoute,
   AdminIndexRoute: AdminIndexRoute,
   FeedIndexRoute: FeedIndexRoute,
   LeaderboardIndexRoute: LeaderboardIndexRoute,
   ReportsIndexRoute: ReportsIndexRoute,
   RoutesIndexRoute: RoutesIndexRoute,
+  SavedIndexRoute: SavedIndexRoute,
   StopsIndexRoute: StopsIndexRoute,
   VehiclesIndexRoute: VehiclesIndexRoute,
 }

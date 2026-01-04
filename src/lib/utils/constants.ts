@@ -106,6 +106,27 @@ export const API_ENDPOINTS = {
     complete: (id: string | number) => `/api/v1/check-ins/${id}/complete`,
     stats: "/api/v1/check-ins/stats",
   },
+  personalized: {
+    favorites: {
+      routes: "/api/v1/users/me/personalized/favorites/routes",
+      route: (id: string | number) => `/api/v1/users/me/personalized/favorites/routes/${id}`,
+      stops: "/api/v1/users/me/personalized/favorites/stops",
+      stop: (id: string | number) => `/api/v1/users/me/personalized/favorites/stops/${id}`,
+    },
+    places: {
+      list: "/api/v1/users/me/personalized/places",
+      detail: (id: string | number) => `/api/v1/users/me/personalized/places/${id}`,
+    },
+    recent: {
+      routes: "/api/v1/users/me/personalized/recent/routes",
+      stops: "/api/v1/users/me/personalized/recent/stops",
+      navigations: "/api/v1/users/me/personalized/recent/navigations",
+    },
+    savedNavigations: {
+      list: "/api/v1/users/me/personalized/saved-navigations",
+      detail: (id: string | number) => `/api/v1/users/me/personalized/saved-navigations/${id}`,
+    },
+  },
 } as const;
 
 export const STORAGE_KEYS = {
