@@ -1,0 +1,442 @@
+'use client';
+
+import React, { useEffect, useMemo, useState, createContext, useContext, useRef } from 'react';
+import maplibregl from 'maplibre-gl';
+import type { MapOptions, MarkerOptions, StyleSpecification } from 'maplibre-gl';
+
+interface MapContextValue {
+  map: maplibregl.Map | null;
+  isLoaded: boolean;
+}
+
+const MapContext = createContext<MapContextValue>({ map: null, isLoaded: false });
+
+export const useMap = () => useContext(MapContext);
+
+// Default CARTO basemap styles
+const DEFAULT_LIGHT_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
+const DEFAULT_DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+
+interface MapProps extends Omit<MapOptions, 'container' | 'style'> {
+  center?: [number, number];
+  zoom?: number;
+  children?: React.ReactNode;
+  className?: string;
+  style?: React.CSSProperties;
+  styles?: {
+    light?: string | StyleSpecification;
+    dark?: string | StyleSpecification;
+  };
+}
+
+export function Map({
+  center = [0, 0],
+  zoom = 10,
+  children,
+  className,
+  style,
+  styles,
+  ...options
+}: MapProps) {
+  const mapContainerRef = React.useRef<HTMLDivElement>(null);
+  const [map, setMap] = useState<maplibregl.Map | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  // Determine which style to use based on theme
+  const mapStyle = useMemo(() => {
+    const lightStyle = styles?.light || DEFAULT_LIGHT_STYLE;
+    const darkStyle = styles?.dark || DEFAULT_DARK_STYLE;
+    const isDark = document.documentElement.classList.contains('dark');
+    return isDark ? darkStyle : lightStyle;
+  }, [styles]);
+
+  useEffect(() => {
+    if (!mapContainerRef.current || map) return;
+
+    const mapInstance = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: mapStyle,
+      center,
+      zoom,
+      ...options,
+    });
+
+    mapInstance.on('load', () => setIsLoaded(true));
+
+    setMap(mapInstance);
+
+    return () => {
+      mapInstance.remove();
+      setMap(null);
+    };
+  }, []);
+
+  // Update center and zoom when props change
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+    map.flyTo({ center, zoom, duration: 1000 });
+  }, [map, isLoaded, center, zoom]);
+
+  // Watch for theme changes
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+          const isDark = document.documentElement.classList.contains('dark');
+          const newStyle = isDark
+            ? (styles?.dark || DEFAULT_DARK_STYLE)
+            : (styles?.light || DEFAULT_LIGHT_STYLE);
+          map.setStyle(newStyle);
+        }
+      });
+    });
+
+    observer.observe(document.documentElement, { attributes: true });
+    return () => observer.disconnect();
+  }, [map, isLoaded, styles]);
+
+  return (
+    <MapContext.Provider value={{ map, isLoaded }}>
+      <div ref={mapContainerRef} className={`w-full h-full ${className || ''}`} style={{ minHeight: '300px', ...style }}>
+        {children}
+      </div>
+    </MapContext.Provider>
+  );
+}
+
+interface MapControlsProps {
+  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  showZoom?: boolean;
+  showCompass?: boolean;
+  showLocate?: boolean;
+  showFullscreen?: boolean;
+  onLocate?: (coords: { longitude: number; latitude: number }) => void;
+}
+
+export function MapControls({
+  position = 'bottom-right',
+  showZoom = true,
+  showCompass = false,
+  showLocate = false,
+  showFullscreen = false,
+  onLocate,
+}: MapControlsProps) {
+  const { map } = useMap();
+
+  useEffect(() => {
+    if (!map) return;
+
+    if (showZoom) {
+      map.addControl(new maplibregl.NavigationControl({ showZoom: true, showCompass }), position);
+    }
+
+    if (showFullscreen) {
+      map.addControl(new maplibregl.FullscreenControl(), position);
+    }
+
+    if (showLocate) {
+      const locateControl = new maplibregl.GeolocateControl({
+        positionOptions: { enableHighAccuracy: true },
+        trackUserLocation: true,
+        showUserLocation: true,
+      });
+      locateControl.on('geolocate', (e) => {
+        if (onLocate) {
+          onLocate({ longitude: e.coords.longitude, latitude: e.coords.latitude });
+        }
+      });
+      map.addControl(locateControl, position);
+    }
+  }, [map, position, showZoom, showCompass, showLocate, showFullscreen, onLocate]);
+
+  return null;
+}
+
+interface MapMarkerProps extends Omit<MarkerOptions, 'element'> {
+  longitude: number;
+  latitude: number;
+  children?: React.ReactNode;
+  onClick?: (e: maplibregl.MapMouseEvent) => void;
+  onMouseEnter?: (e: maplibregl.MapMouseEvent) => void;
+  onMouseLeave?: (e: maplibregl.MapMouseEvent) => void;
+  onDragStart?: (lngLat: { lng: number; lat: number }) => void;
+  onDrag?: (lngLat: { lng: number; lat: number }) => void;
+  onDragEnd?: (lngLat: { lng: number; lat: number }) => void;
+}
+
+export function MapMarker({
+  longitude,
+  latitude,
+  children,
+  onClick,
+  onMouseEnter,
+  onMouseLeave,
+  onDragStart,
+  onDrag,
+  onDragEnd,
+  ...options
+}: MapMarkerProps) {
+  const { map, isLoaded } = useMap();
+  const markerRef = React.useRef<maplibregl.Marker | null>(null);
+  const elementRef = React.useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!map || !isLoaded || !elementRef.current) return;
+
+    const marker = new maplibregl.Marker({
+      element: elementRef.current,
+      ...options,
+    })
+      .setLngLat([longitude, latitude])
+      .addTo(map);
+
+    if (onClick) {
+      marker.getElement().addEventListener('click', (e) => onClick(e as unknown as maplibregl.MapMouseEvent));
+    }
+    if (onMouseEnter) {
+      marker.getElement().addEventListener('mouseenter', (e) => onMouseEnter(e as unknown as maplibregl.MapMouseEvent));
+    }
+    if (onMouseLeave) {
+      marker.getElement().addEventListener('mouseleave', (e) => onMouseLeave(e as unknown as maplibregl.MapMouseEvent));
+    }
+
+    if (options.draggable) {
+      marker.on('dragstart', () => {
+        const lngLat = marker.getLngLat();
+        if (onDragStart) onDragStart({ lng: lngLat.lng, lat: lngLat.lat });
+      });
+      marker.on('drag', () => {
+        const lngLat = marker.getLngLat();
+        if (onDrag) onDrag({ lng: lngLat.lng, lat: lngLat.lat });
+      });
+      marker.on('dragend', () => {
+        const lngLat = marker.getLngLat();
+        if (onDragEnd) onDragEnd({ lng: lngLat.lng, lat: lngLat.lat });
+      });
+    }
+
+    markerRef.current = marker;
+
+    return () => {
+      marker.remove();
+      markerRef.current = null;
+    };
+  }, [map, isLoaded, longitude, latitude, onClick, onMouseEnter, onMouseLeave, onDragStart, onDrag, onDragEnd, options]);
+
+  return (
+    <div ref={elementRef} className="maplibre-marker-wrapper cursor-pointer">
+      {children}
+    </div>
+  );
+}
+
+interface MarkerContentProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function MarkerContent({ children, className }: MarkerContentProps) {
+  return (
+    <div className={`maplibre-marker-content ${className || ''}`}>
+      {children || (
+        <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-md" />
+      )}
+    </div>
+  );
+}
+
+interface MarkerTooltipProps {
+  children?: React.ReactNode;
+  className?: string;
+}
+
+export function MarkerTooltip({ children: _children }: MarkerTooltipProps) {
+  return null;
+}
+
+interface MarkerPopupProps {
+  children?: React.ReactNode;
+  className?: string;
+  closeButton?: boolean;
+  closeOnClick?: boolean;
+  anchor?: 'top' | 'bottom' | 'left' | 'right';
+}
+
+export function MarkerPopup({ children: _children }: MarkerPopupProps) {
+  return null;
+}
+
+interface MapPopupProps {
+  longitude: number;
+  latitude: number;
+  children?: React.ReactNode;
+  className?: string;
+  closeButton?: boolean;
+  onClose?: () => void;
+}
+
+export function MapPopup({
+  longitude,
+  latitude,
+  children,
+  className,
+  closeButton = false,
+  onClose,
+}: MapPopupProps) {
+  const { map, isLoaded } = useMap();
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!map || !isLoaded || !children || !containerRef.current) return;
+
+    const popup = new maplibregl.Popup({
+      closeButton,
+      closeOnClick: false,
+      className: `maplibre-popup ${className || ''}`,
+    })
+      .setLngLat([longitude, latitude])
+      .setDOMContent(containerRef.current)
+      .addTo(map);
+
+    if (onClose) {
+      popup.on('close', onClose);
+    }
+
+    return () => {
+      popup.remove();
+    };
+  }, [map, isLoaded, longitude, latitude, closeButton, className, onClose]);
+
+  if (!children) return null;
+
+  return (
+    <div ref={containerRef} className="maplibre-popup-content">
+      {children}
+    </div>
+  );
+}
+
+interface MapRouteProps {
+  coordinates: [number, number][];
+  color?: string;
+  width?: number;
+  opacity?: number;
+  dashArray?: [number, number];
+}
+
+export function MapRoute({
+  coordinates,
+  color = '#4285F4',
+  width = 3,
+  opacity = 0.8,
+  dashArray,
+}: MapRouteProps) {
+  const { map, isLoaded } = useMap();
+  const sourceRef = React.useRef<string>('route-source');
+  const layerRef = React.useRef<string>('route-layer');
+
+  useEffect(() => {
+    if (!map || !isLoaded || coordinates.length < 2) return;
+
+    const sourceId = sourceRef.current;
+    const layerId = layerRef.current;
+
+    // Create GeoJSON LineString
+    const geoJSON: GeoJSON.FeatureCollection = {
+      type: 'FeatureCollection',
+      features: [
+        {
+          type: 'Feature',
+          properties: {},
+          geometry: {
+            type: 'LineString',
+            coordinates,
+          },
+        },
+      ],
+    };
+
+    // Add source if it doesn't exist
+    if (!map.getSource(sourceId)) {
+      map.addSource(sourceId, {
+        type: 'geojson',
+        data: geoJSON,
+      });
+    } else {
+      (map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(geoJSON);
+    }
+
+    // Add layer if it doesn't exist
+    if (!map.getLayer(layerId)) {
+      map.addLayer({
+        id: layerId,
+        type: 'line',
+        source: sourceId,
+        layout: {
+          'line-join': 'round',
+          'line-cap': 'round',
+        },
+        paint: {
+          'line-color': color,
+          'line-width': width,
+          'line-opacity': opacity,
+          ...(dashArray && { 'line-dasharray': dashArray }),
+        },
+      });
+    }
+
+    return () => {
+      if (map.getLayer(layerId)) {
+        map.removeLayer(layerId);
+      }
+      if (map.getSource(sourceId)) {
+        map.removeSource(sourceId);
+      }
+    };
+  }, [map, isLoaded, coordinates, color, width, opacity, dashArray]);
+
+  return null;
+}
+
+interface MarkerLabelProps {
+  children?: React.ReactNode;
+  className?: string;
+  position?: 'top' | 'bottom';
+}
+
+export function MarkerLabel({ children: _children }: MarkerLabelProps) {
+  return null;
+}
+
+interface MapClusterLayerProps {
+  data: string | GeoJSON.FeatureCollection;
+  clusterMaxZoom?: number;
+  clusterRadius?: number;
+  clusterColors?: [string, string, string];
+  clusterThresholds?: [number, number];
+  pointColor?: string;
+  onPointClick?: (feature: GeoJSON.Feature, coordinates: [number, number]) => void;
+  onClusterClick?: (clusterId: number, coordinates: [number, number], pointCount: number) => void;
+}
+
+export function MapClusterLayer({
+  data,
+  clusterMaxZoom = 14,
+  clusterRadius = 50,
+  clusterColors = ['#51bbd6', '#f1f075', '#f28cb1'],
+  clusterThresholds = [100, 750],
+  pointColor = '#3b82f6',
+  onPointClick,
+  onClusterClick,
+}: MapClusterLayerProps) {
+  const { map, isLoaded } = useMap();
+
+  useEffect(() => {
+    if (!map || !isLoaded) return;
+    // Clustering implementation placeholder
+  }, [map, isLoaded, data, clusterMaxZoom, clusterRadius, clusterColors, clusterThresholds, pointColor, onPointClick, onClusterClick]);
+
+  return null;
+}

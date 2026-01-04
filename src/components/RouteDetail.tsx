@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
 import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
+import { Map, MapControls, MapMarker, MapRoute, MarkerContent, MarkerTooltip } from './ui/map';
+import type { Stop } from '../lib/api/stops';
 import type { Route, RouteDetailResponse, RouteStatistics, ReportSummary, ForumPostSummary } from '../lib/api/routes';
 
 interface RouteDetailProps {
@@ -360,13 +362,89 @@ const RouteStopsSection = ({ stops }: { stops?: any[] }) => {
   );
 };
 
+// Section 6: Route Map
+const RouteMapSection = ({ stops }: { stops: Stop[] }) => {
+  // Filter stops with valid coordinates
+  const validStops = stops.filter(stop =>
+    typeof stop.latitude === 'number' &&
+    typeof stop.longitude === 'number' &&
+    !isNaN(stop.latitude) &&
+    !isNaN(stop.longitude)
+  );
+
+  if (validStops.length === 0) {
+    return null;
+  }
+
+  // Calculate center from all stops
+  const center: [number, number] = [
+    validStops.reduce((sum, s) => sum + s.longitude, 0) / validStops.length,
+    validStops.reduce((sum, s) => sum + s.latitude, 0) / validStops.length,
+  ];
+
+  // Convert stops to coordinates for route line
+  const routeCoordinates: [number, number][] = validStops.map(stop => [stop.longitude, stop.latitude]);
+
+  return (
+    <Card className="mb-6 p-0 overflow-hidden border-0 shadow-md">
+      <Map center={center} zoom={13} style={{ height: '400px' }}>
+        <MapRoute
+          coordinates={routeCoordinates}
+          color="#1B4D3E"
+          width={4}
+          opacity={0.8}
+        />
+        {validStops.map((stop, index) => (
+          <MapMarker
+            key={stop.id}
+            longitude={stop.longitude}
+            latitude={stop.latitude}
+          >
+            <MarkerContent>
+              <div className="w-8 h-8 bg-accent text-white rounded-full flex items-center justify-center font-bold text-sm shadow-lg border-2 border-white">
+                {index + 1}
+              </div>
+            </MarkerContent>
+            <MarkerTooltip>
+              <div className="px-2 py-1">
+                <span className="font-semibold text-text-primary">{index + 1}. {stop.name}</span>
+                {stop.address && (
+                  <p className="text-xs text-text-secondary mt-1">{stop.address}</p>
+                )}
+              </div>
+            </MarkerTooltip>
+          </MapMarker>
+        ))}
+        <MapControls position="bottom-right" showZoom={true} showCompass={true} />
+      </Map>
+    </Card>
+  );
+};
+
 export const RouteDetail = ({ data }: RouteDetailProps) => {
   const { route, statistics, recent_reports, recent_posts } = data;
+
+  // Extract and sort stops
+  const stops = route.route_stops
+    ?.map(rs => rs.stop)
+    .filter((stop): stop is Stop => stop !== undefined)
+    .sort((a, b) => {
+      const seqA = a.sequence ?? (route.route_stops?.find(rs => rs.stop_id === a.id)?.sequence_order ?? 0);
+      const seqB = b.sequence ?? (route.route_stops?.find(rs => rs.stop_id === b.id)?.sequence_order ?? 0);
+      return seqA - seqB;
+    })
+    ?? route.stops
+    ?? [];
 
   return (
     <div className="w-full animate-fade-in">
       {/* Section 1: Route Info Card */}
       <RouteInfoCard route={route} forumId={statistics.forum_id} />
+
+      {/* Section 1.5: Route Map Section */}
+      {stops.length > 0 && (
+        <RouteMapSection stops={stops} />
+      )}
 
       {/* Section 2: Statistics Dashboard */}
       <StatisticsSection statistics={statistics} />
