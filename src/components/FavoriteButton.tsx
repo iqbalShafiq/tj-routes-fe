@@ -8,6 +8,7 @@ interface FavoriteButtonProps {
   isFavorite: boolean;
   size?: 'sm' | 'md' | 'lg';
   showText?: boolean;
+  variant?: 'default' | 'minimal';
 }
 
 export const FavoriteButton = ({
@@ -16,6 +17,7 @@ export const FavoriteButton = ({
   isFavorite,
   size = 'md',
   showText = false,
+  variant = 'default',
 }: FavoriteButtonProps) => {
   const [optimisticFavorite, setOptimisticFavorite] = useState(isFavorite);
 
@@ -55,19 +57,33 @@ export const FavoriteButton = ({
     lg: 'w-6 h-6',
   };
 
+  const getButtonClasses = () => {
+    if (variant === 'minimal') {
+      return `
+        inline-flex items-center justify-center transition-all duration-200
+        ${optimisticFavorite
+          ? 'text-accent'
+          : 'text-text-muted hover:text-accent'
+        }
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+      `;
+    }
+    return `
+      inline-flex items-center justify-center rounded-full transition-all duration-200
+      ${optimisticFavorite
+        ? 'bg-accent text-white'
+        : 'bg-bg-elevated text-text-muted hover:bg-bg-hover hover:text-accent'
+      }
+      ${sizeClasses[size]}
+      ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+    `;
+  };
+
   return (
     <button
       onClick={handleToggle}
       disabled={isLoading}
-      className={`
-        inline-flex items-center justify-center rounded-full transition-all duration-200
-        ${optimisticFavorite
-          ? 'bg-accent text-white'
-          : 'bg-bg-elevated text-text-muted hover:bg-bg-hover hover:text-accent'
-        }
-        ${sizeClasses[size]}
-        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
-      `}
+      className={getButtonClasses()}
       title={optimisticFavorite ? 'Remove from favorites' : 'Add to favorites'}
     >
       {isLoading ? (

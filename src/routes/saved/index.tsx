@@ -162,6 +162,7 @@ function SavedPage() {
                         type="route"
                         isFavorite={true}
                         size="md"
+                        variant="minimal"
                       />
                       <Link
                         to="/routes/$routeId"
@@ -236,8 +237,8 @@ function SavedPage() {
               {favoriteStops.data.map((stop) => (
                 <Card key={stop.id} size="md" className="p-4">
                   <div className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-info/10 flex items-center justify-center">
-                      <svg className="w-6 h-6 text-info" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center">
+                      <svg className="w-6 h-6 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path
                           strokeLinecap="round"
                           strokeLinejoin="round"
@@ -260,6 +261,7 @@ function SavedPage() {
                         type="stop"
                         isFavorite={true}
                         size="md"
+                        variant="minimal"
                       />
                       <Link
                         to="/stops/$stopId"
