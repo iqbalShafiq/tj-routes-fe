@@ -1,5 +1,5 @@
 import { Link } from '@tanstack/react-router';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef, useEffect } from 'react';
 import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
 import type { Stop } from '../lib/api/stops';
@@ -339,6 +339,27 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
   // Mobile drawer state
   const [isDrawerExpanded, setIsDrawerExpanded] = useState(false);
 
+  // Map container ref for scrolling when bottom sheet expands
+  const mapContainerRef = useRef<HTMLDivElement>(null);
+
+  // Scroll to map when bottom sheet expands
+  useEffect(() => {
+    if (isDrawerExpanded && mapContainerRef.current) {
+      // Disable scroll restoration temporarily
+      if ('scrollRestoration' in window.history) {
+        window.history.scrollRestoration = 'manual';
+      }
+      mapContainerRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Re-enable after animation
+      const timer = setTimeout(() => {
+        if ('scrollRestoration' in window.history) {
+          window.history.scrollRestoration = 'auto';
+        }
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [isDrawerExpanded]);
+
   // Filter stops based on search and filters
   const filteredStops = useMemo(() => {
     let result = [...stops];
@@ -432,7 +453,7 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
           </div>
 
           {/* Mobile Map Container */}
-          <div className="lg:hidden relative h-[calc(100vh-160px)] transition-all duration-300 ease-out">
+          <div ref={mapContainerRef} className="lg:hidden relative h-[calc(100vh-160px)] transition-all duration-300 ease-out">
             <div className={`h-full transition-all duration-300 ease-out ${isDrawerExpanded ? 'h-[50%]' : 'h-full'}`}>
               <div className="h-full rounded-t-card overflow-hidden border border-border">
                 <InteractiveMap

@@ -117,36 +117,21 @@ export function MobileStopsDrawer({
     }
   }, [isExpanded, onToggleExpand]);
 
-  // Lock body scroll when drawer is expanded
-  useEffect(() => {
+  // Prevent body scroll when touching above drawer content
+  const preventBodyScroll = useCallback((e: React.TouchEvent) => {
     if (isExpanded) {
-      const scrollY = window.scrollY;
-      document.body.style.overflow = 'hidden';
-      document.body.style.position = 'fixed';
-      document.body.style.top = `-${scrollY}px`;
-      document.body.style.width = '100%';
-    } else {
-      const scrollY = document.body.style.top;
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      if (scrollY) {
-        window.scrollTo(0, parseInt(scrollY.replace('-', '') || '0'));
+      const touchY = e.touches[0].clientY;
+      const drawerTop = drawerRef.current?.getBoundingClientRect().top ?? 0;
+      if (touchY < drawerTop) {
+        e.preventDefault();
       }
     }
-
-    return () => {
-      document.body.style.overflow = '';
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-    };
   }, [isExpanded]);
 
   return (
     <div
       ref={drawerRef}
+      onTouchMove={preventBodyScroll}
       className={`
         fixed bottom-0 left-0 right-0 z-[60]
         bg-bg-surface rounded-t-2xl shadow-elevated
@@ -229,7 +214,7 @@ export function MobileStopsDrawer({
           <div
             className="flex-1 overflow-y-auto space-y-3 scrollbar-thin pb-4"
             style={{
-              maxHeight: 'calc(50vh - 120px)',
+              maxHeight: 'calc(65vh - 140px)',
               contain: 'strict'
             }}
           >
