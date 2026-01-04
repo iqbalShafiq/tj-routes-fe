@@ -65,7 +65,7 @@ export const FavoriteButton = ({
           ? 'text-accent'
           : 'text-text-muted hover:text-accent'
         }
-        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-110'}
       `;
     }
     return `

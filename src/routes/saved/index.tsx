@@ -263,25 +263,6 @@ function SavedPage() {
                         size="md"
                         variant="minimal"
                       />
-                      <Link
-                        to="/stops/$stopId"
-                        params={{ stopId: String(stop.stop.id) }}
-                        className="p-2 hover:bg-bg-elevated rounded-lg transition-colors"
-                      >
-                        <svg
-                          className="w-5 h-5 text-text-secondary"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </Link>
                     </div>
                   </div>
                 </Card>
