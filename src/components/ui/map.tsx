@@ -299,7 +299,6 @@ export function MapMarker({
 
     const marker = new maplibregl.Marker({
       element: markerElement,
-      ...options,
     })
       .setLngLat([longitude, latitude])
       .addTo(map);
@@ -389,22 +388,19 @@ export function MapMarker({
       });
     }
 
-    if (options.draggable) {
-      marker.on("dragstart", () => {
-        const lngLat = marker.getLngLat();
-        if (onDragStart) onDragStart({ lng: lngLat.lng, lat: lngLat.lat });
-      });
-      marker.on("drag", () => {
-        const lngLat = marker.getLngLat();
-        if (onDrag) onDrag({ lng: lngLat.lng, lat: lngLat.lat });
-      });
-      marker.on("dragend", () => {
-        const lngLat = marker.getLngLat();
-        if (onDragEnd) onDragEnd({ lng: lngLat.lng, lat: lngLat.lat });
-      });
-    }
+    // Drag functionality removed - options no longer passed
 
     markerRef.current = marker;
+
+    // Set initial classes AFTER marker is created
+    const baseClasses = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg transition-all duration-200";
+    if (isFocused) {
+      contentElement.className = `${baseClasses} bg-accent text-white scale-125 shadow-xl z-10`;
+    } else if (isHighlighted) {
+      contentElement.className = `${baseClasses} bg-accent-light text-accent scale-110 shadow-lg border-accent`;
+    } else {
+      contentElement.className = `${baseClasses} bg-accent text-white hover:scale-110`;
+    }
 
     return () => {
       // Safely clean up popup with try-catch to handle already-removed elements
@@ -432,35 +428,25 @@ export function MapMarker({
     isLoaded,
     longitude,
     latitude,
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    onDragStart,
-    onDrag,
-    onDragEnd,
     tooltipContent,
-    options,
-    isHighlighted,
-    isFocused,
     stopId,
   ]);
 
   // Update marker styling when isHighlighted or isFocused props change
-  useEffect(() => {
-    if (!markerRef.current || !contentElementRef.current) return;
+  React.useLayoutEffect(() => {
+    if (!contentElementRef.current) return;
 
-    const contentEl = contentElementRef.current;
     const baseClasses = "w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm border-2 border-white shadow-lg transition-all duration-200";
 
     if (isFocused) {
-      contentEl.className = `${baseClasses} bg-accent text-white scale-125 shadow-xl z-10`;
+      contentElementRef.current.className = `${baseClasses} bg-accent text-white scale-125 shadow-xl z-10`;
     } else if (isHighlighted) {
-      contentEl.className = `${baseClasses} bg-accent-light text-accent scale-110 shadow-lg border-accent`;
+      contentElementRef.current.className = `${baseClasses} bg-accent-light text-accent scale-110 shadow-lg border-accent`;
     } else {
-      contentEl.className = `${baseClasses} bg-accent text-white hover:scale-110`;
+      contentElementRef.current.className = `${baseClasses} bg-accent text-white hover:scale-110`;
     }
-  }, [isHighlighted, isFocused]);
-  // Return null - MapLibre manages the DOM, React should not render anything
+  }, [isFocused, isHighlighted, stopId]);
+
   return null;
 }
 
@@ -597,6 +583,7 @@ export function MapRoute({
         data: geoJSON,
       });
     } else {
+      // Update data when coordinates change
       (map.getSource(sourceId) as maplibregl.GeoJSONSource).setData(geoJSON);
     }
 
@@ -620,21 +607,7 @@ export function MapRoute({
     }
 
     return () => {
-      if (!map) return;
-      try {
-        if (layerId && typeof map.getLayer === 'function' && map.getLayer(layerId)) {
-          map.removeLayer(layerId);
-        }
-      } catch {
-        // Layer might not exist or already removed
-      }
-      try {
-        if (sourceId && typeof map.getSource === 'function' && map.getSource(sourceId)) {
-          map.removeSource(sourceId);
-        }
-      } catch {
-        // Source might not exist or already removed
-      }
+      // Don't remove the route on cleanup - the route should persist
     };
   }, [map, isLoaded, coordinates, color, width, opacity, dashArray]);
 

@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import React, { useEffect, useCallback, useRef } from 'react';
 import { Map, MapMarker, MapRoute, MapControls, useMap } from './ui/map';
 import type { Stop } from '../lib/api/stops';
 
@@ -25,16 +25,34 @@ function MapFlyController({
   const { map, isLoaded } = useMap();
 
   useEffect(() => {
-    if (!map || !isLoaded || focusedStopId === null) return;
+    if (!map || !isLoaded) return;
 
-    const focusedStop = validStops.find((s) => s.id === focusedStopId);
-    if (focusedStop && typeof focusedStop.latitude === 'number' && typeof focusedStop.longitude === 'number') {
+    if (focusedStopId === null) {
+      // Fly back to route center when unfocused
+      const center = validStops.length > 0
+        ? [
+            validStops.reduce((sum, s) => sum + s.longitude, 0) / validStops.length,
+            validStops.reduce((sum, s) => sum + s.latitude, 0) / validStops.length,
+          ]
+        : [0, 0];
+
       map.flyTo({
-        center: [focusedStop.longitude, focusedStop.latitude],
-        zoom: 15,
+        center,
+        zoom: 13,
         duration: 800,
         essential: true,
       });
+    } else {
+      // Fly to focused stop
+      const focusedStop = validStops.find((s) => s.id === focusedStopId);
+      if (focusedStop && typeof focusedStop.latitude === 'number' && typeof focusedStop.longitude === 'number') {
+        map.flyTo({
+          center: [focusedStop.longitude, focusedStop.latitude],
+          zoom: 15,
+          duration: 800,
+          essential: true,
+        });
+      }
     }
   }, [focusedStopId, validStops, map, isLoaded]);
 
@@ -75,19 +93,23 @@ export function InteractiveMap({
     stop.latitude,
   ]);
 
-  // Handle marker click
-  const handleMarkerClick = (stopId: number) => {
-    onFocusedStopIdChange(stopId === focusedStopId ? null : stopId);
-  };
+  // Handle marker click - memoized to prevent marker recreation
+  // Use ref to track focusedStopId without adding it to dependencies
+  const focusedStopIdRef = React.useRef(focusedStopId);
+  focusedStopIdRef.current = focusedStopId;
 
-  // Handle marker hover
-  const handleMarkerMouseEnter = (stopId: number) => {
+  const handleMarkerClick = useCallback((stopId: number) => {
+    onFocusedStopIdChange(stopId === focusedStopIdRef.current ? null : stopId);
+  }, [onFocusedStopIdChange]);
+
+  // Handle marker hover - memoized to prevent marker recreation
+  const handleMarkerMouseEnter = useCallback((stopId: number) => {
     onHoverStopIdChange(stopId);
-  };
+  }, [onHoverStopIdChange]);
 
-  const handleMarkerMouseLeave = () => {
+  const handleMarkerMouseLeave = useCallback(() => {
     onHoverStopIdChange(null);
-  };
+  }, [onHoverStopIdChange]);
 
   if (validStops.length === 0) {
     return (
