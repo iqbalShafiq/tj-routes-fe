@@ -406,12 +406,7 @@ const RouteMapSection = ({ stops }: { stops: Stop[] }) => {
               </div>
             </MarkerContent>
             <MarkerTooltip>
-              <div className="px-2 py-1">
-                <span className="font-semibold text-text-primary">{index + 1}. {stop.name}</span>
-                {stop.address && (
-                  <p className="text-xs text-text-secondary mt-1">{stop.address}</p>
-                )}
-              </div>
+              <span className="text-sm font-medium whitespace-nowrap">{index + 1}. {stop.name}</span>
             </MarkerTooltip>
           </MapMarker>
         ))}

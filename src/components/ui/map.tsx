@@ -1,23 +1,39 @@
-'use client';
+"use client";
 
-import React, { useEffect, useMemo, useState, createContext, useContext, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
-import type { MapOptions, MarkerOptions, StyleSpecification } from 'maplibre-gl';
+import React, {
+  useEffect,
+  useMemo,
+  useState,
+  createContext,
+  useContext,
+  useRef,
+} from "react";
+import maplibregl from "maplibre-gl";
+import type {
+  MapOptions,
+  MarkerOptions,
+  StyleSpecification,
+} from "maplibre-gl";
 
 interface MapContextValue {
   map: maplibregl.Map | null;
   isLoaded: boolean;
 }
 
-const MapContext = createContext<MapContextValue>({ map: null, isLoaded: false });
+const MapContext = createContext<MapContextValue>({
+  map: null,
+  isLoaded: false,
+});
 
 export const useMap = () => useContext(MapContext);
 
 // Default CARTO basemap styles
-const DEFAULT_LIGHT_STYLE = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
-const DEFAULT_DARK_STYLE = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
+const DEFAULT_LIGHT_STYLE =
+  "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+const DEFAULT_DARK_STYLE =
+  "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json";
 
-interface MapProps extends Omit<MapOptions, 'container' | 'style'> {
+interface MapProps extends Omit<MapOptions, "container" | "style"> {
   center?: [number, number];
   zoom?: number;
   children?: React.ReactNode;
@@ -46,7 +62,7 @@ export function Map({
   const mapStyle = useMemo(() => {
     const lightStyle = styles?.light || DEFAULT_LIGHT_STYLE;
     const darkStyle = styles?.dark || DEFAULT_DARK_STYLE;
-    const isDark = document.documentElement.classList.contains('dark');
+    const isDark = document.documentElement.classList.contains("dark");
     return isDark ? darkStyle : lightStyle;
   }, [styles]);
 
@@ -61,7 +77,7 @@ export function Map({
       ...options,
     });
 
-    mapInstance.on('load', () => setIsLoaded(true));
+    mapInstance.on("load", () => setIsLoaded(true));
 
     setMap(mapInstance);
 
@@ -83,11 +99,14 @@ export function Map({
 
     const observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
-        if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-          const isDark = document.documentElement.classList.contains('dark');
+        if (
+          mutation.type === "attributes" &&
+          mutation.attributeName === "class"
+        ) {
+          const isDark = document.documentElement.classList.contains("dark");
           const newStyle = isDark
-            ? (styles?.dark || DEFAULT_DARK_STYLE)
-            : (styles?.light || DEFAULT_LIGHT_STYLE);
+            ? styles?.dark || DEFAULT_DARK_STYLE
+            : styles?.light || DEFAULT_LIGHT_STYLE;
           map.setStyle(newStyle);
         }
       });
@@ -99,7 +118,11 @@ export function Map({
 
   return (
     <MapContext.Provider value={{ map, isLoaded }}>
-      <div ref={mapContainerRef} className={`w-full h-full ${className || ''}`} style={{ minHeight: '300px', ...style }}>
+      <div
+        ref={mapContainerRef}
+        className={`w-full h-full ${className || ""}`}
+        style={{ minHeight: "300px", ...style }}
+      >
         {children}
       </div>
     </MapContext.Provider>
@@ -107,7 +130,7 @@ export function Map({
 }
 
 interface MapControlsProps {
-  position?: 'top-left' | 'top-right' | 'bottom-left' | 'bottom-right';
+  position?: "top-left" | "top-right" | "bottom-left" | "bottom-right";
   showZoom?: boolean;
   showCompass?: boolean;
   showLocate?: boolean;
@@ -116,7 +139,7 @@ interface MapControlsProps {
 }
 
 export function MapControls({
-  position = 'bottom-right',
+  position = "bottom-right",
   showZoom = true,
   showCompass = false,
   showLocate = false,
@@ -129,7 +152,10 @@ export function MapControls({
     if (!map) return;
 
     if (showZoom) {
-      map.addControl(new maplibregl.NavigationControl({ showZoom: true, showCompass }), position);
+      map.addControl(
+        new maplibregl.NavigationControl({ showZoom: true, showCompass }),
+        position
+      );
     }
 
     if (showFullscreen) {
@@ -142,19 +168,30 @@ export function MapControls({
         trackUserLocation: true,
         showUserLocation: true,
       });
-      locateControl.on('geolocate', (e) => {
+      locateControl.on("geolocate", (e) => {
         if (onLocate) {
-          onLocate({ longitude: e.coords.longitude, latitude: e.coords.latitude });
+          onLocate({
+            longitude: e.coords.longitude,
+            latitude: e.coords.latitude,
+          });
         }
       });
       map.addControl(locateControl, position);
     }
-  }, [map, position, showZoom, showCompass, showLocate, showFullscreen, onLocate]);
+  }, [
+    map,
+    position,
+    showZoom,
+    showCompass,
+    showLocate,
+    showFullscreen,
+    onLocate,
+  ]);
 
   return null;
 }
 
-interface MapMarkerProps extends Omit<MarkerOptions, 'element'> {
+interface MapMarkerProps extends Omit<MarkerOptions, "element"> {
   longitude: number;
   latitude: number;
   children?: React.ReactNode;
@@ -164,6 +201,30 @@ interface MapMarkerProps extends Omit<MarkerOptions, 'element'> {
   onDragStart?: (lngLat: { lng: number; lat: number }) => void;
   onDrag?: (lngLat: { lng: number; lat: number }) => void;
   onDragEnd?: (lngLat: { lng: number; lat: number }) => void;
+}
+
+// Helper to check if a child is a MarkerTooltip
+function isMarkerTooltip(child: React.ReactNode): boolean {
+  if (!child || typeof child !== "object") return false;
+  const type = (child as { type?: { name?: string } })?.type;
+  return type?.name === "MarkerTooltip";
+}
+
+// Helper to get tooltip content from children
+function extractTooltipContent(
+  children: React.ReactNode
+): React.ReactNode | null {
+  if (!children) return null;
+  const childrenArray = React.Children.toArray(children);
+  for (const child of childrenArray) {
+    if (isMarkerTooltip(child)) {
+      return (
+        (child as React.ReactElement<{ children?: React.ReactNode }>)?.props
+          ?.children ?? null
+      );
+    }
+  }
+  return null;
 }
 
 export function MapMarker({
@@ -181,6 +242,13 @@ export function MapMarker({
   const { map, isLoaded } = useMap();
   const markerRef = React.useRef<maplibregl.Marker | null>(null);
   const elementRef = React.useRef<HTMLDivElement>(null);
+  const popupRef = React.useRef<maplibregl.Popup | null>(null);
+
+  // Extract tooltip content from children
+  const tooltipContent = extractTooltipContent(children);
+  const markerContent = React.Children.toArray(children).filter(
+    (child) => !isMarkerTooltip(child)
+  );
 
   useEffect(() => {
     if (!map || !isLoaded || !elementRef.current) return;
@@ -193,25 +261,89 @@ export function MapMarker({
       .addTo(map);
 
     if (onClick) {
-      marker.getElement().addEventListener('click', (e) => onClick(e as unknown as maplibregl.MapMouseEvent));
+      marker
+        .getElement()
+        .addEventListener("click", (e) =>
+          onClick(e as unknown as maplibregl.MapMouseEvent)
+        );
     }
     if (onMouseEnter) {
-      marker.getElement().addEventListener('mouseenter', (e) => onMouseEnter(e as unknown as maplibregl.MapMouseEvent));
+      marker
+        .getElement()
+        .addEventListener("mouseenter", (e) =>
+          onMouseEnter(e as unknown as maplibregl.MapMouseEvent)
+        );
     }
     if (onMouseLeave) {
-      marker.getElement().addEventListener('mouseleave', (e) => onMouseLeave(e as unknown as maplibregl.MapMouseEvent));
+      marker
+        .getElement()
+        .addEventListener("mouseleave", (e) =>
+          onMouseLeave(e as unknown as maplibregl.MapMouseEvent)
+        );
+    }
+
+    // Tooltip functionality - show popup on hover
+    if (tooltipContent) {
+      marker.getElement().addEventListener("mouseenter", () => {
+        if (!popupRef.current) {
+          const popupContainer = document.createElement("div");
+          popupContainer.className = "map-tooltip-container p-2";
+
+          // Extract text content from tooltip
+          if (typeof tooltipContent === "string") {
+            popupContainer.textContent = tooltipContent;
+          } else {
+            // Extract text from React elements
+            const extractText = (node: React.ReactNode): string => {
+              if (typeof node === "string") return node;
+              if (typeof node === "number") return String(node);
+              if (Array.isArray(node)) return node.map(extractText).join("");
+              if (node && typeof node === "object") {
+                const element = node as React.ReactElement<{
+                  children?: React.ReactNode;
+                }>;
+                if ("props" in element && element.props) {
+                  return extractText(element.props.children);
+                }
+              }
+              return "";
+            };
+            const textContent = extractText(tooltipContent);
+            if (textContent) {
+              popupContainer.textContent = textContent;
+            }
+          }
+
+          popupRef.current = new maplibregl.Popup({
+            closeButton: false,
+            closeOnClick: false,
+            offset: 8,
+            className: "maplibre-tooltip",
+          })
+            .setLngLat([longitude, latitude])
+            .setDOMContent(popupContainer)
+            .addTo(map);
+        }
+      });
+
+      marker.getElement().addEventListener("mouseleave", () => {
+        if (popupRef.current) {
+          popupRef.current.remove();
+          popupRef.current = null;
+        }
+      });
     }
 
     if (options.draggable) {
-      marker.on('dragstart', () => {
+      marker.on("dragstart", () => {
         const lngLat = marker.getLngLat();
         if (onDragStart) onDragStart({ lng: lngLat.lng, lat: lngLat.lat });
       });
-      marker.on('drag', () => {
+      marker.on("drag", () => {
         const lngLat = marker.getLngLat();
         if (onDrag) onDrag({ lng: lngLat.lng, lat: lngLat.lat });
       });
-      marker.on('dragend', () => {
+      marker.on("dragend", () => {
         const lngLat = marker.getLngLat();
         if (onDragEnd) onDragEnd({ lng: lngLat.lng, lat: lngLat.lat });
       });
@@ -220,14 +352,31 @@ export function MapMarker({
     markerRef.current = marker;
 
     return () => {
+      if (popupRef.current) {
+        popupRef.current.remove();
+        popupRef.current = null;
+      }
       marker.remove();
       markerRef.current = null;
     };
-  }, [map, isLoaded, longitude, latitude, onClick, onMouseEnter, onMouseLeave, onDragStart, onDrag, onDragEnd, options]);
+  }, [
+    map,
+    isLoaded,
+    longitude,
+    latitude,
+    onClick,
+    onMouseEnter,
+    onMouseLeave,
+    onDragStart,
+    onDrag,
+    onDragEnd,
+    tooltipContent,
+    options,
+  ]);
 
   return (
     <div ref={elementRef} className="maplibre-marker-wrapper cursor-pointer">
-      {children}
+      {markerContent}
     </div>
   );
 }
@@ -239,7 +388,7 @@ interface MarkerContentProps {
 
 export function MarkerContent({ children, className }: MarkerContentProps) {
   return (
-    <div className={`maplibre-marker-content ${className || ''}`}>
+    <div className={`maplibre-marker-content ${className || ""}`}>
       {children || (
         <div className="w-4 h-4 bg-blue-500 rounded-full border-2 border-white shadow-md" />
       )}
@@ -252,7 +401,7 @@ interface MarkerTooltipProps {
   className?: string;
 }
 
-export function MarkerTooltip({ children: _children }: MarkerTooltipProps) {
+export function MarkerTooltip({}: MarkerTooltipProps) {
   return null;
 }
 
@@ -261,10 +410,10 @@ interface MarkerPopupProps {
   className?: string;
   closeButton?: boolean;
   closeOnClick?: boolean;
-  anchor?: 'top' | 'bottom' | 'left' | 'right';
+  anchor?: "top" | "bottom" | "left" | "right";
 }
 
-export function MarkerPopup({ children: _children }: MarkerPopupProps) {
+export function MarkerPopup({}: MarkerPopupProps) {
   return null;
 }
 
@@ -294,14 +443,14 @@ export function MapPopup({
     const popup = new maplibregl.Popup({
       closeButton,
       closeOnClick: false,
-      className: `maplibre-popup ${className || ''}`,
+      className: `maplibre-popup ${className || ""}`,
     })
       .setLngLat([longitude, latitude])
       .setDOMContent(containerRef.current)
       .addTo(map);
 
     if (onClose) {
-      popup.on('close', onClose);
+      popup.on("close", onClose);
     }
 
     return () => {
@@ -328,14 +477,14 @@ interface MapRouteProps {
 
 export function MapRoute({
   coordinates,
-  color = '#4285F4',
+  color = "#4285F4",
   width = 3,
   opacity = 0.8,
   dashArray,
 }: MapRouteProps) {
   const { map, isLoaded } = useMap();
-  const sourceRef = React.useRef<string>('route-source');
-  const layerRef = React.useRef<string>('route-layer');
+  const sourceRef = React.useRef<string>("route-source");
+  const layerRef = React.useRef<string>("route-layer");
 
   useEffect(() => {
     if (!map || !isLoaded || coordinates.length < 2) return;
@@ -345,13 +494,13 @@ export function MapRoute({
 
     // Create GeoJSON LineString
     const geoJSON: GeoJSON.FeatureCollection = {
-      type: 'FeatureCollection',
+      type: "FeatureCollection",
       features: [
         {
-          type: 'Feature',
+          type: "Feature",
           properties: {},
           geometry: {
-            type: 'LineString',
+            type: "LineString",
             coordinates,
           },
         },
@@ -361,7 +510,7 @@ export function MapRoute({
     // Add source if it doesn't exist
     if (!map.getSource(sourceId)) {
       map.addSource(sourceId, {
-        type: 'geojson',
+        type: "geojson",
         data: geoJSON,
       });
     } else {
@@ -372,17 +521,17 @@ export function MapRoute({
     if (!map.getLayer(layerId)) {
       map.addLayer({
         id: layerId,
-        type: 'line',
+        type: "line",
         source: sourceId,
         layout: {
-          'line-join': 'round',
-          'line-cap': 'round',
+          "line-join": "round",
+          "line-cap": "round",
         },
         paint: {
-          'line-color': color,
-          'line-width': width,
-          'line-opacity': opacity,
-          ...(dashArray && { 'line-dasharray': dashArray }),
+          "line-color": color,
+          "line-width": width,
+          "line-opacity": opacity,
+          ...(dashArray && { "line-dasharray": dashArray }),
         },
       });
     }
@@ -403,7 +552,7 @@ export function MapRoute({
 interface MarkerLabelProps {
   children?: React.ReactNode;
   className?: string;
-  position?: 'top' | 'bottom';
+  position?: "top" | "bottom";
 }
 
 export function MarkerLabel({ children: _children }: MarkerLabelProps) {
@@ -417,17 +566,24 @@ interface MapClusterLayerProps {
   clusterColors?: [string, string, string];
   clusterThresholds?: [number, number];
   pointColor?: string;
-  onPointClick?: (feature: GeoJSON.Feature, coordinates: [number, number]) => void;
-  onClusterClick?: (clusterId: number, coordinates: [number, number], pointCount: number) => void;
+  onPointClick?: (
+    feature: GeoJSON.Feature,
+    coordinates: [number, number]
+  ) => void;
+  onClusterClick?: (
+    clusterId: number,
+    coordinates: [number, number],
+    pointCount: number
+  ) => void;
 }
 
 export function MapClusterLayer({
   data,
   clusterMaxZoom = 14,
   clusterRadius = 50,
-  clusterColors = ['#51bbd6', '#f1f075', '#f28cb1'],
+  clusterColors = ["#51bbd6", "#f1f075", "#f28cb1"],
   clusterThresholds = [100, 750],
-  pointColor = '#3b82f6',
+  pointColor = "#3b82f6",
   onPointClick,
   onClusterClick,
 }: MapClusterLayerProps) {
@@ -436,7 +592,18 @@ export function MapClusterLayer({
   useEffect(() => {
     if (!map || !isLoaded) return;
     // Clustering implementation placeholder
-  }, [map, isLoaded, data, clusterMaxZoom, clusterRadius, clusterColors, clusterThresholds, pointColor, onPointClick, onClusterClick]);
+  }, [
+    map,
+    isLoaded,
+    data,
+    clusterMaxZoom,
+    clusterRadius,
+    clusterColors,
+    clusterThresholds,
+    pointColor,
+    onPointClick,
+    onClusterClick,
+  ]);
 
   return null;
 }

@@ -1,6 +1,6 @@
-@import '@fontsource-variable/inter';
-@import '@fontsource-variable/space-grotesk';
-@import 'maplibre-gl/dist/maplibre-gl.css';
+@import "@fontsource-variable/inter";
+@import "@fontsource-variable/space-grotesk";
+@import "maplibre-gl/dist/maplibre-gl.css";
 
 @tailwind base;
 @tailwind components;
@@ -19,8 +19,8 @@
     --color-text-muted: 163 163 163;
 
     /* Accent Color - Deep Forest Green (elegant, sophisticated) */
-    --color-accent: 27 77 62;        /* #1B4D3E */
-    --color-accent-hover: 20 61 50;   /* #143D31 */
+    --color-accent: 27 77 62; /* #1B4D3E */
+    --color-accent-hover: 20 61 50; /* #143D31 */
     --color-accent-light: 232 245 240; /* #E8F5F0 */
     --color-accent-muted: 168 220 198; /* #A8DCC6 */
 
@@ -35,14 +35,14 @@
     --color-info: 37 99 235;
 
     /* Tertiary Color - Terracotta */
-    --color-tertiary: 193 103 75;        /* #C1674B */
-    --color-tertiary-hover: 166 81 60;   /* #A6513C */
+    --color-tertiary: 193 103 75; /* #C1674B */
+    --color-tertiary-hover: 166 81 60; /* #A6513C */
     --color-tertiary-light: 245 235 231; /* #F5EBE7 */
     --color-tertiary-muted: 219 171 154; /* #DBAB9A */
 
     /* Typography */
-    --font-display: 'Space Grotesk Variable', -apple-system, sans-serif;
-    --font-body: 'Inter Variable', -apple-system, sans-serif;
+    --font-display: "Space Grotesk Variable", -apple-system, sans-serif;
+    --font-body: "Inter Variable", -apple-system, sans-serif;
   }
 
   * {
@@ -52,14 +52,19 @@
   body {
     @apply bg-bg-main text-text-primary;
     font-family: var(--font-body);
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     letter-spacing: -0.01em;
     line-height: 1.6;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     font-family: var(--font-display);
     font-weight: 600;
     letter-spacing: -0.02em;
@@ -69,28 +74,64 @@
 
 @layer components {
   /* Background utilities */
-  .bg-bg-main { background-color: rgb(var(--color-bg-main)); }
-  .bg-bg-surface { background-color: rgb(var(--color-bg-surface)); }
-  .bg-bg-elevated { background-color: rgb(var(--color-bg-elevated)); }
-  .bg-accent-light { background-color: rgb(var(--color-accent-light)); }
-  .bg-tertiary-light { background-color: rgb(var(--color-tertiary-light)); }
+  .bg-bg-main {
+    background-color: rgb(var(--color-bg-main));
+  }
+  .bg-bg-surface {
+    background-color: rgb(var(--color-bg-surface));
+  }
+  .bg-bg-elevated {
+    background-color: rgb(var(--color-bg-elevated));
+  }
+  .bg-accent-light {
+    background-color: rgb(var(--color-accent-light));
+  }
+  .bg-tertiary-light {
+    background-color: rgb(var(--color-tertiary-light));
+  }
 
   /* Text utilities */
-  .text-text-primary { color: rgb(var(--color-text-primary)); }
-  .text-text-secondary { color: rgb(var(--color-text-secondary)); }
-  .text-text-muted { color: rgb(var(--color-text-muted)); }
-  .text-accent { color: rgb(var(--color-accent)); }
-  .text-success { color: rgb(var(--color-success)); }
-  .text-warning { color: rgb(var(--color-warning)); }
-  .text-error { color: rgb(var(--color-error)); }
-  .text-info { color: rgb(var(--color-info)); }
-  .text-tertiary { color: rgb(var(--color-tertiary)); }
+  .text-text-primary {
+    color: rgb(var(--color-text-primary));
+  }
+  .text-text-secondary {
+    color: rgb(var(--color-text-secondary));
+  }
+  .text-text-muted {
+    color: rgb(var(--color-text-muted));
+  }
+  .text-accent {
+    color: rgb(var(--color-accent));
+  }
+  .text-success {
+    color: rgb(var(--color-success));
+  }
+  .text-warning {
+    color: rgb(var(--color-warning));
+  }
+  .text-error {
+    color: rgb(var(--color-error));
+  }
+  .text-info {
+    color: rgb(var(--color-info));
+  }
+  .text-tertiary {
+    color: rgb(var(--color-tertiary));
+  }
 
   /* Border utilities */
-  .border-border { border-color: rgb(var(--color-border)); }
-  .border-accent { border-color: rgb(var(--color-accent)); }
-  .border-tertiary { border-color: rgb(var(--color-tertiary)); }
-  .border-border-strong:hover { border-color: rgb(var(--color-text-secondary)); }
+  .border-border {
+    border-color: rgb(var(--color-border));
+  }
+  .border-accent {
+    border-color: rgb(var(--color-accent));
+  }
+  .border-tertiary {
+    border-color: rgb(var(--color-tertiary));
+  }
+  .border-border-strong:hover {
+    border-color: rgb(var(--color-text-secondary));
+  }
 
   /* Sidebar styles */
   .sidebar-nav-item {
@@ -180,6 +221,15 @@
 
   .badge-dot {
     @apply w-1.5 h-1.5 rounded-full mr-1.5;
+  }
+
+  /* Map Tooltip Styles */
+  .maplibre-tooltip {
+    font-family: var(--font-body) !important;
+    border-radius: 6px !important;
+    color: rgb(var(--color-text-primary)) !important;
+    border: none !important;
+    overflow: hidden !important;
   }
 }
 
