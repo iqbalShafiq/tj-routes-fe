@@ -26,7 +26,7 @@ export const useFavoriteRoutes = (page: number = 1, limit: number = 20) => {
 export const useIsFavoriteRoute = (routeId: string | number | undefined) => {
   return useQuery({
     queryKey: ['isFavoriteRoute', routeId],
-    queryFn: () => personalizedApi.isFavoriteRoute(routeId!),
+    queryFn: () => personalizedApi.isFavoriteRoute(Number(routeId)),
     enabled: !!routeId,
   });
 };
@@ -35,16 +35,53 @@ export const useToggleFavoriteRoute = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ routeId, isFavorite }: { routeId: number; isFavorite: boolean }) => {
+    mutationFn: ({ routeId, isFavorite }: { routeId: number; isFavorite: boolean }) => {
       if (isFavorite) {
-        await personalizedApi.removeFavoriteRoute(routeId);
-      } else {
-        await personalizedApi.addFavoriteRoute(routeId);
+        return personalizedApi.removeFavoriteRoute(routeId);
       }
+      return personalizedApi.addFavoriteRoute(routeId);
+    },
+    onMutate: async ({ routeId, isFavorite }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['isFavoriteRoute', routeId] });
+      await queryClient.cancelQueries({ queryKey: ['favoriteRoutes'] });
+
+      // Snapshot previous value
+      const previousIsFavorite = queryClient.getQueryData(['isFavoriteRoute', routeId]);
+      const previousFavoriteRoutes = queryClient.getQueryData(['favoriteRoutes']);
+
+      // Optimistically update the cache
+      queryClient.setQueryData(['isFavoriteRoute', routeId], !isFavorite);
+
+      // Also update the favorite routes list if needed
+      queryClient.setQueryData(['favoriteRoutes'], (old: any) => {
+        if (!old?.data) return old;
+        if (isFavorite) {
+          // Removing: filter out the route
+          return {
+            ...old,
+            data: old.data.filter((item: any) => item.route?.id !== routeId),
+            total: (old.total || old.data.length) - 1,
+          };
+        }
+        // Adding: won't show until refetch
+        return old;
+      });
+
+      return { previousIsFavorite, previousFavoriteRoutes };
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteRoutes'] });
       queryClient.invalidateQueries({ queryKey: ['isFavoriteRoute', variables.routeId] });
+      queryClient.invalidateQueries({ queryKey: ['favoriteRoutes'] });
+    },
+    onError: (_, variables, context) => {
+      // Rollback on error
+      if (context?.previousIsFavorite) {
+        queryClient.setQueryData(['isFavoriteRoute', variables.routeId], context.previousIsFavorite);
+      }
+      if (context?.previousFavoriteRoutes) {
+        queryClient.setQueryData(['favoriteRoutes'], context.previousFavoriteRoutes);
+      }
     },
     retry: 0, // Don't retry on error
   });
@@ -89,7 +126,7 @@ export const useFavoriteStops = (page: number = 1, limit: number = 20) => {
 export const useIsFavoriteStop = (stopId: string | number | undefined) => {
   return useQuery({
     queryKey: ['isFavoriteStop', stopId],
-    queryFn: () => personalizedApi.isFavoriteStop(stopId!),
+    queryFn: () => personalizedApi.isFavoriteStop(Number(stopId)),
     enabled: !!stopId,
   });
 };
@@ -98,16 +135,53 @@ export const useToggleFavoriteStop = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ stopId, isFavorite }: { stopId: number; isFavorite: boolean }) => {
+    mutationFn: ({ stopId, isFavorite }: { stopId: number; isFavorite: boolean }) => {
       if (isFavorite) {
-        await personalizedApi.removeFavoriteStop(stopId);
-      } else {
-        await personalizedApi.addFavoriteStop(stopId);
+        return personalizedApi.removeFavoriteStop(stopId);
       }
+      return personalizedApi.addFavoriteStop(stopId);
+    },
+    onMutate: async ({ stopId, isFavorite }) => {
+      // Cancel outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['isFavoriteStop', stopId] });
+      await queryClient.cancelQueries({ queryKey: ['favoriteStops'] });
+
+      // Snapshot previous value
+      const previousIsFavorite = queryClient.getQueryData(['isFavoriteStop', stopId]);
+      const previousFavoriteStops = queryClient.getQueryData(['favoriteStops']);
+
+      // Optimistically update the cache
+      queryClient.setQueryData(['isFavoriteStop', stopId], !isFavorite);
+
+      // Also update the favorite stops list if needed
+      queryClient.setQueryData(['favoriteStops'], (old: any) => {
+        if (!old?.data) return old;
+        if (isFavorite) {
+          // Removing: filter out the stop
+          return {
+            ...old,
+            data: old.data.filter((item: any) => item.stop?.id !== stopId),
+            total: (old.total || old.data.length) - 1,
+          };
+        }
+        // Adding: won't show until refetch
+        return old;
+      });
+
+      return { previousIsFavorite, previousFavoriteStops };
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteStops'] });
       queryClient.invalidateQueries({ queryKey: ['isFavoriteStop', variables.stopId] });
+      queryClient.invalidateQueries({ queryKey: ['favoriteStops'] });
+    },
+    onError: (_, variables, context) => {
+      // Rollback on error
+      if (context?.previousIsFavorite) {
+        queryClient.setQueryData(['isFavoriteStop', variables.stopId], context.previousIsFavorite);
+      }
+      if (context?.previousFavoriteStops) {
+        queryClient.setQueryData(['favoriteStops'], context.previousFavoriteStops);
+      }
     },
     retry: 0, // Don't retry on error
   });
