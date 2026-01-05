@@ -229,7 +229,7 @@ export const personalizedApi = {
   },
 
   addFavoriteRoute: async (routeId: number): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.personalized.favorites.routes, { routeId });
+    await apiClient.post(API_ENDPOINTS.personalized.favorites.route(routeId));
   },
 
   removeFavoriteRoute: async (routeId: number): Promise<void> => {
@@ -267,7 +267,7 @@ export const personalizedApi = {
   },
 
   addFavoriteStop: async (stopId: number): Promise<void> => {
-    await apiClient.post(API_ENDPOINTS.personalized.favorites.stops, { stopId });
+    await apiClient.post(API_ENDPOINTS.personalized.favorites.stop(stopId));
   },
 
   removeFavoriteStop: async (stopId: number): Promise<void> => {

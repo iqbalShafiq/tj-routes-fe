@@ -24,7 +24,9 @@ export const FavoriteButton = ({
   const mutation = type === 'route' ? toggleRouteMutation : toggleStopMutation;
   const isPending = mutation.isPending;
 
-  const handleToggle = useCallback(() => {
+  const handleToggle = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
     if (isPending) return;
 
     if (type === 'route') {
