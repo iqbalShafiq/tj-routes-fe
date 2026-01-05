@@ -7,6 +7,8 @@ import type { Route, RouteStop, RouteStatistics, ReportSummary, ForumPostSummary
 import { StopsListPanel } from './StopsListPanel';
 import { InteractiveMap } from './InteractiveMap';
 import { MobileStopsDrawer } from './MobileStopsDrawer';
+import { FavoriteButton } from './FavoriteButton';
+import { useIsFavoriteRoute } from '../lib/hooks/usePersonalized';
 
 interface RouteDetailProps {
   data: {
@@ -18,7 +20,7 @@ interface RouteDetailProps {
 }
 
 // Section 1: Route Info Card
-const RouteInfoCard = ({ route, forumId, statistics }: { route: Route; forumId?: number | null; statistics?: RouteStatistics }) => (
+const RouteInfoCard = ({ route, routeId, isFavorite, forumId, statistics }: { route: Route; routeId: number; isFavorite: boolean; forumId?: number | null; statistics?: RouteStatistics }) => (
   <Card className="mb-6">
     <div className="flex items-center justify-between mb-4">
       <div className="flex items-center gap-4">
@@ -32,9 +34,18 @@ const RouteInfoCard = ({ route, forumId, statistics }: { route: Route; forumId?:
           )}
         </div>
       </div>
-      <Chip variant={route.status === 'active' ? 'success' : route.status === 'inactive' ? 'error' : 'default'}>
-        {route.status}
-      </Chip>
+      <div className="flex items-center gap-3">
+        <Chip variant={route.status === 'active' ? 'success' : route.status === 'inactive' ? 'error' : 'default'}>
+          {route.status}
+        </Chip>
+        <FavoriteButton
+          id={routeId}
+          type="route"
+          isFavorite={isFavorite}
+          size="sm"
+          variant="minimal"
+        />
+      </div>
     </div>
 
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
@@ -306,6 +317,8 @@ const RecentPostsSection = ({ posts }: { posts: ForumPostSummary[] }) => {
 
 export const RouteDetail = ({ data }: RouteDetailProps) => {
   const { route, statistics, recent_reports, recent_posts } = data;
+  const routeId = Number(route.id);
+  const { data: favoriteData } = useIsFavoriteRoute(routeId);
 
   // Extract and sort stops
   const stops: Stop[] = useMemo(() => {
@@ -412,7 +425,7 @@ export const RouteDetail = ({ data }: RouteDetailProps) => {
   return (
     <div className="w-full animate-fade-in">
       {/* Section 1: Route Info Card */}
-      <RouteInfoCard route={route} forumId={statistics.forum_id} statistics={statistics} />
+      <RouteInfoCard route={route} routeId={routeId} isFavorite={!!favoriteData} forumId={statistics.forum_id} statistics={statistics} />
 
       {/* Split View Container */}
       {stops.length > 0 && (

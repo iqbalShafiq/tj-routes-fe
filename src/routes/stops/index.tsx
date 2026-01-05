@@ -9,17 +9,20 @@ import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import type { Stop } from '../../lib/api/stops';
+import { FavoriteButton } from '../../components/FavoriteButton';
+import { useIsFavoriteStop } from '../../lib/hooks/usePersonalized';
 
 export const Route = createFileRoute('/stops/')({
   component: StopsPage,
 });
 
 function StopCard({ stop }: { stop: Stop }) {
+  const { data: isFavorite } = useIsFavoriteStop(stop.id);
   const isTerminal = stop.type === 'terminal';
-  
+
   // Parse facilities if it's a string
-  const facilities = typeof stop.facilities === 'string' 
-    ? JSON.parse(stop.facilities || '[]') 
+  const facilities = typeof stop.facilities === 'string'
+    ? JSON.parse(stop.facilities || '[]')
     : stop.facilities || [];
 
   return (
@@ -45,13 +48,22 @@ function StopCard({ stop }: { stop: Stop }) {
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-1">
-            <Chip variant={isTerminal ? 'warning' : 'default'}>
-              {isTerminal ? 'Terminal' : 'Stop'}
-            </Chip>
-            <Chip variant={stop.status === 'active' ? 'success' : 'error'}>
-              {stop.status}
-            </Chip>
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <div className="flex items-center gap-2">
+              <Chip variant={isTerminal ? 'warning' : 'default'}>
+                {isTerminal ? 'Terminal' : 'Stop'}
+              </Chip>
+              <Chip variant={stop.status === 'active' ? 'success' : 'error'}>
+                {stop.status}
+              </Chip>
+            </div>
+            <FavoriteButton
+              id={stop.id}
+              type="stop"
+              isFavorite={!!isFavorite}
+              size="sm"
+              variant="minimal"
+            />
           </div>
           <h3 className="font-display font-semibold text-text-primary text-lg truncate">{stop.name}</h3>
           {stop.address && (

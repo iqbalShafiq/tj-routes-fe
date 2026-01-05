@@ -2,12 +2,15 @@ import { Link } from "@tanstack/react-router";
 import { Card } from "./ui/Card";
 import { Chip } from "./ui/Chip";
 import type { Route } from "../lib/api/routes";
+import { useIsFavoriteRoute } from "../lib/hooks/usePersonalized";
+import { FavoriteButton } from "./FavoriteButton";
 
 interface RouteCardProps {
   route: Route;
 }
 
 export const RouteCard = ({ route }: RouteCardProps) => {
+  const { data: isFavorite } = useIsFavoriteRoute(route.id);
   const stopsCount = route.stops?.length || route.route_stops?.length || 0;
   
   return (
@@ -18,14 +21,23 @@ export const RouteCard = ({ route }: RouteCardProps) => {
           <span className="text-4xl font-display font-bold text-text-primary leading-none">
             {route.route_number}
           </span>
-          {route.status === "active" && (
-            <Chip variant="success">
-              <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
-              Active
-            </Chip>
-          )}
+          <div className="flex items-center gap-2">
+            <FavoriteButton
+              id={route.id}
+              type="route"
+              isFavorite={!!isFavorite}
+              size="sm"
+              variant="minimal"
+            />
+            {route.status === "active" && (
+              <Chip variant="success">
+                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                Active
+              </Chip>
+            )}
+          </div>
         </div>
 
         {/* Route Name */}
