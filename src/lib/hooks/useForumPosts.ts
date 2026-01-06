@@ -160,10 +160,7 @@ export const usePinForumPost = () => {
         if (!old) return old;
         return {
           ...old,
-          data: {
-            ...old.data,
-            is_pinned: true,
-          },
+          is_pinned: true,
         };
       });
 
@@ -241,10 +238,7 @@ export const useUnpinForumPost = () => {
         if (!old) return old;
         return {
           ...old,
-          data: {
-            ...old.data,
-            is_pinned: false,
-          },
+          is_pinned: false,
         };
       });
 

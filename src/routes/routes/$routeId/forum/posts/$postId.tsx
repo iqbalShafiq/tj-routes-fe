@@ -55,13 +55,13 @@ function ForumPostDetailPage() {
 
   const handlePin = (postId: number) => {
     if (forumData?.forum.id) {
-      pinMutation.mutate({ forumId: forumData.forum.id, postId });
+      pinMutation.mutate({ forumId: forumData.forum.id, postId: String(postId) });
     }
   };
 
   const handleUnpin = (postId: number) => {
     if (forumData?.forum.id) {
-      unpinMutation.mutate({ forumId: forumData.forum.id, postId });
+      unpinMutation.mutate({ forumId: forumData.forum.id, postId: String(postId) });
     }
   };
 
