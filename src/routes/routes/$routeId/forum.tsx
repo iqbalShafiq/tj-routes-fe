@@ -1,21 +1,35 @@
-import { useState, useEffect, useRef } from 'react';
-import { createFileRoute, Link, useNavigate, Outlet, useLocation } from '@tanstack/react-router';
-import { useRoute } from '../../../lib/hooks/useRoutes';
-import { useForumByRoute, useJoinForum, useLeaveForum } from '../../../lib/hooks/useForums';
-import { useForumPostsInfinite } from '../../../lib/hooks/useForumPosts';
-import { useAuth } from '../../../lib/hooks/useAuth';
-import { Button } from '../../../components/ui/Button';
-import { Skeleton } from '../../../components/ui/Loading';
-import { PageHeader } from '../../../components/layout';
-import { ForumHeader } from '../../../components/ForumHeader';
-import { ForumPostCard } from '../../../components/ForumPostCard';
-import { CreateForumPostModal } from '../../../components/CreateForumPostModal';
-import { FORUM_POST_TYPES } from '../../../lib/utils/constants';
-import { usePinForumPost, useUnpinForumPost, useDeleteForumPost } from '../../../lib/hooks/useForumPosts';
-import { PostTypeIcon } from '../../../components/ui/PostTypeIcon';
-import type { ForumPost } from '../../../lib/api/forum-posts';
+import { useState, useEffect, useRef } from "react";
+import {
+  createFileRoute,
+  Link,
+  useNavigate,
+  Outlet,
+  useLocation,
+} from "@tanstack/react-router";
+import { useRoute } from "../../../lib/hooks/useRoutes";
+import {
+  useForumByRoute,
+  useJoinForum,
+  useLeaveForum,
+} from "../../../lib/hooks/useForums";
+import { useForumPostsInfinite } from "../../../lib/hooks/useForumPosts";
+import { useAuth } from "../../../lib/hooks/useAuth";
+import { Button } from "../../../components/ui/Button";
+import { Skeleton } from "../../../components/ui/Loading";
+import { PageHeader } from "../../../components/layout";
+import { ForumHeader } from "../../../components/ForumHeader";
+import { ForumPostCard } from "../../../components/ForumPostCard";
+import { CreateForumPostModal } from "../../../components/CreateForumPostModal";
+import { FORUM_POST_TYPES } from "../../../lib/utils/constants";
+import {
+  usePinForumPost,
+  useUnpinForumPost,
+  useDeleteForumPost,
+} from "../../../lib/hooks/useForumPosts";
+import { PostTypeIcon } from "../../../components/ui/PostTypeIcon";
+import type { ForumPost } from "../../../lib/api/forum-posts";
 
-export const Route = createFileRoute('/routes/$routeId/forum')({
+export const Route = createFileRoute("/routes/$routeId/forum")({
   component: ForumPage,
 });
 
@@ -26,12 +40,14 @@ function ForumPage() {
   const { isAuthenticated, user } = useAuth();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [postTypeFilter, setPostTypeFilter] = useState<
-    'discussion' | 'info' | 'question' | 'announcement' | undefined
+    "discussion" | "info" | "question" | "announcement" | undefined
   >(undefined);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState("");
 
   // Check if we're on a child route (posts, members, etc.)
-  const isChildRoute = location.pathname.includes('/forum/posts/') || location.pathname.includes('/forum/members');
+  const isChildRoute =
+    location.pathname.includes("/forum/posts/") ||
+    location.pathname.includes("/forum/members");
 
   const { data: route, isLoading: routeLoading } = useRoute(routeId);
   const { data: forumData, isLoading: forumLoading } = useForumByRoute(routeId);
@@ -47,14 +63,10 @@ function ForumPage() {
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useForumPostsInfinite(
-    forumData?.forum.id || 0,
-    20,
-    {
-      post_type: postTypeFilter,
-      search: searchTerm || undefined,
-    }
-  );
+  } = useForumPostsInfinite(forumData?.forum.id || 0, 20, {
+    post_type: postTypeFilter,
+    search: searchTerm || undefined,
+  });
 
   // Infinite scroll
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -100,7 +112,7 @@ function ForumPage() {
   };
 
   const handleDelete = (postId: number) => {
-    if (confirm('Are you sure you want to delete this post?')) {
+    if (confirm("Are you sure you want to delete this post?")) {
       if (forumData?.forum.id) {
         deleteMutation.mutate({ forumId: forumData.forum.id, postId });
       }
@@ -110,9 +122,9 @@ function ForumPage() {
   const handleEdit = (post: ForumPost) => {
     // Navigate to edit page or show edit modal
     navigate({
-      to: '/routes/$routeId/forum/posts/$postId',
+      to: "/routes/$routeId/forum/posts/$postId",
       params: { routeId, postId: String(post.id) },
-      search: { edit: 'true' },
+      search: { edit: "true" },
     });
   };
 
@@ -133,11 +145,23 @@ function ForumPage() {
     return (
       <div className="text-center py-20 animate-fade-in">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-red-100 mb-4 card-chamfered">
-          <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          <svg
+            className="w-8 h-8 text-red-600"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+            />
           </svg>
         </div>
-        <p className="text-red-600 font-display text-lg mb-2">Error loading forum</p>
+        <p className="text-red-600 font-display text-lg mb-2">
+          Error loading forum
+        </p>
         <Link to="/routes/$routeId" params={{ routeId }}>
           <Button variant="outline">Back to Route</Button>
         </Link>
@@ -166,9 +190,12 @@ function ForumPage() {
         title="Forum"
         subtitle={`Discussion forum for ${routeName}`}
         breadcrumbs={[
-          { label: 'Routes', path: '/' },
-          { label: route.route_number || String(route.id), path: `/routes/${routeId}` },
-          { label: 'Forum' },
+          { label: "Routes", path: "/" },
+          {
+            label: route.route_number || String(route.id),
+            path: `/routes/${routeId}`,
+          },
+          { label: "Forum" },
         ]}
         actions={
           <Link to="/routes/$routeId" params={{ routeId }}>
@@ -190,35 +217,39 @@ function ForumPage() {
       {/* Filters and Create Button */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm overflow-x-auto max-w-full scrollbar-hide">
-            <button
-              onClick={() => setPostTypeFilter(undefined)}
-              className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
-                !postTypeFilter
-                  ? 'bg-white text-tertiary shadow-sm'
-                  : 'text-text-secondary hover:text-text-primary'
-              }`}
-            >
-              All
-            </button>
-            {FORUM_POST_TYPES.map((type) => (
+          <div className="-mr-6 -ml-6 overflow-x-scroll scrollbar-hide">
+            <div className="flex gap-1 md:gap-2 bg-bg-elevated w-max md:w-auto p-1 rounded-sm mx-6">
               <button
-                key={type.value}
-                onClick={() =>
-                  setPostTypeFilter(
-                    postTypeFilter === type.value ? undefined : (type.value as any)
-                  )
-                }
-                className={`px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2 ${
-                  postTypeFilter === type.value
-                    ? 'bg-white text-tertiary shadow-sm'
-                    : 'text-text-secondary hover:text-text-primary'
+                onClick={() => setPostTypeFilter(undefined)}
+                className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
+                  !postTypeFilter
+                    ? "bg-white text-tertiary shadow-sm"
+                    : "text-text-secondary hover:text-text-primary"
                 }`}
               >
-                <PostTypeIcon type={type.icon as any} className="w-4 h-4" />
-                {type.label}
+                All
               </button>
-            ))}
+              {FORUM_POST_TYPES.map((type) => (
+                <button
+                  key={type.value}
+                  onClick={() =>
+                    setPostTypeFilter(
+                      postTypeFilter === type.value
+                        ? undefined
+                        : (type.value as any)
+                    )
+                  }
+                  className={`px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2 ${
+                    postTypeFilter === type.value
+                      ? "bg-white text-tertiary shadow-sm"
+                      : "text-text-secondary hover:text-text-primary"
+                  }`}
+                >
+                  <PostTypeIcon type={type.icon as any} className="w-4 h-4" />
+                  {type.label}
+                </button>
+              ))}
+            </div>
           </div>
           <input
             type="text"
@@ -250,7 +281,11 @@ function ForumPage() {
         <>
           <div className="space-y-6 mb-8">
             {sortedPosts.map((post, index) => (
-              <div key={post.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-stagger-1">
+              <div
+                key={post.id}
+                style={{ animationDelay: `${index * 50}ms` }}
+                className="animate-stagger-1"
+              >
                 <ForumPostCard
                   post={post}
                   forumId={forumData.forum.id}
@@ -264,11 +299,25 @@ function ForumPage() {
           </div>
 
           {/* Infinite scroll trigger */}
-          <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
+          <div
+            ref={loadMoreRef}
+            className="h-10 flex items-center justify-center"
+          >
             {isFetchingNextPage && (
               <div className="flex items-center gap-2 text-text-muted">
-                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                <svg
+                  className="animate-spin h-5 w-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  />
                   <path
                     className="opacity-75"
                     fill="currentColor"
@@ -283,7 +332,12 @@ function ForumPage() {
       ) : (
         <div className="text-center py-20">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
-            <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg
+              className="w-8 h-8 text-text-muted"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
@@ -292,11 +346,13 @@ function ForumPage() {
               />
             </svg>
           </div>
-          <p className="text-text-secondary font-display text-lg">No posts yet</p>
+          <p className="text-text-secondary font-display text-lg">
+            No posts yet
+          </p>
           <p className="text-text-muted text-sm mt-2 mb-6">
             {forumData.is_member
               ? "Be the first to start a discussion!"
-              : 'Join the forum to create posts'}
+              : "Join the forum to create posts"}
           </p>
           {isAuthenticated && !forumData.is_member && (
             <Button variant="primary" onClick={handleJoin}>
@@ -318,4 +374,3 @@ function ForumPage() {
     </div>
   );
 }
-
