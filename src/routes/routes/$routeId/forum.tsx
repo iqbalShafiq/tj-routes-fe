@@ -190,7 +190,7 @@ function ForumPage() {
       {/* Filters and Create Button */}
       <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
         <div className="flex flex-wrap items-center gap-3">
-          <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm">
+          <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm overflow-x-auto max-w-full scrollbar-hide">
             <button
               onClick={() => setPostTypeFilter(undefined)}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
