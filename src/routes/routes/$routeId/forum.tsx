@@ -9,7 +9,7 @@ import { Skeleton } from '../../../components/ui/Loading';
 import { PageHeader } from '../../../components/layout';
 import { ForumHeader } from '../../../components/ForumHeader';
 import { ForumPostCard } from '../../../components/ForumPostCard';
-import { CreateForumPostForm } from '../../../components/CreateForumPostForm';
+import { CreateForumPostModal } from '../../../components/CreateForumPostModal';
 import { FORUM_POST_TYPES } from '../../../lib/utils/constants';
 import { usePinForumPost, useUnpinForumPost, useDeleteForumPost } from '../../../lib/hooks/useForumPosts';
 import { PostTypeIcon } from '../../../components/ui/PostTypeIcon';
@@ -24,7 +24,7 @@ function ForumPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const { isAuthenticated, user } = useAuth();
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [postTypeFilter, setPostTypeFilter] = useState<
     'discussion' | 'info' | 'question' | 'announcement' | undefined
   >(undefined);
@@ -229,24 +229,11 @@ function ForumPage() {
           />
         </div>
         {isAuthenticated && forumData.is_member && (
-          <Button variant="primary" onClick={() => setShowCreateForm(!showCreateForm)}>
-            {showCreateForm ? 'Cancel' : '+ Create Post'}
+          <Button variant="primary" onClick={() => setIsCreateModalOpen(true)}>
+            + Create Post
           </Button>
         )}
       </div>
-
-      {/* Create Post Form */}
-      {showCreateForm && forumData.is_member && (
-        <div className="mb-6">
-          <CreateForumPostForm
-            forumId={forumData.forum.id}
-            onSuccess={() => {
-              setShowCreateForm(false);
-            }}
-            onCancel={() => setShowCreateForm(false)}
-          />
-        </div>
-      )}
 
       {/* Posts List */}
       {postsLoading && !postsData ? (
@@ -314,6 +301,16 @@ function ForumPage() {
           )}
         </div>
       )}
+
+      {/* Create Post Modal */}
+      <CreateForumPostModal
+        isOpen={isCreateModalOpen}
+        onClose={() => setIsCreateModalOpen(false)}
+        forumId={forumData.forum.id}
+        onSuccess={() => {
+          // Success handling is done in the mutation's onSuccess
+        }}
+      />
     </div>
   );
 }

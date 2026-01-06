@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useCreateForumPost } from '../lib/hooks/useForumPosts';
 import type { CreateForumPostRequest } from '../lib/api/forum-posts';
+import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
 import { Textarea } from './ui/Textarea';
 import { Select } from './ui/Select';
@@ -8,9 +9,9 @@ import { FileInput } from './ui/FileInput';
 import { Button } from './ui/Button';
 import { Loading } from './ui/Loading';
 import { FORUM_POST_TYPES } from '../lib/utils/constants';
-import { PostTypeIcon } from './ui/PostTypeIcon';
 import { useReports } from '../lib/hooks/useReports';
 
+// Form props - shared between modal and inline form
 interface CreateForumPostFormProps {
   forumId: number;
   onSuccess?: () => void;
@@ -18,12 +19,13 @@ interface CreateForumPostFormProps {
   initialData?: Partial<CreateForumPostRequest>;
 }
 
-export const CreateForumPostForm = ({
+// Internal form content component
+function CreateForumPostFormContent({
   forumId,
   onSuccess,
   onCancel,
   initialData,
-}: CreateForumPostFormProps) => {
+}: CreateForumPostFormProps) {
   const [formData, setFormData] = useState<CreateForumPostRequest>({
     post_type: initialData?.post_type || 'discussion',
     title: initialData?.title || '',
@@ -70,7 +72,17 @@ export const CreateForumPostForm = ({
         },
         {
           onSuccess: () => {
-            // Cache update is handled in the mutation's onSuccess callback
+            // Reset form
+            setFormData({
+              post_type: 'discussion',
+              title: '',
+              content: '',
+              linked_report_id: null,
+            });
+            setPhotos([]);
+            setPdfs([]);
+            setErrors({});
+            // Success callback
             onSuccess?.();
           },
           onError: (error: any) => {
@@ -190,7 +202,7 @@ export const CreateForumPostForm = ({
       )}
 
       {/* Actions */}
-      <div className="flex items-center justify-end gap-3 pt-4">
+      <div className="flex items-center justify-end gap-3 pt-4 border-t border-border mt-6">
         {onCancel && (
           <Button type="button" variant="outline" onClick={onCancel}>
             Cancel
@@ -199,8 +211,8 @@ export const CreateForumPostForm = ({
         <Button type="submit" variant="primary" disabled={createPostMutation.isPending}>
           {createPostMutation.isPending ? (
             <>
-              <Loading className="w-4 h-4 mr-2" />
-              Creating...
+              <Loading />
+              <span className="ml-2">Creating...</span>
             </>
           ) : (
             'Create Post'
@@ -209,5 +221,46 @@ export const CreateForumPostForm = ({
       </div>
     </form>
   );
+}
+
+// Export the form component for inline use (e.g., in edit page)
+export const CreateForumPostForm = (props: CreateForumPostFormProps) => {
+  return <CreateForumPostFormContent {...props} />;
 };
 
+// Modal component
+interface CreateForumPostModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  forumId: number;
+  onSuccess?: () => void;
+}
+
+export const CreateForumPostModal = ({
+  isOpen,
+  onClose,
+  forumId,
+  onSuccess,
+}: CreateForumPostModalProps) => {
+  const handleClose = () => {
+    onClose();
+  };
+
+  return (
+    <Modal
+      isOpen={isOpen}
+      onClose={handleClose}
+      title="Create New Post"
+      size="lg"
+    >
+      <CreateForumPostFormContent
+        forumId={forumId}
+        onSuccess={() => {
+          onClose();
+          onSuccess?.();
+        }}
+        onCancel={handleClose}
+      />
+    </Modal>
+  );
+};

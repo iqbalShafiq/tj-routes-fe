@@ -7,7 +7,7 @@ import { Loading } from '../../../../../components/ui/Loading';
 import { Button } from '../../../../../components/ui/Button';
 import { PageHeader } from '../../../../../components/layout';
 import { ForumPostDetail } from '../../../../../components/ForumPostDetail';
-import { CreateForumPostForm } from '../../../../../components/CreateForumPostForm';
+import { CreateForumPostForm } from '../../../../../components/CreateForumPostModal';
 import { useState } from 'react';
 
 export const Route = createFileRoute('/routes/$routeId/forum/posts/$postId')({

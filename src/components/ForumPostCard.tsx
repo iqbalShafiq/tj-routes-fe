@@ -3,11 +3,13 @@ import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card } from './ui/Card';
 import { Button } from './ui/Button';
+import { ImageViewer } from './ui/ImageViewer';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useReactToForumPost, useRemoveForumPostReaction } from '../lib/hooks/useReactions';
 import { FORUM_POST_TYPES } from '../lib/utils/constants';
 import { PostTypeIcon } from './ui/PostTypeIcon';
 import type { ForumPost } from '../lib/api/forum-posts';
+import type { ImageItem } from '../hooks/useImageViewer';
 
 interface ForumPostCardProps {
   post: ForumPost;
@@ -29,7 +31,39 @@ export const ForumPostCard = ({
   const { isAuthenticated, user } = useAuth();
   const reactMutation = useReactToForumPost();
   const removeReactionMutation = useRemoveForumPostReaction();
-  const [imageIndex, setImageIndex] = useState(0);
+
+  // Safely get photo_urls as an array (handles both array and JSON string from backend)
+  const photoUrls = (() => {
+    if (!post.photo_urls) return [];
+    if (Array.isArray(post.photo_urls)) return post.photo_urls;
+    if (typeof post.photo_urls === 'string') {
+      try {
+        return JSON.parse(post.photo_urls);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
+
+  // Image viewer state
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+  // Convert photoUrls to ImageItem array for viewer
+  const imageItems: ImageItem[] = photoUrls.map((url, idx) => ({
+    url,
+    alt: `${post.title} - Image ${idx + 1}`,
+  }));
+
+  const openViewer = (index: number) => {
+    setViewerIndex(index);
+    setIsViewerOpen(true);
+  };
+
+  const closeViewer = () => {
+    setIsViewerOpen(false);
+  };
 
   const postTypeInfo = FORUM_POST_TYPES.find((t) => t.value === post.post_type);
 
@@ -160,68 +194,34 @@ export const ForumPostCard = ({
           )}
 
           {/* Images Gallery */}
-          {post.photo_urls && post.photo_urls.length > 0 && (
+          {photoUrls.length > 0 && (
             <div className="mb-4">
-              {post.photo_urls.length === 1 ? (
-                <div className="w-full rounded-lg overflow-hidden">
+              {photoUrls.length === 1 ? (
+                <button
+                  onClick={() => openViewer(0)}
+                  className="w-full rounded-lg overflow-hidden block"
+                >
                   <img
-                    src={post.photo_urls[0]}
+                    src={photoUrls[0]}
                     alt={post.title}
-                    className="w-full h-auto max-h-96 object-cover"
+                    className="w-full h-auto max-h-96 object-cover hover:opacity-95 transition-opacity"
                   />
-                </div>
+                </button>
               ) : (
-                <div className="relative">
-                  <div className="w-full rounded-lg overflow-hidden">
-                    <img
-                      src={post.photo_urls[imageIndex]}
-                      alt={`${post.title} - Image ${imageIndex + 1}`}
-                      className="w-full h-auto max-h-96 object-cover"
-                    />
-                  </div>
-                  {post.photo_urls.length > 1 && (
-                    <>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setImageIndex((prev) => (prev > 0 ? prev - 1 : post.photo_urls!.length - 1));
-                        }}
-                        className="absolute left-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                        </svg>
-                      </button>
-                      <button
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          setImageIndex((prev) => (prev < post.photo_urls!.length - 1 ? prev + 1 : 0));
-                        }}
-                        className="absolute right-2 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/50 hover:bg-black/70 text-white rounded-full flex items-center justify-center transition-colors"
-                      >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
-                      </button>
-                      <div className="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1">
-                        {post.photo_urls.map((_, idx) => (
-                          <button
-                            key={idx}
-                            onClick={(e) => {
-                              e.preventDefault();
-                              e.stopPropagation();
-                              setImageIndex(idx);
-                            }}
-                            className={`w-2 h-2 rounded-full transition-colors ${
-                              idx === imageIndex ? 'bg-white' : 'bg-white/50'
-                            }`}
-                          />
-                        ))}
-                      </div>
-                    </>
-                  )}
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
+                  {photoUrls.map((url, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => openViewer(idx)}
+                      className="w-full aspect-video rounded-lg overflow-hidden block"
+                    >
+                      <img
+                        src={url}
+                        alt={`${post.title} - Image ${idx + 1}`}
+                        className="w-full h-full object-cover hover:opacity-95 transition-opacity"
+                      />
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -306,6 +306,14 @@ export const ForumPostCard = ({
           </Link>
         </div>
       </div>
+
+      {/* Image Viewer */}
+      <ImageViewer
+        images={imageItems}
+        initialIndex={viewerIndex}
+        isOpen={isViewerOpen}
+        onClose={closeViewer}
+      />
     </Card>
   );
 };

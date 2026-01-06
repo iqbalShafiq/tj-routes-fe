@@ -9,6 +9,7 @@ interface GalleryControlsProps {
   onZoomOut: () => void;
   onReset: () => void;
   onClose: () => void;
+  zoom?: number;
 }
 
 export const GalleryControls = ({
@@ -22,6 +23,7 @@ export const GalleryControls = ({
   onZoomOut,
   onReset,
   onClose,
+  zoom = 1,
 }: GalleryControlsProps) => {
   return (
     <>
@@ -67,8 +69,18 @@ export const GalleryControls = ({
         </button>
       )}
 
-      {/* Bottom zoom controls */}
-      <div className="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 z-[82]">
+      {/* Bottom controls container */}
+      <div className="pointer-events-auto absolute bottom-4 left-1/2 -translate-x-1/2 z-[82] flex flex-col items-center gap-3">
+        {/* Zoom indicator - above zoom controls */}
+        {zoom !== 1 && (
+          <div className="bg-bg-surface/80 backdrop-blur-sm px-3 py-1 rounded-full shadow-lg">
+            <span className="text-sm font-medium text-text-secondary">
+              {Math.round(zoom * 100)}%
+            </span>
+          </div>
+        )}
+
+        {/* Zoom controls */}
         <div className="bg-bg-surface/80 backdrop-blur-sm px-4 py-2 rounded-full shadow-lg flex items-center gap-2">
           {/* Zoom out */}
           <button

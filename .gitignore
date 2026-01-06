@@ -26,3 +26,6 @@ openapi.yaml
 
 .tanstack/tmp/*
 .env
+
+CLAUDE.md
+docs/*

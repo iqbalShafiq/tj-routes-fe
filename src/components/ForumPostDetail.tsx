@@ -6,7 +6,7 @@ import { Button } from './ui/Button';
 import { Input } from './ui/Input';
 import { Textarea } from './ui/Textarea';
 import { Chip } from './ui/Chip';
-import { Loading } from './ui/Loading';
+import { ImageViewer } from './ui/ImageViewer';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useForumPostComments, useCreateForumPostComment } from '../lib/hooks/useComments';
 import { useReactToForumPost, useRemoveForumPostReaction, useReactToForumPostComment, useRemoveForumPostCommentReaction } from '../lib/hooks/useReactions';
@@ -14,6 +14,7 @@ import { FORUM_POST_TYPES } from '../lib/utils/constants';
 import { PostTypeIcon } from './ui/PostTypeIcon';
 import type { ForumPost } from '../lib/api/forum-posts';
 import type { Comment } from '../lib/api/comments';
+import type { ImageItem } from '../hooks/useImageViewer';
 
 interface CommentItemProps {
   comment: Comment;
@@ -155,6 +156,51 @@ export const ForumPostDetail = ({
   const { isAuthenticated, user } = useAuth();
   const [newComment, setNewComment] = useState('');
 
+  // Safely get photo_urls and pdf_urls as arrays (handles both array and JSON string from backend)
+  const photoUrls = (() => {
+    if (!post.photo_urls) return [];
+    if (Array.isArray(post.photo_urls)) return post.photo_urls;
+    if (typeof post.photo_urls === 'string') {
+      try {
+        return JSON.parse(post.photo_urls);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
+  const pdfUrls = (() => {
+    if (!post.pdf_urls) return [];
+    if (Array.isArray(post.pdf_urls)) return post.pdf_urls;
+    if (typeof post.pdf_urls === 'string') {
+      try {
+        return JSON.parse(post.pdf_urls);
+      } catch {
+        return [];
+      }
+    }
+    return [];
+  })();
+
+  // Image viewer state
+  const [viewerIndex, setViewerIndex] = useState(0);
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+
+  // Convert photoUrls to ImageItem array for viewer
+  const imageItems: ImageItem[] = photoUrls.map((url, idx) => ({
+    url,
+    alt: `${post.title} - Image ${idx + 1}`,
+  }));
+
+  const openViewer = (index: number) => {
+    setViewerIndex(index);
+    setIsViewerOpen(true);
+  };
+
+  const closeViewer = () => {
+    setIsViewerOpen(false);
+  };
+
   const { data: comments, isLoading: commentsLoading } = useForumPostComments(post.id);
   const createComment = useCreateForumPostComment();
   const reactMutation = useReactToForumPost();
@@ -273,24 +319,28 @@ export const ForumPostDetail = ({
         )}
 
         {/* Images */}
-        {post.photo_urls && post.photo_urls.length > 0 && (
+        {photoUrls.length > 0 && (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-6">
-            {post.photo_urls.map((url, idx) => (
-              <a key={idx} href={url} target="_blank" rel="noopener noreferrer">
+            {photoUrls.map((url, idx) => (
+              <button
+                key={idx}
+                onClick={() => openViewer(idx)}
+                className="w-full"
+              >
                 <img
                   src={url}
                   alt={`Post image ${idx + 1}`}
                   className="w-full h-40 object-cover rounded-lg hover:opacity-90 transition-opacity"
                 />
-              </a>
+              </button>
             ))}
           </div>
         )}
 
         {/* PDFs */}
-        {post.pdf_urls && post.pdf_urls.length > 0 && (
+        {pdfUrls.length > 0 && (
           <div className="flex flex-wrap gap-2 mb-6">
-            {post.pdf_urls.map((url, idx) => (
+            {pdfUrls.map((url, idx) => (
               <a
                 key={idx}
                 href={url}
@@ -384,6 +434,14 @@ export const ForumPostDetail = ({
           </div>
         )}
       </Card>
+
+      {/* Image Viewer */}
+      <ImageViewer
+        images={imageItems}
+        initialIndex={viewerIndex}
+        isOpen={isViewerOpen}
+        onClose={closeViewer}
+      />
     </div>
   );
 };

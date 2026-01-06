@@ -3,7 +3,6 @@ import { createPortal } from "react-dom";
 import { useImageViewer } from "../../hooks/useImageViewer";
 import type { ImageItem } from "../../hooks/useImageViewer";
 import { GalleryControls } from "./GalleryControls";
-import { ZoomIndicator } from "./ZoomIndicator";
 
 interface ImageViewerProps {
   images: ImageItem[];
@@ -138,6 +137,7 @@ export const ImageViewer = ({
           onZoomOut={zoomOut}
           onReset={resetZoom}
           onClose={onClose}
+          zoom={zoom}
         />
       </div>
 
@@ -147,9 +147,6 @@ export const ImageViewer = ({
           <div className="w-12 h-12 border-4 border-white/20 border-t-white rounded-full animate-spin" />
         </div>
       )}
-
-      {/* Zoom indicator */}
-      <ZoomIndicator zoom={zoom} visible={zoom !== 1} />
 
       {/* Screen reader announcements */}
       <div className="sr-only" role="status" aria-live="polite">
