@@ -15,6 +15,7 @@ import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
 import type { Stop, CreateStopRequest } from '../../lib/api/stops';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/admin/stops')({
   beforeLoad: async () => {
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/admin/stops')({
     }
   },
   component: AdminStopsPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function AdminStopsPage() {

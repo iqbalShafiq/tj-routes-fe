@@ -6,6 +6,7 @@ import { Card } from '../../components/ui/Card';
 import { Loading } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { RecentItemCard } from '../../components/RecentItemCard';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/saved/recent')({
   beforeLoad: async () => {
@@ -14,6 +15,7 @@ export const Route = createFileRoute('/saved/recent')({
     }
   },
   component: RecentPage,
+  errorComponent: RouteErrorComponent,
 });
 
 type RecentTabType = 'routes' | 'stops' | 'navigations';

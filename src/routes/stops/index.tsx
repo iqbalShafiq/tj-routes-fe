@@ -11,9 +11,11 @@ import { PageHeader } from '../../components/layout';
 import type { Stop } from '../../lib/api/stops';
 import { FavoriteButton } from '../../components/FavoriteButton';
 import { useIsFavoriteStop } from '../../lib/hooks/usePersonalized';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/stops/')({
   component: StopsPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function StopCard({ stop }: { stop: Stop }) {

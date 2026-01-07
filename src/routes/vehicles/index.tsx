@@ -9,9 +9,11 @@ import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import type { Vehicle } from '../../lib/api/vehicles';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/vehicles/')({
   component: VehiclesPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function VehicleCard({ vehicle }: { vehicle: Vehicle }) {

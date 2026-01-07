@@ -1,17 +1,50 @@
 import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import { useRoute } from '../../../../../lib/hooks/useRoutes';
-import { useForumByRoute } from '../../../../../lib/hooks/useForums';
-import { useForumPost, useUpdateForumPost, useDeleteForumPost, usePinForumPost, useUnpinForumPost } from '../../../../../lib/hooks/useForumPosts';
+import { useForumByRoute, forumKeys } from '../../../../../lib/hooks/useForums';
+import { useForumPost, useUpdateForumPost, useDeleteForumPost, usePinForumPost, useUnpinForumPost, forumPostKeys } from '../../../../../lib/hooks/useForumPosts';
 import { useAuth } from '../../../../../lib/hooks/useAuth';
-import { Loading } from '../../../../../components/ui/Loading';
+import { Loading, Skeleton } from '../../../../../components/ui/Loading';
 import { Button } from '../../../../../components/ui/Button';
 import { PageHeader } from '../../../../../components/layout';
 import { ForumPostDetail } from '../../../../../components/ForumPostDetail';
 import { CreateForumPostForm } from '../../../../../components/CreateForumPostModal';
 import { useState } from 'react';
+import { RouteErrorComponent } from '../../../../../components/RouteErrorComponent';
+import { forumsApi } from '../../../../../lib/api/forums';
+import { forumPostsApi } from '../../../../../lib/api/forum-posts';
 
 export const Route = createFileRoute('/routes/$routeId/forum/posts/$postId')({
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    const { routeId, postId } = params;
+
+    // First, fetch the forum by route to get the forumId
+    const forumData = await queryClient.ensureQueryData({
+      queryKey: forumKeys.byRoute(routeId),
+      queryFn: () => forumsApi.getForumByRoute(routeId),
+    });
+
+    // Then, fetch the forum post using the forumId
+    if (forumData?.forum?.id) {
+      await queryClient.ensureQueryData({
+        queryKey: forumPostKeys.detail(forumData.forum.id, postId),
+        queryFn: () => forumPostsApi.getForumPost(forumData.forum.id, postId),
+      });
+    }
+
+    return { routeId, postId };
+  },
   component: ForumPostDetailPage,
+  errorComponent: RouteErrorComponent,
+  pendingComponent: () => (
+    <div className="animate-fade-in">
+      <PageHeader title="Loading post..." />
+      <div className="space-y-4">
+        <Skeleton className="h-64 card-chamfered" />
+        <Skeleton className="h-48 card-chamfered" />
+      </div>
+    </div>
+  ),
 });
 
 function ForumPostDetailPage() {

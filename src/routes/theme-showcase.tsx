@@ -1,8 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router';
 import { useState } from 'react';
+import { RouteErrorComponent } from '../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/theme-showcase')({
   component: ThemeShowcase,
+  errorComponent: RouteErrorComponent,
 });
 
 interface BorderStyle {

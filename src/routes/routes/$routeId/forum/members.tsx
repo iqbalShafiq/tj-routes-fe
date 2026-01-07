@@ -6,9 +6,11 @@ import { Loading } from '../../../../components/ui/Loading';
 import { Button } from '../../../../components/ui/Button';
 import { PageHeader } from '../../../../components/layout';
 import { ForumMembersList } from '../../../../components/ForumMembersList';
+import { RouteErrorComponent } from '../../../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/routes/$routeId/forum/members')({
   component: ForumMembersPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function ForumMembersPage() {

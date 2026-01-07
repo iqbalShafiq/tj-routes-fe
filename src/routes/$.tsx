@@ -1,9 +1,11 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
 import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
+import { RouteErrorComponent } from '../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/$')({
   component: NotFoundPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function NotFoundPage() {

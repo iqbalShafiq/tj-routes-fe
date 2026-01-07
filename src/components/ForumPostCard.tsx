@@ -1,4 +1,5 @@
 import { Link } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Card } from './ui/Card';
@@ -6,6 +7,8 @@ import { Button } from './ui/Button';
 import { ImageViewer } from './ui/ImageViewer';
 import { useAuth } from '../lib/hooks/useAuth';
 import { useReactToForumPost, useRemoveForumPostReaction } from '../lib/hooks/useReactions';
+import { forumPostKeys } from '../lib/hooks/useForumPosts';
+import { forumPostsApi } from '../lib/api/forum-posts';
 import { FORUM_POST_TYPES } from '../lib/utils/constants';
 import { PostTypeIcon } from './ui/PostTypeIcon';
 import type { ForumPost } from '../lib/api/forum-posts';
@@ -28,6 +31,7 @@ export const ForumPostCard = ({
   onPin,
   onUnpin,
 }: ForumPostCardProps) => {
+  const queryClient = useQueryClient();
   const { isAuthenticated, user } = useAuth();
   const reactMutation = useReactToForumPost();
   const removeReactionMutation = useRemoveForumPostReaction();
@@ -66,6 +70,14 @@ export const ForumPostCard = ({
   };
 
   const postTypeInfo = FORUM_POST_TYPES.find((t) => t.value === post.post_type);
+
+  const prefetchForumPost = () => {
+    queryClient.prefetchQuery({
+      queryKey: forumPostKeys.detail(forumId, post.id),
+      queryFn: () => forumPostsApi.getForumPost(forumId, post.id),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+  };
 
   const handleReaction = (type: 'upvote' | 'downvote') => {
     if (!isAuthenticated) return;
@@ -169,6 +181,8 @@ export const ForumPostCard = ({
         to="/routes/$routeId/forum/posts/$postId"
         params={{ routeId: String(post.forum_id), postId: String(post.id) }}
         className="block"
+        onMouseEnter={prefetchForumPost}
+        onFocus={prefetchForumPost}
       >
         <div className="mb-4">
           <h3 className="text-xl sm:text-2xl font-display font-bold text-text-primary mb-2 hover:text-accent transition-colors">

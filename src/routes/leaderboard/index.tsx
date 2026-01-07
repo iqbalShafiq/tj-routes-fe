@@ -8,6 +8,7 @@ import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import type { LeaderboardEntry } from '../../lib/api/leaderboard';
 import { USER_LEVELS } from '../../lib/utils/constants';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/leaderboard/')({
   beforeLoad: async () => {
@@ -16,6 +17,7 @@ export const Route = createFileRoute('/leaderboard/')({
     }
   },
   component: LeaderboardPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'tertiary' | 'warning' {

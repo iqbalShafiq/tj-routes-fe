@@ -10,6 +10,7 @@ import { Button } from "../../components/ui/Button";
 import { Card } from "../../components/ui/Card";
 import { authApi } from "../../lib/api/auth";
 import { getLastVisitedPage } from "../../lib/utils/navigation";
+import { RouteErrorComponent } from "../../components/RouteErrorComponent";
 
 export const Route = createFileRoute("/auth/login")({
   beforeLoad: async () => {
@@ -23,6 +24,7 @@ export const Route = createFileRoute("/auth/login")({
     }
   },
   component: LoginPage,
+  errorComponent: RouteErrorComponent,
 });
 
 const loginSchema = z.object({

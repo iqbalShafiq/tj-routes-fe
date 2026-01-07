@@ -1,5 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { reactionsApi, type ReactionType } from '../api/reactions';
+import { reportKeys } from './useReports';
+import { commentKeys } from './useComments';
 
 // Report reactions
 export const useReactToReport = () => {
@@ -9,8 +11,8 @@ export const useReactToReport = () => {
     mutationFn: ({ reportId, type }: { reportId: string | number; type: ReactionType }) =>
       reactionsApi.reactToReport(reportId, type),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(variables.reportId) });
+      queryClient.invalidateQueries({ queryKey: reportKeys.lists() });
     },
   });
 };
@@ -22,8 +24,8 @@ export const useRemoveReportReaction = () => {
     mutationFn: (reportId: string | number) =>
       reactionsApi.removeReportReaction(reportId).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['report', reportId] });
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(reportId) });
+      queryClient.invalidateQueries({ queryKey: reportKeys.lists() });
     },
   });
 };
@@ -43,7 +45,7 @@ export const useReactToComment = () => {
       reportId: string | number;
     }) => reactionsApi.reactToComment(commentId, type).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', 'report', reportId] });
+      queryClient.invalidateQueries({ queryKey: commentKeys.report(reportId) });
     },
   });
 };
@@ -55,7 +57,7 @@ export const useRemoveCommentReaction = () => {
     mutationFn: ({ commentId, reportId }: { commentId: string | number; reportId: string | number }) =>
       reactionsApi.removeCommentReaction(commentId).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', 'report', reportId] });
+      queryClient.invalidateQueries({ queryKey: commentKeys.report(reportId) });
     },
   });
 };
@@ -75,7 +77,7 @@ export const useReactToForumPostComment = () => {
       postId: string | number;
     }) => reactionsApi.reactToComment(commentId, type).then(() => postId),
     onSuccess: (postId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', 'forumPost', postId] });
+      queryClient.invalidateQueries({ queryKey: commentKeys.forumPost(postId) });
     },
   });
 };
@@ -87,7 +89,7 @@ export const useRemoveForumPostCommentReaction = () => {
     mutationFn: ({ commentId, postId }: { commentId: string | number; postId: string | number }) =>
       reactionsApi.removeCommentReaction(commentId).then(() => postId),
     onSuccess: (postId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', 'forumPost', postId] });
+      queryClient.invalidateQueries({ queryKey: commentKeys.forumPost(postId) });
     },
   });
 };
@@ -118,4 +120,3 @@ export const useRemoveForumPostReaction = () => {
     },
   });
 };
-

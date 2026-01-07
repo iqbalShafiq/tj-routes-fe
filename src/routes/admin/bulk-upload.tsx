@@ -16,6 +16,7 @@ import { PageHeader } from "../../components/layout";
 import { useToast } from "../../lib/hooks/useToast";
 import { format } from "date-fns";
 import type { EntityType, BulkUploadLog } from "../../lib/api/bulk-upload";
+import { RouteErrorComponent } from "../../components/RouteErrorComponent";
 
 export const Route = createFileRoute("/admin/bulk-upload")({
   beforeLoad: async () => {
@@ -25,6 +26,7 @@ export const Route = createFileRoute("/admin/bulk-upload")({
     }
   },
   component: AdminBulkUploadPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function UploadProgress({ upload }: { upload: BulkUploadLog }) {

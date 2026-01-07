@@ -3,6 +3,18 @@ import { reportsApi, type CreateReportRequest, type UpdateReportStatusRequest, t
 import { commentsApi, type CreateCommentRequest, type Comment } from '../api/comments';
 import { reactionsApi, type ReactionType } from '../api/reactions';
 
+// Query keys for reports
+export const reportKeys = {
+  all: ['reports'] as const,
+  lists: () => [...reportKeys.all, 'list'] as const,
+  list: (page: number, limit: number, options?: any) =>
+    [...reportKeys.lists(), { page, limit, ...options }] as const,
+  details: () => [...reportKeys.all, 'detail'] as const,
+  detail: (id: string | number) => [...reportKeys.details(), id] as const,
+  userReports: (userId: string | number) => [...reportKeys.all, 'user', userId] as const,
+  comments: (reportId: string | number) => [...reportKeys.all, 'comments', reportId] as const,
+};
+
 export const useReports = (
   page: number = 1,
   limit: number = 20,
@@ -13,14 +25,14 @@ export const useReports = (
   }
 ) => {
   return useQuery({
-    queryKey: ['reports', page, limit, options],
+    queryKey: reportKeys.list(page, limit, options),
     queryFn: () => reportsApi.getReports(page, limit, options),
   });
 };
 
 export const useReport = (id: string | number) => {
   return useQuery({
-    queryKey: ['report', id],
+    queryKey: reportKeys.detail(id),
     queryFn: () => reportsApi.getReport(id),
     enabled: !!id,
   });
@@ -28,36 +40,36 @@ export const useReport = (id: string | number) => {
 
 export const useCreateReport = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ data, photos, pdfs }: { data: CreateReportRequest; photos?: File[]; pdfs?: File[] }) =>
       reportsApi.createReport(data, photos, pdfs),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.all });
     },
   });
 };
 
 export const useUpdateReportStatus = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ id, data }: { id: string | number; data: UpdateReportStatusRequest }) =>
       reportsApi.updateReportStatus(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
-      queryClient.invalidateQueries({ queryKey: ['report', variables.id] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(variables.id) });
     },
   });
 };
 
 export const useDeleteReport = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: (id: string | number) => reportsApi.deleteReport(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['reports'] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.all });
     },
   });
 };
@@ -65,7 +77,7 @@ export const useDeleteReport = () => {
 // Comments hooks
 export const useComments = (reportId: string | number) => {
   return useQuery({
-    queryKey: ['comments', reportId],
+    queryKey: reportKeys.comments(reportId),
     queryFn: () => commentsApi.getComments(reportId),
     enabled: !!reportId,
   });
@@ -73,38 +85,38 @@ export const useComments = (reportId: string | number) => {
 
 export const useCreateComment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ reportId, data }: { reportId: string | number; data: CreateCommentRequest }) =>
       commentsApi.createComment(reportId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', variables.reportId] });
-      queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.comments(variables.reportId) });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(variables.reportId) });
     },
   });
 };
 
 export const useUpdateComment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ commentId, content, reportId }: { commentId: string | number; content: string; reportId: string | number }) =>
       commentsApi.updateComment(commentId, content).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.comments(reportId) });
     },
   });
 };
 
 export const useDeleteComment = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ commentId, reportId }: { commentId: string | number; reportId: string | number }) =>
       commentsApi.deleteComment(commentId).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', reportId] });
-      queryClient.invalidateQueries({ queryKey: ['report', reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.comments(reportId) });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(reportId) });
     },
   });
 };
@@ -119,10 +131,10 @@ export const useReactToReport = () => {
     onMutate: async ({ reportId, type }) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['feed'] });
-      await queryClient.cancelQueries({ queryKey: ['report', reportId] });
+      await queryClient.cancelQueries({ queryKey: reportKeys.detail(reportId) });
 
       // Snapshot previous value
-      const previousReport = queryClient.getQueryData(['report', reportId]);
+      const previousReport = queryClient.getQueryData(reportKeys.detail(reportId));
 
       // Calculate the updated report data
       const updateReportData = (report: any) => {
@@ -154,7 +166,7 @@ export const useReactToReport = () => {
 
       // Optimistically update individual report query
       if (previousReport) {
-        queryClient.setQueryData(['report', reportId], updateReportData(previousReport));
+        queryClient.setQueryData(reportKeys.detail(reportId), updateReportData(previousReport));
       }
 
       // Optimistically update feed
@@ -177,13 +189,13 @@ export const useReactToReport = () => {
       return { previousReport };
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['report', variables.reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(variables.reportId) });
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
     onError: (_, variables, context) => {
       // Rollback on error
       if (context?.previousReport) {
-        queryClient.setQueryData(['report', variables.reportId], context.previousReport);
+        queryClient.setQueryData(reportKeys.detail(variables.reportId), context.previousReport);
       }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
@@ -199,10 +211,10 @@ export const useRemoveReportReaction = () => {
     onMutate: async (reportId) => {
       // Cancel outgoing refetches
       await queryClient.cancelQueries({ queryKey: ['feed'] });
-      await queryClient.cancelQueries({ queryKey: ['report', reportId] });
+      await queryClient.cancelQueries({ queryKey: reportKeys.detail(reportId) });
 
       // Snapshot previous value
-      const previousReport = queryClient.getQueryData(['report', reportId]);
+      const previousReport = queryClient.getQueryData(reportKeys.detail(reportId));
 
       // Calculate updated report data for removal
       const removeReactionData = (report: any) => ({
@@ -214,7 +226,7 @@ export const useRemoveReportReaction = () => {
 
       // Optimistically update individual report query
       if (previousReport && previousReport.user_reaction) {
-        queryClient.setQueryData(['report', reportId], removeReactionData(previousReport));
+        queryClient.setQueryData(reportKeys.detail(reportId), removeReactionData(previousReport));
       }
 
       // Optimistically update feed
@@ -237,13 +249,13 @@ export const useRemoveReportReaction = () => {
       return { previousReport };
     },
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['report', reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.detail(reportId) });
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
     onError: (_, reportId, context) => {
       // Rollback on error
       if (context?.previousReport) {
-        queryClient.setQueryData(['report', reportId], context.previousReport);
+        queryClient.setQueryData(reportKeys.detail(reportId), context.previousReport);
       }
       queryClient.invalidateQueries({ queryKey: ['feed'] });
     },
@@ -257,7 +269,7 @@ export const useReactToComment = () => {
     mutationFn: ({ commentId, type, reportId }: { commentId: string | number; type: ReactionType; reportId: string | number }) =>
       reactionsApi.reactToComment(commentId, type).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.comments(reportId) });
     },
   });
 };
@@ -269,7 +281,7 @@ export const useRemoveCommentReaction = () => {
     mutationFn: ({ commentId, reportId }: { commentId: string | number; reportId: string | number }) =>
       reactionsApi.removeCommentReaction(commentId).then(() => reportId),
     onSuccess: (reportId) => {
-      queryClient.invalidateQueries({ queryKey: ['comments', reportId] });
+      queryClient.invalidateQueries({ queryKey: reportKeys.comments(reportId) });
     },
   });
 };
@@ -286,7 +298,7 @@ export const useUserReports = (
   }
 ) => {
   return useQuery({
-    queryKey: ['userReports', userId, page, limit, options],
+    queryKey: reportKeys.userReports(userId!),
     queryFn: () => reportsApi.getUserReports(userId!, page, limit, options),
     enabled: !!userId,
   });

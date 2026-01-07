@@ -8,13 +8,61 @@ import {
   type RecordRecentNavigationRequest,
 } from '../api/personalized';
 
+// Query keys for personalized content
+export const personalizedKeys = {
+  // Favorite Routes
+  favoriteRoutes: {
+    all: () => ['favoriteRoutes'] as const,
+    list: (page: number, limit: number) => ['favoriteRoutes', page, limit] as const,
+  },
+  isFavoriteRoute: (routeId: string | number) => ['isFavoriteRoute', routeId] as const,
+
+  // Favorite Stops
+  favoriteStops: {
+    all: () => ['favoriteStops'] as const,
+    list: (page: number, limit: number) => ['favoriteStops', page, limit] as const,
+  },
+  isFavoriteStop: (stopId: string | number) => ['isFavoriteStop', stopId] as const,
+
+  // Places
+  places: {
+    all: () => ['places'] as const,
+  },
+  place: (id: string | number) => ['place', id] as const,
+
+  // Recent Routes
+  recentRoutes: {
+    all: () => ['recentRoutes'] as const,
+    list: (page: number, limit: number) => ['recentRoutes', page, limit] as const,
+  },
+
+  // Recent Stops
+  recentStops: {
+    all: () => ['recentStops'] as const,
+    list: (page: number, limit: number) => ['recentStops', page, limit] as const,
+  },
+
+  // Recent Navigations
+  recentNavigations: {
+    all: () => ['recentNavigations'] as const,
+    list: (page: number, limit: number) => ['recentNavigations', page, limit] as const,
+  },
+
+  // Saved Navigations
+  savedNavigations: {
+    all: () => ['savedNavigations'] as const,
+    list: (page: number, limit: number) => ['savedNavigations', page, limit] as const,
+  },
+  savedNavigation: (id: string | number) => ['savedNavigation', id] as const,
+};
+
 // =====================
 // Favorite Routes Hooks
 // =====================
 
 export const useFavoriteRoutes = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['favoriteRoutes', page, limit],
+    queryKey: personalizedKeys.favoriteRoutes.list(page, limit),
     queryFn: () => personalizedApi.getFavoriteRoutes(page, limit),
     staleTime: 5 * 60 * 1000, // 5 minutes
     gcTime: 10 * 60 * 1000, // 10 minutes
@@ -25,7 +73,7 @@ export const useFavoriteRoutes = (page: number = 1, limit: number = 20) => {
 
 export const useIsFavoriteRoute = (routeId: string | number | undefined) => {
   return useQuery({
-    queryKey: ['isFavoriteRoute', routeId],
+    queryKey: personalizedKeys.isFavoriteRoute(routeId!),
     queryFn: () => personalizedApi.isFavoriteRoute(Number(routeId)),
     enabled: !!routeId,
   });
@@ -43,18 +91,18 @@ export const useToggleFavoriteRoute = () => {
     },
     onMutate: async ({ routeId, isFavorite }) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['isFavoriteRoute', routeId] });
-      await queryClient.cancelQueries({ queryKey: ['favoriteRoutes'] });
+      await queryClient.cancelQueries({ queryKey: personalizedKeys.isFavoriteRoute(routeId) });
+      await queryClient.cancelQueries({ queryKey: personalizedKeys.favoriteRoutes.all() });
 
       // Snapshot previous value
-      const previousIsFavorite = queryClient.getQueryData(['isFavoriteRoute', routeId]);
-      const previousFavoriteRoutes = queryClient.getQueryData(['favoriteRoutes']);
+      const previousIsFavorite = queryClient.getQueryData(personalizedKeys.isFavoriteRoute(routeId));
+      const previousFavoriteRoutes = queryClient.getQueryData(personalizedKeys.favoriteRoutes.all());
 
       // Optimistically update the cache
-      queryClient.setQueryData(['isFavoriteRoute', routeId], !isFavorite);
+      queryClient.setQueryData(personalizedKeys.isFavoriteRoute(routeId), !isFavorite);
 
       // Also update the favorite routes list if needed
-      queryClient.setQueryData(['favoriteRoutes'], (old: any) => {
+      queryClient.setQueryData(personalizedKeys.favoriteRoutes.all(), (old: any) => {
         if (!old?.data) return old;
         if (isFavorite) {
           // Removing: filter out the route
@@ -71,16 +119,16 @@ export const useToggleFavoriteRoute = () => {
       return { previousIsFavorite, previousFavoriteRoutes };
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['isFavoriteRoute', variables.routeId] });
-      queryClient.invalidateQueries({ queryKey: ['favoriteRoutes'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.isFavoriteRoute(variables.routeId) });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteRoutes.all() });
     },
     onError: (_, variables, context) => {
       // Rollback on error
       if (context?.previousIsFavorite) {
-        queryClient.setQueryData(['isFavoriteRoute', variables.routeId], context.previousIsFavorite);
+        queryClient.setQueryData(personalizedKeys.isFavoriteRoute(variables.routeId), context.previousIsFavorite);
       }
       if (context?.previousFavoriteRoutes) {
-        queryClient.setQueryData(['favoriteRoutes'], context.previousFavoriteRoutes);
+        queryClient.setQueryData(personalizedKeys.favoriteRoutes.all(), context.previousFavoriteRoutes);
       }
     },
     retry: 0, // Don't retry on error
@@ -93,7 +141,7 @@ export const useAddFavoriteRoute = () => {
   return useMutation({
     mutationFn: (routeId: number) => personalizedApi.addFavoriteRoute(routeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteRoutes'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteRoutes.all() });
     },
   });
 };
@@ -104,7 +152,7 @@ export const useRemoveFavoriteRoute = () => {
   return useMutation({
     mutationFn: (routeId: number) => personalizedApi.removeFavoriteRoute(routeId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteRoutes'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteRoutes.all() });
     },
   });
 };
@@ -115,7 +163,7 @@ export const useRemoveFavoriteRoute = () => {
 
 export const useFavoriteStops = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['favoriteStops', page, limit],
+    queryKey: personalizedKeys.favoriteStops.list(page, limit),
     queryFn: () => personalizedApi.getFavoriteStops(page, limit),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 0,
@@ -125,7 +173,7 @@ export const useFavoriteStops = (page: number = 1, limit: number = 20) => {
 
 export const useIsFavoriteStop = (stopId: string | number | undefined) => {
   return useQuery({
-    queryKey: ['isFavoriteStop', stopId],
+    queryKey: personalizedKeys.isFavoriteStop(stopId!),
     queryFn: () => personalizedApi.isFavoriteStop(Number(stopId)),
     enabled: !!stopId,
   });
@@ -143,18 +191,18 @@ export const useToggleFavoriteStop = () => {
     },
     onMutate: async ({ stopId, isFavorite }) => {
       // Cancel outgoing refetches
-      await queryClient.cancelQueries({ queryKey: ['isFavoriteStop', stopId] });
-      await queryClient.cancelQueries({ queryKey: ['favoriteStops'] });
+      await queryClient.cancelQueries({ queryKey: personalizedKeys.isFavoriteStop(stopId) });
+      await queryClient.cancelQueries({ queryKey: personalizedKeys.favoriteStops.all() });
 
       // Snapshot previous value
-      const previousIsFavorite = queryClient.getQueryData(['isFavoriteStop', stopId]);
-      const previousFavoriteStops = queryClient.getQueryData(['favoriteStops']);
+      const previousIsFavorite = queryClient.getQueryData(personalizedKeys.isFavoriteStop(stopId));
+      const previousFavoriteStops = queryClient.getQueryData(personalizedKeys.favoriteStops.all());
 
       // Optimistically update the cache
-      queryClient.setQueryData(['isFavoriteStop', stopId], !isFavorite);
+      queryClient.setQueryData(personalizedKeys.isFavoriteStop(stopId), !isFavorite);
 
       // Also update the favorite stops list if needed
-      queryClient.setQueryData(['favoriteStops'], (old: any) => {
+      queryClient.setQueryData(personalizedKeys.favoriteStops.all(), (old: any) => {
         if (!old?.data) return old;
         if (isFavorite) {
           // Removing: filter out the stop
@@ -171,16 +219,16 @@ export const useToggleFavoriteStop = () => {
       return { previousIsFavorite, previousFavoriteStops };
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['isFavoriteStop', variables.stopId] });
-      queryClient.invalidateQueries({ queryKey: ['favoriteStops'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.isFavoriteStop(variables.stopId) });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteStops.all() });
     },
     onError: (_, variables, context) => {
       // Rollback on error
       if (context?.previousIsFavorite) {
-        queryClient.setQueryData(['isFavoriteStop', variables.stopId], context.previousIsFavorite);
+        queryClient.setQueryData(personalizedKeys.isFavoriteStop(variables.stopId), context.previousIsFavorite);
       }
       if (context?.previousFavoriteStops) {
-        queryClient.setQueryData(['favoriteStops'], context.previousFavoriteStops);
+        queryClient.setQueryData(personalizedKeys.favoriteStops.all(), context.previousFavoriteStops);
       }
     },
     retry: 0, // Don't retry on error
@@ -193,7 +241,7 @@ export const useAddFavoriteStop = () => {
   return useMutation({
     mutationFn: (stopId: number) => personalizedApi.addFavoriteStop(stopId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteStops'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteStops.all() });
     },
   });
 };
@@ -204,7 +252,7 @@ export const useRemoveFavoriteStop = () => {
   return useMutation({
     mutationFn: (stopId: number) => personalizedApi.removeFavoriteStop(stopId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['favoriteStops'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.favoriteStops.all() });
     },
   });
 };
@@ -215,7 +263,7 @@ export const useRemoveFavoriteStop = () => {
 
 export const usePlaces = () => {
   return useQuery({
-    queryKey: ['places'],
+    queryKey: personalizedKeys.places.all(),
     queryFn: () => personalizedApi.getPlaces(),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 0,
@@ -225,7 +273,7 @@ export const usePlaces = () => {
 
 export const usePlace = (id: string | number | undefined) => {
   return useQuery({
-    queryKey: ['place', id],
+    queryKey: personalizedKeys.place(id!),
     queryFn: () => personalizedApi.getPlace(id!),
     enabled: !!id,
   });
@@ -237,7 +285,7 @@ export const useCreatePlace = () => {
   return useMutation({
     mutationFn: (data: CreatePlaceRequest) => personalizedApi.createPlace(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['places'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.places.all() });
     },
   });
 };
@@ -249,8 +297,8 @@ export const useUpdatePlace = () => {
     mutationFn: ({ id, data }: { id: string | number; data: UpdatePlaceRequest }) =>
       personalizedApi.updatePlace(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['places'] });
-      queryClient.invalidateQueries({ queryKey: ['place', variables.id] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.places.all() });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.place(variables.id) });
     },
   });
 };
@@ -261,7 +309,7 @@ export const useDeletePlace = () => {
   return useMutation({
     mutationFn: (id: string | number) => personalizedApi.deletePlace(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['places'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.places.all() });
     },
   });
 };
@@ -272,7 +320,7 @@ export const useDeletePlace = () => {
 
 export const useRecentRoutes = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['recentRoutes', page, limit],
+    queryKey: personalizedKeys.recentRoutes.list(page, limit),
     queryFn: () => personalizedApi.getRecentRoutes(page, limit),
     staleTime: 2 * 60 * 1000, // 2 minutes - recent items may change more often
     retry: 0,
@@ -286,7 +334,7 @@ export const useRecentRoutes = (page: number = 1, limit: number = 20) => {
 
 export const useRecentStops = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['recentStops', page, limit],
+    queryKey: personalizedKeys.recentStops.list(page, limit),
     queryFn: () => personalizedApi.getRecentStops(page, limit),
     staleTime: 2 * 60 * 1000, // 2 minutes - recent items may change more often
     retry: 0,
@@ -300,7 +348,7 @@ export const useRecentStops = (page: number = 1, limit: number = 20) => {
 
 export const useRecentNavigations = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['recentNavigations', page, limit],
+    queryKey: personalizedKeys.recentNavigations.list(page, limit),
     queryFn: () => personalizedApi.getRecentNavigations(page, limit),
     staleTime: 2 * 60 * 1000, // 2 minutes - recent items may change more often
     retry: 0,
@@ -315,7 +363,7 @@ export const useRecordRecentNavigation = () => {
     mutationFn: (data: RecordRecentNavigationRequest) =>
       personalizedApi.recordRecentNavigation(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['recentNavigations'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.recentNavigations.all() });
     },
   });
 };
@@ -326,7 +374,7 @@ export const useRecordRecentNavigation = () => {
 
 export const useSavedNavigations = (page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['savedNavigations', page, limit],
+    queryKey: personalizedKeys.savedNavigations.list(page, limit),
     queryFn: () => personalizedApi.getSavedNavigations(page, limit),
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: 0,
@@ -336,7 +384,7 @@ export const useSavedNavigations = (page: number = 1, limit: number = 20) => {
 
 export const useSavedNavigation = (id: string | number | undefined) => {
   return useQuery({
-    queryKey: ['savedNavigation', id],
+    queryKey: personalizedKeys.savedNavigation(id!),
     queryFn: () => personalizedApi.getSavedNavigation(id!),
     enabled: !!id,
   });
@@ -349,7 +397,7 @@ export const useCreateSavedNavigation = () => {
     mutationFn: (data: CreateNavigationRequest) =>
       personalizedApi.createSavedNavigation(data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savedNavigations'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.savedNavigations.all() });
     },
   });
 };
@@ -361,8 +409,8 @@ export const useUpdateSavedNavigation = () => {
     mutationFn: ({ id, data }: { id: string | number; data: UpdateNavigationRequest }) =>
       personalizedApi.updateSavedNavigation(id, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['savedNavigations'] });
-      queryClient.invalidateQueries({ queryKey: ['savedNavigation', variables.id] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.savedNavigations.all() });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.savedNavigation(variables.id) });
     },
   });
 };
@@ -373,7 +421,7 @@ export const useDeleteSavedNavigation = () => {
   return useMutation({
     mutationFn: (id: string | number) => personalizedApi.deleteSavedNavigation(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['savedNavigations'] });
+      queryClient.invalidateQueries({ queryKey: personalizedKeys.savedNavigations.all() });
     },
   });
 };

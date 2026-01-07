@@ -12,6 +12,7 @@ import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
 import { format } from 'date-fns';
 import { USER_LEVELS } from '../../lib/utils/constants';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/admin/users')({
   beforeLoad: async () => {
@@ -21,6 +22,7 @@ export const Route = createFileRoute('/admin/users')({
     }
   },
   component: AdminUsersPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function getLevelVariant(level: string): 'default' | 'success' | 'info' | 'purple' | 'warning' {

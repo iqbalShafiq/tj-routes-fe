@@ -1,19 +1,23 @@
 import { useState, useEffect } from 'react';
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import { useReport, useComments, useCreateComment, useReactToReport, useReactToComment } from '../../lib/hooks/useReports';
+import { useReport, useComments, useCreateComment, useReactToReport, useReactToComment, reportKeys } from '../../lib/hooks/useReports';
+import { commentKeys } from '../../lib/hooks/useComments';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { authApi } from '../../lib/api/auth';
+import { reportsApi } from '../../lib/api/reports';
+import { commentsApi } from '../../lib/api/comments';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { Textarea } from '../../components/ui/Textarea';
 import { Chip } from '../../components/ui/Chip';
-import { Loading } from '../../components/ui/Loading';
+import { Loading, Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { ImageViewer } from '../../components/ui/ImageViewer';
 import { format, formatDistanceToNow } from 'date-fns';
 import type { Comment } from '../../lib/api/comments';
 import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/feed/$reportId')({
   beforeLoad: async () => {
@@ -21,7 +25,36 @@ export const Route = createFileRoute('/feed/$reportId')({
       throw redirect({ to: '/auth/login' });
     }
   },
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    const reportId = params.reportId;
+
+    // Prefetch report and comments concurrently
+    await Promise.all([
+      queryClient.ensureQueryData({
+        queryKey: reportKeys.detail(reportId),
+        queryFn: () => reportsApi.getReport(reportId),
+      }),
+      queryClient.ensureQueryData({
+        queryKey: commentKeys.report(reportId),
+        queryFn: () => commentsApi.getComments(reportId),
+      }),
+    ]);
+
+    return { reportId };
+  },
   component: ReportDetailPage,
+  errorComponent: RouteErrorComponent,
+  pendingComponent: () => (
+    <div className="animate-fade-in">
+      <PageHeader title="Loading..." />
+      <div className="space-y-4">
+        <Skeleton className="h-64 card-chamfered" />
+        <Skeleton className="h-32 card-chamfered" />
+        <Skeleton className="h-48 card-chamfered" />
+      </div>
+    </div>
+  ),
 });
 
 function CommentItem({

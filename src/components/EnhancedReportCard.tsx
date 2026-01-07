@@ -1,6 +1,8 @@
 import { Link } from '@tanstack/react-router';
+import { useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../lib/hooks/useAuth';
-import { useReactToReport, useRemoveReportReaction } from '../lib/hooks/useReports';
+import { useReactToReport, useRemoveReportReaction, reportKeys } from '../lib/hooks/useReports';
+import { reportsApi } from '../lib/api/reports';
 import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
 import { ShareButton } from './ShareButton';
@@ -16,6 +18,7 @@ interface EnhancedReportCardProps {
 }
 
 export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
+  const queryClient = useQueryClient();
   const { isAuthenticated } = useAuth();
   const reactMutation = useReactToReport();
   const removeReactionMutation = useRemoveReportReaction();
@@ -23,6 +26,14 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
   const [animatingReaction, setAnimatingReaction] = useState<'upvote' | 'downvote' | null>(null);
   const [isImageViewerOpen, setIsImageViewerOpen] = useState(false);
   const [viewerInitialIndex, setViewerInitialIndex] = useState(0);
+
+  const prefetchReport = () => {
+    queryClient.prefetchQuery({
+      queryKey: reportKeys.detail(report.id),
+      queryFn: () => reportsApi.getReport(report.id),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+  };
 
   // Clear animation state after animation completes
   useEffect(() => {
@@ -117,7 +128,13 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       </div>
 
       {/* Content */}
-      <Link to="/feed/$reportId" params={{ reportId: String(report.id) }} className="block">
+      <Link
+        to="/feed/$reportId"
+        params={{ reportId: String(report.id) }}
+        className="block"
+        onMouseEnter={prefetchReport}
+        onFocus={prefetchReport}
+      >
         <div className="mb-4">
           <span className="text-[10px] sm:text-xs font-medium text-text-muted uppercase tracking-wider mb-1 block">
             {typeInfo?.label || report.type}

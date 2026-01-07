@@ -1,17 +1,19 @@
 import { createFileRoute, Link, redirect } from '@tanstack/react-router';
-import { useUserProfile, useBadges } from '../../lib/hooks/useLeaderboard';
+import { useUserProfile, useBadges, leaderboardKeys } from '../../lib/hooks/useLeaderboard';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { useUserReports } from '../../lib/hooks/useReports';
 import { useCheckIns, useCheckInStats } from '../../lib/hooks/useCheckIn';
 import { authApi } from '../../lib/api/auth';
+import { leaderboardApi } from '../../lib/api/leaderboard';
 import { Card } from '../../components/ui/Card';
-import { Loading } from '../../components/ui/Loading';
+import { Loading, Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { ReportListCard } from '../../components/ReportListCard';
 import { CheckInHistoryList } from '../../components/CheckInHistoryList';
 import { format } from 'date-fns';
 import { USER_LEVELS } from '../../lib/utils/constants';
 import { useState } from 'react';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/profile/$userId')({
   beforeLoad: async () => {
@@ -19,7 +21,30 @@ export const Route = createFileRoute('/profile/$userId')({
       throw redirect({ to: '/auth/login' });
     }
   },
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    const userId = params.userId;
+
+    // Prefetch user profile data
+    await queryClient.ensureQueryData({
+      queryKey: leaderboardKeys.userProfile(userId),
+      queryFn: () => leaderboardApi.getUserProfile(userId),
+    });
+
+    return { userId };
+  },
   component: UserProfilePage,
+  errorComponent: RouteErrorComponent,
+  pendingComponent: () => (
+    <div className="animate-fade-in">
+      <PageHeader title="Loading profile..." />
+      <div className="space-y-6">
+        <Skeleton className="h-48 card-chamfered" />
+        <Skeleton className="h-32 card-chamfered" />
+        <Skeleton className="h-64 card-chamfered" />
+      </div>
+    </div>
+  ),
 });
 
 function getLevelColor(level: string) {

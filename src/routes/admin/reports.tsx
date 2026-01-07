@@ -16,6 +16,7 @@ import { useToast } from '../../lib/hooks/useToast';
 import { format } from 'date-fns';
 import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
 import type { Report } from '../../lib/api/reports';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/admin/reports')({
   beforeLoad: async () => {
@@ -25,6 +26,7 @@ export const Route = createFileRoute('/admin/reports')({
     }
   },
   component: AdminReportsPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function AdminReportsPage() {

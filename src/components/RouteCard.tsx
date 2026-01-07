@@ -1,20 +1,37 @@
 import { Link } from "@tanstack/react-router";
+import { useQueryClient } from "@tanstack/react-query";
 import { Card } from "./ui/Card";
 import { Chip } from "./ui/Chip";
 import type { Route } from "../lib/api/routes";
 import { useIsFavoriteRoute } from "../lib/hooks/usePersonalized";
 import { FavoriteButton } from "./FavoriteButton";
+import { routeKeys } from "../lib/hooks/useRoutes";
+import { routesApi } from "../lib/api/routes";
 
 interface RouteCardProps {
   route: Route;
 }
 
 export const RouteCard = ({ route }: RouteCardProps) => {
+  const queryClient = useQueryClient();
   const { data: isFavorite } = useIsFavoriteRoute(route.id);
   const stopsCount = route.stops?.length || route.route_stops?.length || 0;
-  
+
+  const prefetchRoute = () => {
+    queryClient.prefetchQuery({
+      queryKey: routeKeys.withStats(route.id),
+      queryFn: () => routesApi.getRouteWithStats(route.id),
+      staleTime: 5 * 60 * 1000, // 5 minutes
+    });
+  };
+
   return (
-    <Link to="/routes/$routeId" params={{ routeId: route.id.toString() }}>
+    <Link
+      to="/routes/$routeId"
+      params={{ routeId: route.id.toString() }}
+      onMouseEnter={prefetchRoute}
+      onFocus={prefetchRoute}
+    >
       <Card className="h-full group cursor-pointer hover:shadow-lg transition-all duration-200" size="md">
         {/* Header: Number and Status */}
         <div className="flex items-start justify-between mb-3">

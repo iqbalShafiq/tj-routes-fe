@@ -1,6 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { bulkUploadApi, type EntityType, type UploadStatus } from '../api/bulk-upload';
 
+// Query keys for bulk uploads
+export const bulkUploadKeys = {
+  all: ['bulkUploads'] as const,
+  lists: () => [...bulkUploadKeys.all, 'list'] as const,
+  list: (page: number, limit: number, options?: any) =>
+    [...bulkUploadKeys.lists(), { page, limit, ...options }] as const,
+  details: () => [...bulkUploadKeys.all, 'detail'] as const,
+  detail: (id: string | number) => [...bulkUploadKeys.details(), id] as const,
+};
+
 export const useBulkUploads = (
   page: number = 1,
   limit: number = 20,
@@ -11,14 +21,14 @@ export const useBulkUploads = (
   }
 ) => {
   return useQuery({
-    queryKey: ['bulkUploads', page, limit, options],
+    queryKey: bulkUploadKeys.list(page, limit, options),
     queryFn: () => bulkUploadApi.getUploads(page, limit, options),
   });
 };
 
 export const useBulkUploadStatus = (id: string | number) => {
   return useQuery({
-    queryKey: ['bulkUpload', id],
+    queryKey: bulkUploadKeys.detail(id),
     queryFn: () => bulkUploadApi.getUploadStatus(id),
     enabled: !!id,
     refetchInterval: (query) => {
@@ -34,13 +44,12 @@ export const useBulkUploadStatus = (id: string | number) => {
 
 export const useUploadCSV = () => {
   const queryClient = useQueryClient();
-  
+
   return useMutation({
     mutationFn: ({ entityType, file }: { entityType: EntityType; file: File }) =>
       bulkUploadApi.uploadCSV(entityType, file),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['bulkUploads'] });
+      queryClient.invalidateQueries({ queryKey: bulkUploadKeys.all });
     },
   });
 };
-

@@ -1,6 +1,19 @@
 import { useQuery, useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { forumPostsApi, type CreateForumPostRequest, type UpdateForumPostRequest } from '../api/forum-posts';
 
+// Query keys for forum posts
+export const forumPostKeys = {
+  all: (forumId: string | number) => ['forumPosts', forumId] as const,
+  lists: (forumId: string | number) => [...forumPostKeys.all(forumId), 'list'] as const,
+  list: (forumId: string | number, page: number, limit: number, options?: any) =>
+    [...forumPostKeys.lists(forumId), { page, limit, ...options }] as const,
+  infinite: (forumId: string | number, limit: number, options?: any) =>
+    ['forumPosts', 'infinite', forumId, limit, options] as const,
+  details: (forumId: string | number) => [...forumPostKeys.all(forumId), 'detail'] as const,
+  detail: (forumId: string | number, postId: string | number) =>
+    ['forumPost', forumId, postId] as const,
+};
+
 export const useForumPosts = (
   forumId: string | number,
   page: number = 1,
@@ -11,7 +24,7 @@ export const useForumPosts = (
   }
 ) => {
   return useQuery({
-    queryKey: ['forumPosts', forumId, page, limit, options],
+    queryKey: forumPostKeys.list(forumId, page, limit, options),
     queryFn: () => forumPostsApi.getForumPosts(forumId, page, limit, options),
     enabled: !!forumId,
   });
@@ -26,7 +39,7 @@ export const useForumPostsInfinite = (
   }
 ) => {
   return useInfiniteQuery({
-    queryKey: ['forumPosts', 'infinite', forumId, limit, options],
+    queryKey: forumPostKeys.infinite(forumId, limit, options),
     queryFn: ({ pageParam = 1 }) =>
       forumPostsApi.getForumPosts(forumId, pageParam, limit, options),
     getNextPageParam: (lastPage) => {
@@ -42,7 +55,7 @@ export const useForumPostsInfinite = (
 
 export const useForumPost = (forumId: string | number, postId: string | number) => {
   return useQuery({
-    queryKey: ['forumPost', forumId, postId],
+    queryKey: forumPostKeys.detail(forumId, postId),
     queryFn: () => forumPostsApi.getForumPost(forumId, postId),
     enabled: !!forumId && !!postId,
   });
@@ -66,7 +79,7 @@ export const useCreateForumPost = () => {
     onSuccess: (newPost, variables) => {
       // Update infinite queries - add the new post to the first page
       // We update all infinite queries so the user sees the new post immediately
-      const allInfiniteQueries = queryClient.getQueriesData({ queryKey: ['forumPosts', 'infinite', variables.forumId] });
+      const allInfiniteQueries = queryClient.getQueriesData({ queryKey: forumPostKeys.infinite(variables.forumId, 20, {}) });
       allInfiniteQueries.forEach(([queryKey]) => {
         queryClient.setQueryData(queryKey, (old: any) => {
           if (!old || !old.pages || old.pages.length === 0) return old;
@@ -88,7 +101,7 @@ export const useCreateForumPost = () => {
       });
 
       // Update regular queries - add the new post to the beginning of the data array
-      queryClient.setQueryData(['forumPosts', variables.forumId], (old: any) => {
+      queryClient.setQueryData(forumPostKeys.all(variables.forumId), (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -117,8 +130,8 @@ export const useUpdateForumPost = () => {
       data: UpdateForumPostRequest;
     }) => forumPostsApi.updateForumPost(forumId, postId, data),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['forumPost', variables.forumId, variables.postId] });
-      queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.detail(variables.forumId, variables.postId) });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.all(variables.forumId) });
     },
   });
 };
@@ -130,7 +143,7 @@ export const useDeleteForumPost = () => {
     mutationFn: ({ forumId, postId }: { forumId: string | number; postId: string | number }) =>
       forumPostsApi.deleteForumPost(forumId, postId),
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.all(variables.forumId) });
       queryClient.invalidateQueries({ queryKey: ['forum', variables.forumId] });
     },
   });
@@ -156,7 +169,7 @@ export const usePinForumPost = () => {
       const previousInfiniteQueries = allInfiniteQueries.map(([queryKey, data]) => [queryKey, data]);
 
       // Optimistically update the post
-      queryClient.setQueryData(['forumPost', forumId, postId], (old: any) => {
+      queryClient.setQueryData(forumPostKeys.detail(forumId, postId), (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -165,7 +178,7 @@ export const usePinForumPost = () => {
       });
 
       // Optimistically update the posts list (regular query)
-      queryClient.setQueryData(['forumPosts', forumId], (old: any) => {
+      queryClient.setQueryData(forumPostKeys.all(forumId), (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -197,10 +210,10 @@ export const usePinForumPost = () => {
     onError: (err, variables, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousPost) {
-        queryClient.setQueryData(['forumPost', variables.forumId, variables.postId], context.previousPost);
+        queryClient.setQueryData(forumPostKeys.detail(variables.forumId, variables.postId), context.previousPost);
       }
       if (context?.previousPosts) {
-        queryClient.setQueryData(['forumPosts', variables.forumId], context.previousPosts);
+        queryClient.setQueryData(forumPostKeys.all(variables.forumId), context.previousPosts);
       }
       // Rollback infinite queries
       context?.previousInfiniteQueries?.forEach(([queryKey, data]) => {
@@ -208,8 +221,8 @@ export const usePinForumPost = () => {
       });
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['forumPost', variables.forumId, variables.postId] });
-      queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.detail(variables.forumId, variables.postId) });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.all(variables.forumId) });
     },
   });
 };
@@ -222,19 +235,19 @@ export const useUnpinForumPost = () => {
       forumPostsApi.unpinForumPost(forumId, postId),
     onMutate: async ({ forumId, postId }) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ['forumPost', forumId, postId] });
-      await queryClient.cancelQueries({ queryKey: ['forumPosts', forumId] });
+      await queryClient.cancelQueries({ queryKey: forumPostKeys.detail(forumId, postId) });
+      await queryClient.cancelQueries({ queryKey: forumPostKeys.all(forumId) });
 
       // Snapshot the previous values
-      const previousPost = queryClient.getQueryData(['forumPost', forumId, postId]);
-      const previousPosts = queryClient.getQueryData(['forumPosts', forumId]);
-      
+      const previousPost = queryClient.getQueryData(forumPostKeys.detail(forumId, postId));
+      const previousPosts = queryClient.getQueryData(forumPostKeys.all(forumId));
+
       // Get all infinite query data to snapshot
       const allInfiniteQueries = queryClient.getQueriesData({ queryKey: ['forumPosts', 'infinite', forumId] });
       const previousInfiniteQueries = allInfiniteQueries.map(([queryKey, data]) => [queryKey, data]);
 
       // Optimistically update the post
-      queryClient.setQueryData(['forumPost', forumId, postId], (old: any) => {
+      queryClient.setQueryData(forumPostKeys.detail(forumId, postId), (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -243,7 +256,7 @@ export const useUnpinForumPost = () => {
       });
 
       // Optimistically update the posts list (regular query)
-      queryClient.setQueryData(['forumPosts', forumId], (old: any) => {
+      queryClient.setQueryData(forumPostKeys.all(forumId), (old: any) => {
         if (!old) return old;
         return {
           ...old,
@@ -275,10 +288,10 @@ export const useUnpinForumPost = () => {
     onError: (err, variables, context) => {
       // If the mutation fails, use the context returned from onMutate to roll back
       if (context?.previousPost) {
-        queryClient.setQueryData(['forumPost', variables.forumId, variables.postId], context.previousPost);
+        queryClient.setQueryData(forumPostKeys.detail(variables.forumId, variables.postId), context.previousPost);
       }
       if (context?.previousPosts) {
-        queryClient.setQueryData(['forumPosts', variables.forumId], context.previousPosts);
+        queryClient.setQueryData(forumPostKeys.all(variables.forumId), context.previousPosts);
       }
       // Rollback infinite queries
       context?.previousInfiniteQueries?.forEach(([queryKey, data]) => {
@@ -286,8 +299,8 @@ export const useUnpinForumPost = () => {
       });
     },
     onSuccess: (_, variables) => {
-      queryClient.invalidateQueries({ queryKey: ['forumPost', variables.forumId, variables.postId] });
-      queryClient.invalidateQueries({ queryKey: ['forumPosts', variables.forumId] });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.detail(variables.forumId, variables.postId) });
+      queryClient.invalidateQueries({ queryKey: forumPostKeys.all(variables.forumId) });
     },
   });
 };

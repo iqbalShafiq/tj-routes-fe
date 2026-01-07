@@ -11,6 +11,7 @@ import { SavedNavigationCard } from '../../components/SavedNavigationCard';
 import { PlaceFormModal } from '../../components/PlaceFormModal';
 import { NavigationFormModal } from '../../components/NavigationFormModal';
 import { useAuth } from '../../lib/hooks/useAuth';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/saved/')({
   beforeLoad: async () => {
@@ -19,6 +20,7 @@ export const Route = createFileRoute('/saved/')({
     }
   },
   component: SavedPage,
+  errorComponent: RouteErrorComponent,
 });
 
 type TabType = 'favorites' | 'places' | 'navigations';

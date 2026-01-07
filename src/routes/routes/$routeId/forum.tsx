@@ -28,9 +28,11 @@ import {
 } from "../../../lib/hooks/useForumPosts";
 import { PostTypeIcon } from "../../../components/ui/PostTypeIcon";
 import type { ForumPost } from "../../../lib/api/forum-posts";
+import { RouteErrorComponent } from "../../../components/RouteErrorComponent";
 
 export const Route = createFileRoute("/routes/$routeId/forum")({
   component: ForumPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function ForumPage() {

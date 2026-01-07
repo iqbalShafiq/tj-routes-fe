@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { createFileRoute, useSearch } from '@tanstack/react-router';
+import { createFileRoute, useSearch, useNavigate } from '@tanstack/react-router';
 import { useFeed } from '../../lib/hooks/useFeed';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { Button } from '../../components/ui/Button';
@@ -10,9 +10,11 @@ import { StoriesBar } from '../../components/StoriesBar';
 import { TrendingSection } from '../../components/TrendingSection';
 import { HashtagFilter } from '../../components/HashtagFilter';
 import { ReportModal } from '../../components/ReportModal';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/feed/')({
   component: FeedPage,
+  errorComponent: RouteErrorComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {
       sort: (search.sort as 'recent' | 'popular' | 'trending') || 'recent',
@@ -24,14 +26,15 @@ export const Route = createFileRoute('/feed/')({
 
 function FeedPage() {
   const { isAuthenticated } = useAuth();
+  const navigate = useNavigate({ from: '/feed/' });
   const search = useSearch({ from: '/feed/' });
-  const [sort, setSort] = useState<'recent' | 'popular' | 'trending'>(search.sort || 'recent');
-  const [hashtag, setHashtag] = useState<string | undefined>(search.hashtag);
-  const [followed, setFollowed] = useState<boolean | undefined>(
-    search.followed ? true : undefined
-  );
   const [isReportModalOpen, setIsReportModalOpen] = useState(false);
   const limit = 20;
+
+  // Use search params directly from router
+  const sort = search.sort || 'recent';
+  const hashtag = search.hashtag;
+  const followed = search.followed ? true : undefined;
 
   const {
     data,
@@ -64,17 +67,6 @@ function FeedPage() {
     observer.observe(loadMoreRef.current);
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
-
-  // Update URL when filters change
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (sort !== 'recent') params.set('sort', sort);
-    if (hashtag) params.set('hashtag', hashtag);
-    if (followed) params.set('followed', 'true');
-    const queryString = params.toString();
-    const newUrl = queryString ? `/feed?${queryString}` : '/feed';
-    window.history.replaceState({}, '', newUrl);
-  }, [sort, hashtag, followed]);
 
   const allReports = data?.pages.flatMap((page) => page.data) || [];
 
@@ -128,7 +120,7 @@ function FeedPage() {
         <div className="flex flex-wrap items-center gap-3 mb-4">
           <div className="flex gap-2 bg-bg-elevated p-1 rounded-sm">
             <button
-              onClick={() => setSort('recent')}
+              onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'recent' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'recent'
                   ? 'bg-white text-tertiary shadow-sm'
@@ -138,7 +130,7 @@ function FeedPage() {
               Recent
             </button>
             <button
-              onClick={() => setSort('popular')}
+              onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'popular' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'popular'
                   ? 'bg-white text-tertiary shadow-sm'
@@ -148,7 +140,7 @@ function FeedPage() {
               Popular
             </button>
             <button
-              onClick={() => setSort('trending')}
+              onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'trending' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'trending'
                   ? 'bg-white text-tertiary shadow-sm'
@@ -160,7 +152,10 @@ function FeedPage() {
           </div>
           {isAuthenticated && (
             <button
-              onClick={() => setFollowed(followed ? undefined : true)}
+              onClick={() => navigate({
+                search: (prev) => ({ ...prev, followed: followed ? undefined : 'true' }),
+                replace: true,
+              })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 followed
                   ? 'bg-tertiary text-white hover:bg-tertiary-hover'
@@ -175,7 +170,10 @@ function FeedPage() {
         {/* Hashtag Filter */}
         <HashtagFilter
           selectedHashtag={hashtag}
-          onHashtagSelect={(tag) => setHashtag(tag)}
+          onHashtagSelect={(tag) => navigate({
+            search: (prev) => ({ ...prev, hashtag: tag }),
+            replace: true,
+          })}
         />
       </PageHeader>
 

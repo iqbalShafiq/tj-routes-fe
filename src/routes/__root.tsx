@@ -1,5 +1,5 @@
 import {
-  createRootRoute,
+  createRootRouteWithContext,
   Outlet,
   useRouterState,
   useLocation,
@@ -13,11 +13,24 @@ import { ActiveCheckInBanner } from "../components/ActiveCheckInBanner";
 import { trackLastVisitedPage } from "../lib/utils/navigation";
 import { useEffect } from "react";
 
-const queryClient = new QueryClient({
+// Define router context type
+interface RouterContext {
+  queryClient: QueryClient;
+}
+
+// Export queryClient to be passed from main.tsx
+export const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       staleTime: 1000 * 60 * 5, // 5 minutes
+      gcTime: 1000 * 60 * 10, // 10 minutes (garbage collection)
       refetchOnWindowFocus: false,
+      refetchOnReconnect: true,
+      retry: 1,
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
+    },
+    mutations: {
+      retry: 0, // Don't retry mutations by default
     },
   },
 });
@@ -89,7 +102,7 @@ function RootComponent() {
   );
 }
 
-export const Route = createRootRoute({
+export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <QueryClientProvider client={queryClient}>
       <AuthProvider>

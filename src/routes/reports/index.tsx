@@ -11,6 +11,7 @@ import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { ReportModal } from '../../components/ReportModal';
 import { format } from 'date-fns';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/reports/')({
   beforeLoad: async () => {
@@ -22,6 +23,7 @@ export const Route = createFileRoute('/reports/')({
     }
   },
   component: ReportsPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function ReportsPage() {

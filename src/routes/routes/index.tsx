@@ -6,9 +6,11 @@ import { useState } from 'react';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 import { PageHeader } from '../../components/layout';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/routes/')({
   component: RoutesListing,
+  errorComponent: RouteErrorComponent,
 });
 
 function RoutesListing() {

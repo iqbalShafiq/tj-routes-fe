@@ -15,6 +15,7 @@ import { Table } from '../../components/ui/Table';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { useToast } from '../../lib/hooks/useToast';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/admin/routes')({
   beforeLoad: async () => {
@@ -24,6 +25,7 @@ export const Route = createFileRoute('/admin/routes')({
     }
   },
   component: AdminRoutesPage,
+  errorComponent: RouteErrorComponent,
 });
 
 function AdminRoutesPage() {

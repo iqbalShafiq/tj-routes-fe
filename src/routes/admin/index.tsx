@@ -11,6 +11,7 @@ import { Chip } from '../../components/ui/Chip';
 import { Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { format } from 'date-fns';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 
 export const Route = createFileRoute('/admin/')({
   beforeLoad: async () => {
@@ -20,6 +21,7 @@ export const Route = createFileRoute('/admin/')({
     }
   },
   component: AdminDashboard,
+  errorComponent: RouteErrorComponent,
 });
 
 function StatCard({ 

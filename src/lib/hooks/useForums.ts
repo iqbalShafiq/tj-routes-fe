@@ -1,9 +1,21 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { forumsApi } from '../api/forums';
 
+// Query keys for forums
+export const forumKeys = {
+  all: ['forum'] as const,
+  byRoute: (routeId: string | number) => [...forumKeys.all, 'byRoute', routeId] as const,
+  byRoutes: () => [...forumKeys.all, 'byRoute'] as const,
+  details: () => [...forumKeys.all, 'detail'] as const,
+  detail: (id: string | number) => [...forumKeys.details(), id] as const,
+  membership: (id: string | number) => [...forumKeys.all, 'membership', id] as const,
+  members: (id: string | number, page: number, limit: number) =>
+    [...forumKeys.all, 'members', id, page, limit] as const,
+};
+
 export const useForumByRoute = (routeId: string | number) => {
   return useQuery({
-    queryKey: ['forum', 'byRoute', routeId],
+    queryKey: forumKeys.byRoute(routeId),
     queryFn: () => forumsApi.getForumByRoute(routeId),
     enabled: !!routeId,
   });
@@ -11,7 +23,7 @@ export const useForumByRoute = (routeId: string | number) => {
 
 export const useForum = (forumId: string | number) => {
   return useQuery({
-    queryKey: ['forum', forumId],
+    queryKey: forumKeys.detail(forumId),
     queryFn: () => forumsApi.getForum(forumId),
     enabled: !!forumId,
   });
@@ -19,7 +31,7 @@ export const useForum = (forumId: string | number) => {
 
 export const useForumMembership = (forumId: string | number) => {
   return useQuery({
-    queryKey: ['forum', 'membership', forumId],
+    queryKey: forumKeys.membership(forumId),
     queryFn: () => forumsApi.checkMembership(forumId),
     enabled: !!forumId,
   });
@@ -27,7 +39,7 @@ export const useForumMembership = (forumId: string | number) => {
 
 export const useForumMembers = (forumId: string | number, page: number = 1, limit: number = 20) => {
   return useQuery({
-    queryKey: ['forum', 'members', forumId, page, limit],
+    queryKey: forumKeys.members(forumId, page, limit),
     queryFn: () => forumsApi.getForumMembers(forumId, page, limit),
     enabled: !!forumId,
   });
@@ -40,12 +52,12 @@ export const useJoinForum = () => {
     mutationFn: (forumId: string | number) => forumsApi.joinForum(forumId),
     onMutate: async (forumId) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ['forum'] });
+      await queryClient.cancelQueries({ queryKey: forumKeys.all });
 
       // Snapshot the previous values - need to update both byRoute and direct forum queries
-      const allByRouteQueries = queryClient.getQueriesData({ queryKey: ['forum', 'byRoute'] });
-      const allForumQueries = queryClient.getQueriesData({ queryKey: ['forum', forumId] });
-      const previousMembership = queryClient.getQueryData(['forum', 'membership', forumId]);
+      const allByRouteQueries = queryClient.getQueriesData({ queryKey: forumKeys.byRoutes() });
+      const allForumQueries = queryClient.getQueriesData({ queryKey: forumKeys.detail(forumId) });
+      const previousMembership = queryClient.getQueryData(forumKeys.membership(forumId));
 
       // Find and snapshot only the queries we're going to modify
       const previousByRouteQueries: Array<[any, any]> = [];
@@ -76,7 +88,7 @@ export const useJoinForum = () => {
       });
 
       // Optimistically update membership status
-      queryClient.setQueryData(['forum', 'membership', forumId], true);
+      queryClient.setQueryData(forumKeys.membership(forumId), true);
 
       // Return a context object with the snapshotted values
       return { previousByRouteQueries, previousForumQueries, previousMembership };
@@ -90,14 +102,14 @@ export const useJoinForum = () => {
         queryClient.setQueryData(queryKey, data);
       });
       if (context?.previousMembership !== undefined) {
-        queryClient.setQueryData(['forum', 'membership', forumId], context.previousMembership);
+        queryClient.setQueryData(forumKeys.membership(forumId), context.previousMembership);
       }
     },
     onSuccess: (_, forumId) => {
-      queryClient.invalidateQueries({ queryKey: ['forum', forumId] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'byRoute'] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'membership', forumId] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'members', forumId] });
+      queryClient.invalidateQueries({ queryKey: forumKeys.detail(forumId) });
+      queryClient.invalidateQueries({ queryKey: forumKeys.byRoutes() });
+      queryClient.invalidateQueries({ queryKey: forumKeys.membership(forumId) });
+      queryClient.invalidateQueries({ queryKey: forumKeys.members(forumId, 1, 20) });
     },
   });
 };
@@ -109,12 +121,12 @@ export const useLeaveForum = () => {
     mutationFn: (forumId: string | number) => forumsApi.leaveForum(forumId),
     onMutate: async (forumId) => {
       // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-      await queryClient.cancelQueries({ queryKey: ['forum'] });
+      await queryClient.cancelQueries({ queryKey: forumKeys.all });
 
       // Snapshot the previous values - need to update both byRoute and direct forum queries
-      const allByRouteQueries = queryClient.getQueriesData({ queryKey: ['forum', 'byRoute'] });
-      const allForumQueries = queryClient.getQueriesData({ queryKey: ['forum', forumId] });
-      const previousMembership = queryClient.getQueryData(['forum', 'membership', forumId]);
+      const allByRouteQueries = queryClient.getQueriesData({ queryKey: forumKeys.byRoutes() });
+      const allForumQueries = queryClient.getQueriesData({ queryKey: forumKeys.detail(forumId) });
+      const previousMembership = queryClient.getQueryData(forumKeys.membership(forumId));
 
       // Find and snapshot only the queries we're going to modify
       const previousByRouteQueries: Array<[any, any]> = [];
@@ -145,7 +157,7 @@ export const useLeaveForum = () => {
       });
 
       // Optimistically update membership status
-      queryClient.setQueryData(['forum', 'membership', forumId], false);
+      queryClient.setQueryData(forumKeys.membership(forumId), false);
 
       // Return a context object with the snapshotted values
       return { previousByRouteQueries, previousForumQueries, previousMembership };
@@ -159,14 +171,14 @@ export const useLeaveForum = () => {
         queryClient.setQueryData(queryKey, data);
       });
       if (context?.previousMembership !== undefined) {
-        queryClient.setQueryData(['forum', 'membership', forumId], context.previousMembership);
+        queryClient.setQueryData(forumKeys.membership(forumId), context.previousMembership);
       }
     },
     onSuccess: (_, forumId) => {
-      queryClient.invalidateQueries({ queryKey: ['forum', forumId] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'byRoute'] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'membership', forumId] });
-      queryClient.invalidateQueries({ queryKey: ['forum', 'members', forumId] });
+      queryClient.invalidateQueries({ queryKey: forumKeys.detail(forumId) });
+      queryClient.invalidateQueries({ queryKey: forumKeys.byRoutes() });
+      queryClient.invalidateQueries({ queryKey: forumKeys.membership(forumId) });
+      queryClient.invalidateQueries({ queryKey: forumKeys.members(forumId, 1, 20) });
     },
   });
 };

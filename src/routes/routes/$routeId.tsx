@@ -1,17 +1,42 @@
 import { createFileRoute, Link, Outlet, useLocation } from '@tanstack/react-router';
 import { useState } from 'react';
-import { useRouteWithStats } from '../../lib/hooks/useRoutes';
+import { useRouteWithStats, routeKeys } from '../../lib/hooks/useRoutes';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { useActiveCheckIn } from '../../lib/hooks/useCheckIn';
 import { RouteDetail } from '../../components/RouteDetail';
 import { CheckInModal } from '../../components/CheckInModal';
 import { ReportModal } from '../../components/ReportModal';
-import { Loading } from '../../components/ui/Loading';
+import { Loading, Skeleton } from '../../components/ui/Loading';
 import { Button } from '../../components/ui/Button';
 import { PageHeader } from '../../components/layout';
+import { RouteErrorComponent } from '../../components/RouteErrorComponent';
+import { routesApi } from '../../lib/api/routes';
 
 export const Route = createFileRoute('/routes/$routeId')({
+  loader: async ({ context, params }) => {
+    const { queryClient } = context;
+    const routeId = params.routeId;
+
+    // Prefetch route detail with stats
+    await queryClient.ensureQueryData({
+      queryKey: routeKeys.withStats(routeId),
+      queryFn: () => routesApi.getRouteWithStats(routeId),
+    });
+
+    return { routeId };
+  },
   component: RouteDetailPage,
+  errorComponent: RouteErrorComponent,
+  pendingComponent: () => (
+    <div className="animate-fade-in">
+      <PageHeader title="Loading route..." />
+      <div className="space-y-6">
+        <Skeleton className="h-48 card-chamfered" />
+        <Skeleton className="h-64 card-chamfered" />
+        <Skeleton className="h-96 card-chamfered" />
+      </div>
+    </div>
+  ),
 });
 
 function RouteDetailPage() {
