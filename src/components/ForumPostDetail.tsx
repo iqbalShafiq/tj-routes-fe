@@ -231,8 +231,9 @@ export const ForumPostDetail = ({
     <div className="animate-fade-in">
       <Card className="mb-6">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 mb-4">
-          <div className="flex items-start sm:items-center gap-3 flex-1 min-w-0">
+        <div className="flex flex-col md:flex-row md:justify-between gap-3 mb-4 relative">
+          {/* Left side: Avatar + User Info */}
+          <div className="flex items-start md:items-center gap-3 flex-1 min-w-0">
             <Link
               to="/profile/$userId"
               params={{ userId: String(post.user_id) }}
@@ -265,8 +266,10 @@ export const ForumPostDetail = ({
                 )}
               </div>
               <p className="text-sm text-text-muted">{format(new Date(post.created_at), 'PPp')}</p>
+
+              {/* Action buttons - below timestamp on small screens */}
               {(isOwner || isAdmin) && (
-                <div className="flex items-center gap-2 flex-shrink-0 mt-2 sm:mt-0">
+                <div className="flex items-center gap-2 flex-shrink-0 mt-2 md:absolute md:right-0 md:top-0 md:mt-0">
                   {isAdmin && (
                     <>
                       {post.is_pinned ? (
