@@ -8,7 +8,7 @@ import { Button } from '../../../../../components/ui/Button';
 import { PageHeader } from '../../../../../components/layout';
 import { ForumPostDetail } from '../../../../../components/ForumPostDetail';
 import { CreateForumPostForm } from '../../../../../components/CreateForumPostModal';
-import { useState } from 'react';
+import { Modal } from '../../../../../components/ui/Modal';
 import { RouteErrorComponent } from '../../../../../components/RouteErrorComponent';
 import { forumsApi } from '../../../../../lib/api/forums';
 import { forumPostsApi } from '../../../../../lib/api/forum-posts';
@@ -50,8 +50,8 @@ export const Route = createFileRoute('/routes/$routeId/forum/posts/$postId')({
 function ForumPostDetailPage() {
   const { routeId, postId } = Route.useParams();
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const { user } = useAuth();
-  const [isEditing, setIsEditing] = useState(false);
 
   const { data: route } = useRoute(routeId);
   const { data: forumData } = useForumByRoute(routeId);
@@ -59,13 +59,29 @@ function ForumPostDetailPage() {
     forumData?.forum.id || 0,
     postId
   );
-  const updateMutation = useUpdateForumPost();
   const deleteMutation = useDeleteForumPost();
   const pinMutation = usePinForumPost();
   const unpinMutation = useUnpinForumPost();
 
-  const handleEdit = (post: any) => {
-    setIsEditing(true);
+  // Check if edit modal should be open (account for URL-encoded quotes)
+  const isEditModalOpen = (search.edit === 'true' || search.edit === '"true"') && user?.id === post?.user_id;
+
+  const handleEdit = () => {
+    // Navigate with edit=true query parameter
+    navigate({
+      to: '/routes/$routeId/forum/posts/$postId',
+      params: { routeId, postId },
+      search: { edit: 'true' },
+    });
+  };
+
+  const handleCloseEditModal = () => {
+    // Navigate to remove edit query parameter
+    navigate({
+      to: '/routes/$routeId/forum/posts/$postId',
+      params: { routeId, postId },
+      search: { edit: undefined },
+    });
   };
 
   const handleDelete = (postId: number) => {
@@ -118,8 +134,6 @@ function ForumPostDetailPage() {
     );
   }
 
-  const routeName = `${route.route_number} - ${route.name}`;
-
   return (
     <div className="animate-fade-in">
       <PageHeader
@@ -137,32 +151,40 @@ function ForumPostDetailPage() {
         }
       />
 
-      {isEditing && user?.id === post.user_id ? (
-        <div className="mb-6">
+      {/* Edit Modal */}
+      {isEditModalOpen && (
+        <Modal
+          isOpen={true}
+          onClose={handleCloseEditModal}
+          title="Edit Post"
+          size="lg"
+        >
           <CreateForumPostForm
             forumId={forumData.forum.id}
+            postId={post.id}
+            isEditing={true}
             initialData={{
               post_type: post.post_type,
               title: post.title,
               content: post.content,
               linked_report_id: post.linked_report_id,
             }}
-            onSuccess={() => {
-              setIsEditing(false);
-            }}
-            onCancel={() => setIsEditing(false)}
+            initialPhotos={Array.isArray(post.photo_urls) ? post.photo_urls : []}
+            initialPdfs={Array.isArray(post.pdf_urls) ? post.pdf_urls : []}
+            onSuccess={handleCloseEditModal}
+            onCancel={handleCloseEditModal}
           />
-        </div>
-      ) : (
-        <ForumPostDetail
-          post={post}
-          forumId={forumData.forum.id}
-          onEdit={handleEdit}
-          onDelete={handleDelete}
-          onPin={handlePin}
-          onUnpin={handleUnpin}
-        />
+        </Modal>
       )}
+
+      <ForumPostDetail
+        post={post}
+        forumId={forumData.forum.id}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onPin={handlePin}
+        onUnpin={handleUnpin}
+      />
     </div>
   );
 }

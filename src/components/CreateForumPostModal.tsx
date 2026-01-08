@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useCreateForumPost } from '../lib/hooks/useForumPosts';
+import { useCreateForumPost, useUpdateForumPost } from '../lib/hooks/useForumPosts';
 import type { CreateForumPostRequest } from '../lib/api/forum-posts';
 import { Modal } from './ui/Modal';
 import { Input } from './ui/Input';
@@ -17,6 +17,10 @@ interface CreateForumPostFormProps {
   onSuccess?: () => void;
   onCancel?: () => void;
   initialData?: Partial<CreateForumPostRequest>;
+  isEditing?: boolean;       // NEW: indicates edit mode
+  postId?: number;           // NEW: post ID for update API
+  initialPhotos?: string[];  // NEW: existing photo URLs
+  initialPdfs?: string[];    // NEW: existing PDF URLs
 }
 
 // Internal form content component
@@ -25,6 +29,10 @@ function CreateForumPostFormContent({
   onSuccess,
   onCancel,
   initialData,
+  isEditing = false,
+  postId,
+  initialPhotos,
+  initialPdfs,
 }: CreateForumPostFormProps) {
   const [formData, setFormData] = useState<CreateForumPostRequest>({
     post_type: initialData?.post_type || 'discussion',
@@ -40,6 +48,7 @@ function CreateForumPostFormContent({
   const { data: reportsData } = useReports(1, 50);
 
   const createPostMutation = useCreateForumPost();
+  const updatePostMutation = useUpdateForumPost();
 
   const validate = () => {
     const newErrors: Record<string, string> = {};
@@ -63,35 +72,70 @@ function CreateForumPostFormContent({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (validate()) {
-      createPostMutation.mutate(
-        {
-          forumId,
-          data: formData,
-          photos: photos.length > 0 ? photos : undefined,
-          pdfs: pdfs.length > 0 ? pdfs : undefined,
-        },
-        {
-          onSuccess: () => {
-            // Reset form
-            setFormData({
-              post_type: 'discussion',
-              title: '',
-              content: '',
-              linked_report_id: null,
-            });
-            setPhotos([]);
-            setPdfs([]);
-            setErrors({});
-            // Success callback
-            onSuccess?.();
+      if (isEditing && postId) {
+        // Use update mutation for editing
+        updatePostMutation.mutate(
+          {
+            forumId,
+            postId,
+            data: formData,
           },
-          onError: (error: any) => {
-            setErrors({
-              submit: error.response?.data?.error || 'Failed to create post. Please try again.',
-            });
+          {
+            onSuccess: () => {
+              // Reset form for create mode only
+              if (!isEditing) {
+                setFormData({
+                  post_type: 'discussion',
+                  title: '',
+                  content: '',
+                  linked_report_id: null,
+                });
+                setPhotos([]);
+                setPdfs([]);
+                setErrors({});
+              }
+              // Success callback
+              onSuccess?.();
+            },
+            onError: (error: any) => {
+              setErrors({
+                submit: error.response?.data?.error || 'Failed to update post. Please try again.',
+              });
+            },
+          }
+        );
+      } else {
+        // Use create mutation for new posts
+        createPostMutation.mutate(
+          {
+            forumId,
+            data: formData,
+            photos: photos.length > 0 ? photos : undefined,
+            pdfs: pdfs.length > 0 ? pdfs : undefined,
           },
-        }
-      );
+          {
+            onSuccess: () => {
+              // Reset form
+              setFormData({
+                post_type: 'discussion',
+                title: '',
+                content: '',
+                linked_report_id: null,
+              });
+              setPhotos([]);
+              setPdfs([]);
+              setErrors({});
+              // Success callback
+              onSuccess?.();
+            },
+            onError: (error: any) => {
+              setErrors({
+                submit: error.response?.data?.error || 'Failed to create post. Please try again.',
+              });
+            },
+          }
+        );
+      }
     }
   };
 
@@ -179,8 +223,25 @@ function CreateForumPostFormContent({
         multiple
         onFileChange={handlePhotoChange}
       />
+      {/* Display existing photos (read-only) */}
+      {isEditing && initialPhotos && initialPhotos.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-text-secondary">Current Photos</p>
+          <div className="flex flex-wrap gap-2">
+            {initialPhotos.map((url, idx) => (
+              <img
+                key={idx}
+                src={url}
+                alt={`Photo ${idx + 1}`}
+                className="w-20 h-20 object-cover rounded border border-border"
+              />
+            ))}
+          </div>
+          <p className="text-xs text-text-muted">Add new photos to include them. Existing photos cannot be removed.</p>
+        </div>
+      )}
       {photos.length > 0 && (
-        <p className="text-sm text-text-secondary">{photos.length} photo(s) selected</p>
+        <p className="text-sm text-text-secondary">{photos.length} new photo(s) selected</p>
       )}
 
       {/* PDFs */}
@@ -190,8 +251,31 @@ function CreateForumPostFormContent({
         multiple
         onFileChange={handlePdfChange}
       />
+      {/* Display existing PDFs (read-only) */}
+      {isEditing && initialPdfs && initialPdfs.length > 0 && (
+        <div className="space-y-2">
+          <p className="text-sm font-medium text-text-secondary">Current PDF Documents</p>
+          <div className="flex flex-wrap gap-2">
+            {initialPdfs.map((url, idx) => (
+              <a
+                key={idx}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-3 py-2 bg-bg-elevated rounded border border-border hover:bg-border transition-colors"
+              >
+                <svg className="w-4 h-4 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                </svg>
+                <span className="text-sm text-text-primary">PDF {idx + 1}</span>
+              </a>
+            ))}
+          </div>
+          <p className="text-xs text-text-muted">Add new PDFs to include them. Existing PDFs cannot be removed.</p>
+        </div>
+      )}
       {pdfs.length > 0 && (
-        <p className="text-sm text-text-secondary">{pdfs.length} PDF(s) selected</p>
+        <p className="text-sm text-text-secondary">{pdfs.length} new PDF(s) selected</p>
       )}
 
       {/* Error Message */}
@@ -208,14 +292,29 @@ function CreateForumPostFormContent({
             Cancel
           </Button>
         )}
-        <Button type="submit" variant="primary" disabled={createPostMutation.isPending}>
-          {createPostMutation.isPending ? (
-            <>
-              <Loading />
-              <span className="ml-2">Creating...</span>
-            </>
+        <Button
+          type="submit"
+          variant="primary"
+          disabled={createPostMutation.isPending || updatePostMutation.isPending}
+        >
+          {isEditing ? (
+            updatePostMutation.isPending ? (
+              <>
+                <Loading />
+                <span className="ml-2">Updating...</span>
+              </>
+            ) : (
+              'Update Post'
+            )
           ) : (
-            'Create Post'
+            createPostMutation.isPending ? (
+              <>
+                <Loading />
+                <span className="ml-2">Creating...</span>
+              </>
+            ) : (
+              'Create Post'
+            )
           )}
         </Button>
       </div>
