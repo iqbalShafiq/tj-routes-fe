@@ -65,7 +65,7 @@ export const Modal = ({
         onKeyDown={handleKeyDown}
         className={`
           relative w-full ${sizeClasses[size]} max-h-[90vh]
-          bg-white card-minimal overflow-hidden
+          bg-white rounded-md overflow-hidden
           shadow-2xl animate-in fade-in zoom-in-95 duration-200
         `}
       >
