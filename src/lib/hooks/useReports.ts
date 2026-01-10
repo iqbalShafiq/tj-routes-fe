@@ -303,3 +303,64 @@ export const useUserReports = (
     enabled: !!userId,
   });
 };
+
+// Hook to get reports by type (excluding current report)
+export const useReportsByType = (
+  type: string | undefined,
+  excludeReportId: string | number | undefined,
+  limit: number = 5
+) => {
+  return useQuery({
+    queryKey: [...reportKeys.lists(), 'type', type, 'exclude', excludeReportId, limit],
+    queryFn: async () => {
+      if (!type) return { data: [], total: 0, page: 1, limit, total_pages: 0 };
+      const result = await reportsApi.getReports(1, limit, { type });
+      // Filter out the current report
+      const filtered = result.data.filter((r) => r.id !== excludeReportId);
+      return { ...result, data: filtered };
+    },
+    enabled: !!type && !!excludeReportId,
+  });
+};
+
+// Hook to get reports by route (excluding current report)
+export const useReportsByRoute = (
+  routeId: string | number | undefined,
+  excludeReportId: string | number | undefined,
+  limit: number = 5
+) => {
+  return useQuery({
+    queryKey: [...reportKeys.lists(), 'route', routeId, 'exclude', excludeReportId, limit],
+    queryFn: async () => {
+      if (!routeId) return { data: [], total: 0, page: 1, limit, total_pages: 0 };
+      const result = await reportsApi.getReports(1, limit, {});
+      // Filter by route and exclude current
+      const filtered = result.data.filter(
+        (r) => r.related_route_id === Number(routeId) && r.id !== excludeReportId
+      );
+      return { ...result, data: filtered };
+    },
+    enabled: !!routeId && !!excludeReportId,
+  });
+};
+
+// Hook to get reports by stop (excluding current report)
+export const useReportsByStop = (
+  stopId: string | number | undefined,
+  excludeReportId: string | number | undefined,
+  limit: number = 5
+) => {
+  return useQuery({
+    queryKey: [...reportKeys.lists(), 'stop', stopId, 'exclude', excludeReportId, limit],
+    queryFn: async () => {
+      if (!stopId) return { data: [], total: 0, page: 1, limit, total_pages: 0 };
+      const result = await reportsApi.getReports(1, limit, {});
+      // Filter by stop and exclude current
+      const filtered = result.data.filter(
+        (r) => r.related_stop_id === Number(stopId) && r.id !== excludeReportId
+      );
+      return { ...result, data: filtered };
+    },
+    enabled: !!stopId && !!excludeReportId,
+  });
+};

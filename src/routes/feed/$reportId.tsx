@@ -18,6 +18,7 @@ import { format, formatDistanceToNow } from 'date-fns';
 import type { Comment } from '../../lib/api/comments';
 import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
 import { RouteErrorComponent } from '../../components/RouteErrorComponent';
+import { ReportDetailSidebar } from '../../components/feed/ReportDetailSidebar';
 
 export const Route = createFileRoute('/feed/$reportId')({
   beforeLoad: async () => {
@@ -278,7 +279,11 @@ function ReportDetailPage() {
         ]}
       />
 
-      <Card className="mb-6">
+      {/* Two-column grid: main content + right sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8">
+        {/* Main Content Column */}
+        <div className="min-w-0">
+          <Card className="mb-6">
         {/* Author */}
         <div className="flex items-center gap-3 mb-6">
           <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center text-white font-bold text-lg">
@@ -459,23 +464,28 @@ function ReportDetailPage() {
       )}
 
       {/* Comments Section */}
-      <Card static>
-        <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Comments</h2>
+        <Card static>
+          <h2 className="text-lg font-display font-semibold text-text-primary mb-4">Comments</h2>
 
-        {commentsLoading ? (
-          <div className="py-8 text-center text-text-muted">Loading comments...</div>
-        ) : comments && comments.length > 0 ? (
-          <div className="divide-y divide-border">
-            {comments.map((comment) => (
-              <CommentItem key={comment.id} comment={comment} reportId={reportId} />
-            ))}
-          </div>
-        ) : (
-          <div className="py-8 text-center text-text-muted">
-            <p>No comments yet. Be the first to comment!</p>
-          </div>
-        )}
-      </Card>
+          {commentsLoading ? (
+            <div className="py-8 text-center text-text-muted">Loading comments...</div>
+          ) : comments && comments.length > 0 ? (
+            <div className="divide-y divide-border">
+              {comments.map((comment) => (
+                <CommentItem key={comment.id} comment={comment} reportId={reportId} />
+              ))}
+            </div>
+          ) : (
+            <div className="py-8 text-center text-text-muted">
+              <p>No comments yet. Be the first to comment!</p>
+            </div>
+          )}
+        </Card>
+      </div>
+
+      {/* Right Sidebar Column */}
+      <ReportDetailSidebar report={report} />
+      </div>
 
       {/* Image Viewer Portal */}
       {report.photo_urls && (

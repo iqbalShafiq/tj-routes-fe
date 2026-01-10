@@ -131,12 +131,7 @@ export const ActiveForumDiscussionsWidget = () => {
     return (
       <Card size="sm">
         <div className="mb-4">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-            </svg>
-            <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
-          </div>
+          <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
         </div>
         <div className="space-y-4">
           {[...Array(3)].map((_, i) => (
@@ -154,12 +149,7 @@ export const ActiveForumDiscussionsWidget = () => {
     return (
       <Card size="sm">
         <div className="mb-4">
-          <div className="flex items-center gap-2">
-            <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-            </svg>
-            <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
-          </div>
+          <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
         </div>
         <div className="text-center py-6 text-text-muted text-sm">
           <svg className="w-8 h-8 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -174,12 +164,7 @@ export const ActiveForumDiscussionsWidget = () => {
   return (
     <Card size="sm">
       <div className="mb-4">
-        <div className="flex items-center gap-2">
-          <svg className="w-5 h-5 text-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z" />
-          </svg>
-          <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
-        </div>
+        <h3 className="font-display font-semibold text-text-primary">Active Discussions</h3>
       </div>
       <div className="space-y-3">
         {posts.map((post) => (
