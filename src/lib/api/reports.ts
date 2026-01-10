@@ -292,4 +292,42 @@ export const reportsApi = {
     }
     return { data: [], total: 0, page, limit, total_pages: 0 };
   },
+
+  // Get recent reports for a specific route
+  getRecentByRoute: async (
+    routeId: string | number,
+    page: number = 1,
+    limit: number = 5
+  ): Promise<{
+    data: Report[];
+    total: number;
+    page: number;
+    limit: number;
+  }> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+      route_id: routeId.toString(),
+    });
+
+    const response = await apiClient.get<{
+      success: boolean;
+      data: {
+        reports: Report[];
+        total: number;
+        page: number;
+        limit: number;
+      };
+    }>(`${API_ENDPOINTS.reports.list}?${params}`);
+
+    if (response.data.success && response.data.data.reports) {
+      return {
+        data: response.data.data.reports,
+        total: response.data.data.total,
+        page: response.data.data.page,
+        limit: response.data.data.limit,
+      };
+    }
+    return { data: [], total: 0, page, limit };
+  },
 };

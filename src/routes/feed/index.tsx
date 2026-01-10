@@ -11,6 +11,7 @@ import { TrendingSection } from '../../components/TrendingSection';
 import { HashtagFilter } from '../../components/HashtagFilter';
 import { ReportModal } from '../../components/ReportModal';
 import { RouteErrorComponent } from '../../components/RouteErrorComponent';
+import { RightSidebar } from '../../components/feed/RightSidebar';
 
 export const Route = createFileRoute('/feed/')({
   component: FeedPage,
@@ -183,46 +184,55 @@ function FeedPage() {
       {/* Trending Section */}
       {sort === 'recent' && <TrendingSection />}
 
-      {/* Feed Posts */}
-      {allReports.length > 0 ? (
-        <>
-          <div className="space-y-6 mb-8">
-            {allReports.map((report, index) => (
-              <div key={report.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-stagger-1">
-                <EnhancedReportCard report={report} />
+      {/* Three-column grid: main feed + right sidebar */}
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8">
+        {/* Main Feed Column */}
+        <div className="min-w-0">
+          {/* Feed Posts */}
+          {allReports.length > 0 ? (
+            <>
+              <div className="space-y-6 mb-8">
+                {allReports.map((report, index) => (
+                  <div key={report.id} style={{ animationDelay: `${index * 50}ms` }} className="animate-stagger-1">
+                    <EnhancedReportCard report={report} />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Infinite scroll trigger */}
-          <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
-            {isFetchingNextPage && (
-              <div className="flex items-center gap-2 text-text-muted">
-                <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                </svg>
-                <span>Loading more...</span>
+              {/* Infinite scroll trigger */}
+              <div ref={loadMoreRef} className="h-10 flex items-center justify-center">
+                {isFetchingNextPage && (
+                  <div className="flex items-center gap-2 text-text-muted">
+                    <svg className="animate-spin h-5 w-5" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                    </svg>
+                    <span>Loading more...</span>
+                  </div>
+                )}
               </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-20">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
-              <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
-              </svg>
+            </>
+          ) : (
+            <div className="text-center py-20">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
+                <svg className="w-8 h-8 text-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z" />
+                </svg>
+              </div>
+              <p className="text-text-secondary font-display text-lg">No reports yet</p>
+              <p className="text-text-muted text-sm mt-2 mb-6">Be the first to share something!</p>
+              {isAuthenticated && (
+                <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
+                  Create Report
+                </Button>
+              )}
             </div>
-            <p className="text-text-secondary font-display text-lg">No reports yet</p>
-            <p className="text-text-muted text-sm mt-2 mb-6">Be the first to share something!</p>
-            {isAuthenticated && (
-              <Button variant="primary" onClick={() => setIsReportModalOpen(true)}>
-                Create Report
-              </Button>
-            )}
-          </div>
-      )}
+          )}
+        </div>
+
+        {/* Right Sidebar Column */}
+        <RightSidebar />
+      </div>
 
       <ReportModal
         isOpen={isReportModalOpen}
