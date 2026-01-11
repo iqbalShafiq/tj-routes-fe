@@ -29,6 +29,7 @@ import {
 import { PostTypeIcon } from "../../../components/ui/PostTypeIcon";
 import type { ForumPost } from "../../../lib/api/forum-posts";
 import { RouteErrorComponent } from "../../../components/RouteErrorComponent";
+import { ForumSidebar } from "../../../components/forum/ForumSidebar";
 
 export const Route = createFileRoute("/routes/$routeId/forum")({
   component: ForumPage,
@@ -216,153 +217,161 @@ function ForumPage() {
         isLoading={joinMutation.isPending || leaveMutation.isPending}
       />
 
-      {/* Filters and Create Button */}
-      <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
-        <div className="flex flex-wrap items-center gap-3">
-          <div className="-mr-6 -ml-6 overflow-x-scroll scrollbar-hide">
-            <div className="flex gap-1 md:gap-2 bg-bg-elevated w-max md:w-auto p-1 rounded-sm mx-6">
-              <button
-                onClick={() => setPostTypeFilter(undefined)}
-                className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
-                  !postTypeFilter
-                    ? "bg-white text-tertiary shadow-sm"
-                    : "text-text-secondary hover:text-text-primary"
-                }`}
-              >
-                All
-              </button>
-              {FORUM_POST_TYPES.map((type) => (
-                <button
-                  key={type.value}
-                  onClick={() =>
-                    setPostTypeFilter(
-                      postTypeFilter === type.value
-                        ? undefined
-                        : (type.value as any)
-                    )
-                  }
-                  className={`px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2 ${
-                    postTypeFilter === type.value
-                      ? "bg-white text-tertiary shadow-sm"
-                      : "text-text-secondary hover:text-text-primary"
-                  }`}
+      {/* Main content with sidebar */}
+      <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
+        <div>
+          {/* Filters and Create Button */}
+          <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="-mr-6 -ml-6 overflow-x-scroll scrollbar-hide">
+                <div className="flex gap-1 md:gap-2 bg-bg-elevated w-max md:w-auto p-1 rounded-sm mx-6">
+                  <button
+                    onClick={() => setPostTypeFilter(undefined)}
+                    className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
+                      !postTypeFilter
+                        ? "bg-white text-tertiary shadow-sm"
+                        : "text-text-secondary hover:text-text-primary"
+                    }`}
+                  >
+                    All
+                  </button>
+                  {FORUM_POST_TYPES.map((type) => (
+                    <button
+                      key={type.value}
+                      onClick={() =>
+                        setPostTypeFilter(
+                          postTypeFilter === type.value
+                            ? undefined
+                            : (type.value as any)
+                        )
+                      }
+                      className={`px-4 py-2 text-sm font-medium rounded transition-colors flex items-center gap-2 ${
+                        postTypeFilter === type.value
+                          ? "bg-white text-tertiary shadow-sm"
+                          : "text-text-secondary hover:text-text-primary"
+                      }`}
+                    >
+                      <PostTypeIcon type={type.icon as any} className="w-4 h-4" />
+                      {type.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <input
+                type="text"
+                placeholder="Search posts..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="flex-1 px-4 py-2 border-2 border-border bg-white rounded focus:outline-none focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary"
+              />
+              {isAuthenticated && forumData.is_member && (
+                <Button
+                  variant="primary"
+                  onClick={() => setIsCreateModalOpen(true)}
+                  className="w-full sm:w-auto"
                 >
-                  <PostTypeIcon type={type.icon as any} className="w-4 h-4" />
-                  {type.label}
-                </button>
-              ))}
+                  + Create Post
+                </Button>
+              )}
             </div>
           </div>
-          <input
-            type="text"
-            placeholder="Search posts..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="flex-1 px-4 py-2 border-2 border-border bg-white rounded focus:outline-none focus:ring-2 focus:ring-tertiary/20 focus:border-tertiary"
-          />
-          {isAuthenticated && forumData.is_member && (
-            <Button
-              variant="primary"
-              onClick={() => setIsCreateModalOpen(true)}
-              className="w-full sm:w-auto"
-            >
-              + Create Post
-            </Button>
-          )}
-        </div>
-      </div>
 
-      {/* Posts List */}
-      {postsLoading && !postsData ? (
-        <div className="space-y-4">
-          {[...Array(3)].map((_, i) => (
-            <Skeleton key={i} className="h-64 card-chamfered" />
-          ))}
-        </div>
-      ) : sortedPosts.length > 0 ? (
-        <>
-          <div className="space-y-6 mb-8">
-            {sortedPosts.map((post, index) => (
-              <div
-                key={post.id}
-                style={{ animationDelay: `${index * 50}ms` }}
-                className="animate-stagger-1"
-              >
-                <ForumPostCard
-                  post={post}
-                  forumId={forumData.forum.id}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  onPin={handlePin}
-                  onUnpin={handleUnpin}
-                />
+          {/* Posts List */}
+          {postsLoading && !postsData ? (
+            <div className="space-y-4">
+              {[...Array(3)].map((_, i) => (
+                <Skeleton key={i} className="h-64 card-chamfered" />
+              ))}
+            </div>
+          ) : sortedPosts.length > 0 ? (
+            <>
+              <div className="space-y-6 mb-8">
+                {sortedPosts.map((post, index) => (
+                  <div
+                    key={post.id}
+                    style={{ animationDelay: `${index * 50}ms` }}
+                    className="animate-stagger-1"
+                  >
+                    <ForumPostCard
+                      post={post}
+                      forumId={forumData.forum.id}
+                      onEdit={handleEdit}
+                      onDelete={handleDelete}
+                      onPin={handlePin}
+                      onUnpin={handleUnpin}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
 
-          {/* Infinite scroll trigger */}
-          <div
-            ref={loadMoreRef}
-            className="h-10 flex items-center justify-center"
-          >
-            {isFetchingNextPage && (
-              <div className="flex items-center gap-2 text-text-muted">
+              {/* Infinite scroll trigger */}
+              <div
+                ref={loadMoreRef}
+                className="h-10 flex items-center justify-center"
+              >
+                {isFetchingNextPage && (
+                  <div className="flex items-center gap-2 text-text-muted">
+                    <svg
+                      className="animate-spin h-5 w-5"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      />
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      />
+                    </svg>
+                    <span>Loading more...</span>
+                  </div>
+                )}
+              </div>
+            </>
+          ) : (
+            <div className="text-center py-20">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
                 <svg
-                  className="animate-spin h-5 w-5"
+                  className="w-8 h-8 text-text-muted"
                   fill="none"
+                  stroke="currentColor"
                   viewBox="0 0 24 24"
                 >
-                  <circle
-                    className="opacity-25"
-                    cx="12"
-                    cy="12"
-                    r="10"
-                    stroke="currentColor"
-                    strokeWidth="4"
-                  />
                   <path
-                    className="opacity-75"
-                    fill="currentColor"
-                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
                   />
                 </svg>
-                <span>Loading more...</span>
               </div>
-            )}
-          </div>
-        </>
-      ) : (
-        <div className="text-center py-20">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 card-chamfered">
-            <svg
-              className="w-8 h-8 text-text-muted"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M19 20H5a2 2 0 01-2-2V6a2 2 0 012-2h10a2 2 0 012 2v1m2 13a2 2 0 01-2-2V7m2 13a2 2 0 002-2V9a2 2 0 00-2-2h-2m-4-3H9M7 16h6M7 8h6v4H7V8z"
-              />
-            </svg>
-          </div>
-          <p className="text-text-secondary font-display text-lg">
-            No posts yet
-          </p>
-          <p className="text-text-muted text-sm mt-2 mb-6">
-            {forumData.is_member
-              ? "Be the first to start a discussion!"
-              : "Join the forum to create posts"}
-          </p>
-          {isAuthenticated && !forumData.is_member && (
-            <Button variant="primary" onClick={handleJoin}>
-              Join Forum
-            </Button>
+              <p className="text-text-secondary font-display text-lg">
+                No posts yet
+              </p>
+              <p className="text-text-muted text-sm mt-2 mb-6">
+                {forumData.is_member
+                  ? "Be the first to start a discussion!"
+                  : "Join the forum to create posts"}
+              </p>
+              {isAuthenticated && !forumData.is_member && (
+                <Button variant="primary" onClick={handleJoin}>
+                  Join Forum
+                </Button>
+              )}
+            </div>
           )}
         </div>
-      )}
+
+        {/* Sidebar */}
+        <ForumSidebar routeId={routeId} />
+      </div>
 
       {/* Create Post Modal */}
       <CreateForumPostModal

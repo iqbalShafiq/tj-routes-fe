@@ -116,7 +116,7 @@ export const SuggestedUsersWidget = () => {
                 onClick={() => handleUserClick(user.id)}
                 className="flex flex-col items-start w-full hover:opacity-80 transition-opacity"
               >
-                <span className="font-medium text-text-primary truncate w-full">{user.username}</span>
+                <span className="font-medium text-text-primary truncate w-full text-left">{user.username}</span>
                 <span className={`text-xs px-2 py-0.5 rounded-full mt-1 ${getLevelColor(user.level || 'newcomer')}`}>
                   {user.level || 'newcomer'}
                 </span>

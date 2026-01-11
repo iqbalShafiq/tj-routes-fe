@@ -1,5 +1,4 @@
 import { useUser } from '../../lib/hooks/useUsers';
-import { useUserReports } from '../../lib/hooks/useReports';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { Skeleton } from '../ui/Loading';
 import { Card } from '../ui/Card';
@@ -31,7 +30,6 @@ export const AuthorProfileWidget = ({ userId }: AuthorProfileWidgetProps) => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
   const { data: author, isLoading: loadingAuthor } = useUser(userId);
-  const { data: userReports, isLoading: loadingReports } = useUserReports(userId, 1, 1);
 
   const handleUserClick = () => {
     navigate({ to: '/profile/$userId', params: { userId: userId.toString() } });
@@ -112,12 +110,8 @@ export const AuthorProfileWidget = ({ userId }: AuthorProfileWidgetProps) => {
 
       <div className="mt-4 pt-4 border-t border-border">
         <div className="flex items-center justify-between text-sm">
-          <span className="text-text-muted">Total Reports</span>
-          {loadingReports ? (
-            <span className="text-text-muted">...</span>
-          ) : (
-            <span className="font-medium text-text-primary">{userReports?.total || 0}</span>
-          )}
+          <span className="text-text-muted">Reputation</span>
+          <span className="font-medium text-text-primary">{author.reputation_points || 0}</span>
         </div>
       </div>
     </Card>

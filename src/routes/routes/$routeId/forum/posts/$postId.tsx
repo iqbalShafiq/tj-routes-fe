@@ -12,6 +12,7 @@ import { Modal } from '../../../../../components/ui/Modal';
 import { RouteErrorComponent } from '../../../../../components/RouteErrorComponent';
 import { forumsApi } from '../../../../../lib/api/forums';
 import { forumPostsApi } from '../../../../../lib/api/forum-posts';
+import { ForumSidebar } from '../../../../../components/forum/ForumSidebar';
 
 export const Route = createFileRoute('/routes/$routeId/forum/posts/$postId')({
   loader: async ({ context, params }) => {
@@ -177,14 +178,25 @@ function ForumPostDetailPage() {
         </Modal>
       )}
 
-      <ForumPostDetail
-        post={post}
-        forumId={forumData.forum.id}
-        onEdit={handleEdit}
-        onDelete={handleDelete}
-        onPin={handlePin}
-        onUnpin={handleUnpin}
-      />
+      {/* Main content with sidebar */}
+      <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
+        <ForumPostDetail
+          post={post}
+          forumId={forumData.forum.id}
+          onEdit={handleEdit}
+          onDelete={handleDelete}
+          onPin={handlePin}
+          onUnpin={handleUnpin}
+        />
+
+        {/* Sidebar with author profile */}
+        <ForumSidebar
+          routeId={routeId}
+          showAuthorProfile={true}
+          authorUserId={post.user_id}
+          excludePostId={post.id}
+        />
+      </div>
     </div>
   );
 }

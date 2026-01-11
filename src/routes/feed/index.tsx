@@ -185,7 +185,7 @@ function FeedPage() {
       {sort === 'recent' && <TrendingSection />}
 
       {/* Three-column grid: main feed + right sidebar */}
-      <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6 lg:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 lg:gap-8">
         {/* Main Feed Column */}
         <div className="min-w-0">
           {/* Feed Posts */}

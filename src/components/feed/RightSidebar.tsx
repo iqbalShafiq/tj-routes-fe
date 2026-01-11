@@ -5,7 +5,7 @@ import { RouteActivityWidget } from './RouteActivityWidget';
 
 export const RightSidebar = () => {
   return (
-    <aside className="hidden lg:block w-80 sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <aside className="hidden lg:block w-[400px] sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
       <div className="space-y-6">
         <TrendingHashtagsWidget />
         <SuggestedUsersWidget />
