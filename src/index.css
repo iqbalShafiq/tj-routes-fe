@@ -93,6 +93,31 @@
     line-height: 1.6;
   }
 
+  /* Global browser scrollbar styling */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-border)) transparent;
+  }
+
+  html::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+  }
+
+  html::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  html::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 4px;
+    transition: background 0.2s ease;
+  }
+
+  html::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-border));
+  }
+
   h1,
   h2,
   h3,
@@ -292,6 +317,7 @@
   .scrollbar-thin::-webkit-scrollbar-thumb {
     background: rgb(var(--color-border));
     border-radius: 3px;
+    transition: background 0.2s ease;
   }
   .scrollbar-thin::-webkit-scrollbar-thumb:hover {
     background: rgb(var(--color-accent) / 0.6);
