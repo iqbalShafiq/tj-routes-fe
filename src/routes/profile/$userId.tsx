@@ -10,10 +10,14 @@ import { Loading, Skeleton } from '../../components/ui/Loading';
 import { PageHeader } from '../../components/layout';
 import { ReportListCard } from '../../components/ReportListCard';
 import { CheckInHistoryList } from '../../components/CheckInHistoryList';
+import { FollowButton } from '../../components/FollowButton';
+import { MessageUserButton } from '../../components/MessageUserButton';
 import { format } from 'date-fns';
 import { USER_LEVELS } from '../../lib/utils/constants';
 import { useState } from 'react';
 import { RouteErrorComponent } from '../../components/RouteErrorComponent';
+import { Button } from '../../components/ui/Button';
+import { ChangePasswordModal } from '../../components/ChangePasswordModal';
 
 export const Route = createFileRoute('/profile/$userId')({
   beforeLoad: async () => {
@@ -134,6 +138,7 @@ function UserProfilePage() {
   const { data: profile, isLoading: profileLoading, error: profileError } = useUserProfile(userId);
   const { data: allBadges } = useBadges();
   const [activeTab, setActiveTab] = useState<'reports' | 'checkins' | 'badges'>('reports');
+  const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
 
   const isOwnProfile = currentUser?.id === Number(userId);
 
@@ -201,6 +206,12 @@ function UserProfilePage() {
                     Your Profile
                   </span>
                 )}
+                {!isOwnProfile && (
+                  <div className="flex items-center gap-2">
+                    <FollowButton userId={Number(userId)} variant="default" />
+                    <MessageUserButton userId={Number(userId)} variant="default" />
+                  </div>
+                )}
               </div>
               
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-4">
@@ -258,6 +269,24 @@ function UserProfilePage() {
             <p className="text-sm text-text-muted">Points to Next</p>
           </Card>
       </div>
+
+      {/* Security Section - Only show for own profile and non-OAuth users */}
+      {isOwnProfile && !currentUser?.oauth_provider && (
+        <Card className="mb-6">
+          <h2 className="text-xl font-display font-semibold text-text-primary mb-4">
+            Security
+          </h2>
+          <p className="text-sm text-text-secondary mb-4">
+            Manage your account security settings
+          </p>
+          <Button
+            variant="outline"
+            onClick={() => setShowChangePasswordModal(true)}
+          >
+            Change Password
+          </Button>
+        </Card>
+      )}
 
       {/* Tab Navigation */}
       <div className="flex border-b border-border mb-6">
@@ -465,6 +494,12 @@ function UserProfilePage() {
           )}
         </div>
       )}
+
+      {/* Change Password Modal */}
+      <ChangePasswordModal
+        isOpen={showChangePasswordModal}
+        onClose={() => setShowChangePasswordModal(false)}
+      />
     </div>
   );
 }
