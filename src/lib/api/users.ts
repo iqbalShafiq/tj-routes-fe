@@ -28,6 +28,16 @@ export interface UserResponse {
   data: User;
 }
 
+export interface FriendsResponse {
+  success: boolean;
+  data: {
+    friends: User[];
+    total: number;
+    page: number;
+    limit: number;
+  };
+}
+
 export const usersApi = {
   getUsers: async (
     page: number = 1,
@@ -152,12 +162,46 @@ export const usersApi = {
         limit: number;
       };
     }>(`/api/v1/users/${id}/following?${params}`);
-    
+
     if (response.data.success && response.data.data.following) {
       const total = response.data.data.total;
       const total_pages = Math.ceil(total / limit);
       return {
         data: response.data.data.following,
+        total,
+        page: response.data.data.page,
+        limit: response.data.data.limit,
+        total_pages,
+      };
+    }
+    return { data: [], total: 0, page, limit, total_pages: 0 };
+  },
+
+  getFriends: async (
+    id: number | string,
+    page: number = 1,
+    limit: number = 20
+  ): Promise<{
+    data: User[];
+    total: number;
+    page: number;
+    limit: number;
+    total_pages: number;
+  }> => {
+    const params = new URLSearchParams({
+      page: page.toString(),
+      limit: limit.toString(),
+    });
+
+    const response = await apiClient.get<FriendsResponse>(
+      `/api/v1/users/${id}/friends?${params}`
+    );
+
+    if (response.data.success && response.data.data.friends) {
+      const total = response.data.data.total;
+      const total_pages = Math.ceil(total / limit);
+      return {
+        data: response.data.data.friends,
         total,
         page: response.data.data.page,
         limit: response.data.data.limit,

@@ -31,6 +31,9 @@ export const API_ENDPOINTS = {
     login: "/api/v1/auth/login",
     register: "/api/v1/auth/register",
     oauth: (provider: string) => `/api/v1/auth/oauth/${provider}`,
+    forgotPassword: "/api/v1/auth/forgot-password",
+    resetPassword: "/api/v1/auth/reset-password",
+    changePassword: "/api/v1/auth/change-password",
   },
   routes: {
     list: "/api/v1/routes",
@@ -133,6 +136,7 @@ export const STORAGE_KEYS = {
   AUTH_TOKEN: "auth_token",
   REFRESH_TOKEN: "refresh_token",
   USER: "user",
+  THEME: "theme",
 } as const;
 
 export const REPORT_TYPES = [
@@ -162,3 +166,10 @@ export const FORUM_POST_TYPES = [
   { value: "question", label: "Question", icon: "question" },
   { value: "announcement", label: "Announcement", icon: "announcement" },
 ] as const;
+
+export const WS_URL = import.meta.env.VITE_WS_URL || 'ws://localhost:8080/api/v1/ws';
+export const FORUM_WS_URL_PATTERN = 'ws://localhost:8080/api/v1/ws/forum/:forumId';
+export const WS_RECONNECT_DELAY = 1000;
+export const WS_MAX_RECONNECT_ATTEMPTS = 5;
+export const WS_MESSAGE_QUEUE_LIMIT = 100;
+export const WS_TYPING_DEBOUNCE_MS = 500;
