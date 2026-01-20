@@ -30,9 +30,17 @@ import { PostTypeIcon } from "../../../components/ui/PostTypeIcon";
 import type { ForumPost } from "../../../lib/api/forum-posts";
 import { RouteErrorComponent } from "../../../components/RouteErrorComponent";
 import { ForumSidebar } from "../../../components/forum/ForumSidebar";
+import { ChatProvider } from "../../../lib/hooks/useChatContext";
+import { useChatContext } from "../../../lib/hooks/useChatContext";
+import { Tabs } from "../../../components/ui/Tabs";
+import { ForumChatPanel } from "../../../components/chat/ForumChatPanel";
 
 export const Route = createFileRoute("/routes/$routeId/forum")({
-  component: ForumPage,
+  component: () => (
+    <ChatProvider enabled={true}>
+      <ForumPage />
+    </ChatProvider>
+  ),
   errorComponent: RouteErrorComponent,
 });
 
@@ -40,12 +48,14 @@ function ForumPage() {
   const { routeId } = Route.useParams();
   const navigate = useNavigate();
   const location = useLocation();
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated } = useAuth();
+  const { joinRoom, leaveRoom, isConnected } = useChatContext();
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [postTypeFilter, setPostTypeFilter] = useState<
     "discussion" | "info" | "question" | "announcement" | undefined
   >(undefined);
   const [searchTerm, setSearchTerm] = useState("");
+  const [activeTab, setActiveTab] = useState<'posts' | 'chat'>('posts');
 
   // Check if we're on a child route (posts, members, etc.)
   const isChildRoute =
@@ -90,6 +100,20 @@ function ForumPage() {
     return () => observer.disconnect();
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
+  // Room management for chat
+  useEffect(() => {
+    if (activeTab === 'chat' && forumData?.is_member && forumData.forum.id && isConnected) {
+      const roomId = `forum:${forumData.forum.id}`;
+      console.log('[Forum] Joining room:', roomId);
+      joinRoom(roomId);
+
+      return () => {
+        console.log('[Forum] Leaving room:', roomId);
+        leaveRoom(roomId);
+      };
+    }
+  }, [activeTab, forumData?.forum.id, forumData?.is_member, isConnected, joinRoom, leaveRoom]);
+
   const handleJoin = () => {
     if (forumData?.forum.id) {
       joinMutation.mutate(forumData.forum.id);
@@ -98,7 +122,14 @@ function ForumPage() {
 
   const handleLeave = () => {
     if (forumData?.forum.id) {
-      leaveMutation.mutate(forumData.forum.id);
+      leaveMutation.mutate(forumData.forum.id, {
+        onSuccess: () => {
+          // If user is in chat tab, switch to posts
+          if (activeTab === 'chat') {
+            setActiveTab('posts');
+          }
+        }
+      });
     }
   };
 
@@ -217,8 +248,18 @@ function ForumPage() {
         isLoading={joinMutation.isPending || leaveMutation.isPending}
       />
 
+      {/* Tab Navigation */}
+      <div className="mb-6">
+        <Tabs
+          tabs={['posts', 'chat']}
+          activeTab={activeTab}
+          onChange={(tab) => setActiveTab(tab as 'posts' | 'chat')}
+        />
+      </div>
+
       {/* Main content with sidebar */}
       <div className="lg:grid lg:grid-cols-[1fr_360px] lg:gap-8">
+        {activeTab === 'posts' ? (
         <div>
           {/* Filters and Create Button */}
           <div className="mb-6 flex flex-col md:flex-row md:items-center gap-4">
@@ -368,9 +409,19 @@ function ForumPage() {
             </div>
           )}
         </div>
+        ) : (
+          <ForumChatPanel
+            forumId={forumData.forum.id}
+            isMember={forumData.is_member}
+            memberCount={forumData.member_count}
+            onJoin={handleJoin}
+          />
+        )}
 
         {/* Sidebar */}
-        <ForumSidebar routeId={routeId} />
+        <div className={activeTab === 'chat' ? 'hidden lg:block' : ''}>
+          <ForumSidebar routeId={routeId} />
+        </div>
       </div>
 
       {/* Create Post Modal */}

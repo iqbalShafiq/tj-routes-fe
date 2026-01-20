@@ -124,7 +124,7 @@ function FeedPage() {
               onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'recent' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'recent'
-                  ? 'bg-white text-tertiary shadow-sm'
+                  ? 'bg-bg-surface text-tertiary shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -134,7 +134,7 @@ function FeedPage() {
               onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'popular' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'popular'
-                  ? 'bg-white text-tertiary shadow-sm'
+                  ? 'bg-bg-surface text-tertiary shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >
@@ -144,7 +144,7 @@ function FeedPage() {
               onClick={() => navigate({ search: (prev) => ({ ...prev, sort: 'trending' }), replace: true })}
               className={`px-4 py-2 text-sm font-medium rounded transition-colors ${
                 sort === 'trending'
-                  ? 'bg-white text-tertiary shadow-sm'
+                  ? 'bg-bg-surface text-tertiary shadow-sm'
                   : 'text-text-secondary hover:text-text-primary'
               }`}
             >

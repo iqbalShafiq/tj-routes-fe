@@ -10,7 +10,7 @@ interface ReportDetailSidebarProps {
 
 export const ReportDetailSidebar = ({ report }: ReportDetailSidebarProps) => {
   return (
-    <aside className="hidden lg:block w-[400px] sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto">
+    <aside className="hidden lg:block w-[400px] sticky top-8 self-start max-h-[calc(100vh-4rem)] overflow-y-auto scrollbar-thin">
       <div className="space-y-6">
         {/* Author Profile */}
         {report.user && (

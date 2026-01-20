@@ -6,6 +6,7 @@ import {
 } from "@tanstack/react-router";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { AuthProvider } from "../lib/hooks/useAuth";
+import { ThemeProvider } from "../lib/hooks/useTheme";
 import { useNavigationLoading } from "../lib/hooks/useNavigationLoading";
 import { AppLayout } from "../components/layout";
 import { ProgressBar } from "../components/ui/ProgressBar";
@@ -67,7 +68,7 @@ function RootComponent() {
     return (
       <>
         <ProgressBar isActive={isNavigating} onComplete={stopNavigation} />
-        <div className="min-h-screen bg-slate-50 flex items-center justify-center">
+        <div className="min-h-screen bg-bg-main flex items-center justify-center">
           <main className="w-full max-w-7xl mx-auto px-6 py-8">
             <Outlet />
           </main>
@@ -81,7 +82,7 @@ function RootComponent() {
     return (
       <>
         <ProgressBar isActive={isNavigating} onComplete={stopNavigation} />
-        <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="min-h-screen bg-bg-main flex items-center justify-center">
           <main className="w-full max-w-md mx-auto px-6 py-12">
             <Outlet />
           </main>
@@ -105,9 +106,11 @@ function RootComponent() {
 export const Route = createRootRouteWithContext<RouterContext>()({
   component: () => (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider>
-        <RootComponent />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <RootComponent />
+        </AuthProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   ),
 });

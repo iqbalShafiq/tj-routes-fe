@@ -187,7 +187,7 @@ function AdminBulkUploadPage() {
 
       {/* Upload Form */}
       <Card static className="mb-8">
-        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">
+        <h2 className="text-lg font-display font-semibold text-text-primary mb-4">
           Upload CSV
         </h2>
 
@@ -228,14 +228,14 @@ function AdminBulkUploadPage() {
 
       {/* CSV Format Guide */}
       <Card static className="mb-8">
-        <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">
+        <h2 className="text-lg font-display font-semibold text-text-primary mb-4">
           CSV Format Guide
         </h2>
 
         <div className="space-y-4">
           <div>
-            <h3 className="font-medium text-slate-900 mb-2">Routes CSV</h3>
-            <code className="block bg-slate-50 p-3 rounded-sm text-sm text-slate-700 overflow-x-auto">
+            <h3 className="font-medium text-text-primary mb-2">Routes CSV</h3>
+            <code className="block bg-bg-elevated p-3 rounded-sm text-sm text-text-secondary overflow-x-auto">
               route_number,name,description,status
               <br />
               1,Blok M - Kota,Route from Blok M to Kota,active
@@ -245,8 +245,8 @@ function AdminBulkUploadPage() {
           </div>
 
           <div>
-            <h3 className="font-medium text-slate-900 mb-2">Stops CSV</h3>
-            <code className="block bg-slate-50 p-3 rounded-sm text-sm text-slate-700 overflow-x-auto">
+            <h3 className="font-medium text-text-primary mb-2">Stops CSV</h3>
+            <code className="block bg-bg-elevated p-3 rounded-sm text-sm text-text-secondary overflow-x-auto">
               name,type,latitude,longitude,address,city,district,status
               <br />
               Halte Bundaran HI,stop,-6.1944,106.8229,"Jl. Sudirman",Jakarta
@@ -258,8 +258,8 @@ function AdminBulkUploadPage() {
           </div>
 
           <div>
-            <h3 className="font-medium text-slate-900 mb-2">Vehicles CSV</h3>
-            <code className="block bg-slate-50 p-3 rounded-sm text-sm text-slate-700 overflow-x-auto">
+            <h3 className="font-medium text-text-primary mb-2">Vehicles CSV</h3>
+            <code className="block bg-bg-elevated p-3 rounded-sm text-sm text-text-secondary overflow-x-auto">
               vehicle_plate,route_id,vehicle_type,capacity,status
               <br />
               B1234XYZ,1,Bus,60,active
@@ -271,7 +271,7 @@ function AdminBulkUploadPage() {
       </Card>
 
       {/* Upload History */}
-      <h2 className="text-lg font-display font-semibold text-slate-900 mb-4">
+      <h2 className="text-lg font-display font-semibold text-text-primary mb-4">
         Upload History
       </h2>
 
@@ -295,7 +295,7 @@ function AdminBulkUploadPage() {
             >
               ← Previous
             </Button>
-            <span className="text-slate-600 text-sm font-medium">
+            <span className="text-text-secondary text-sm font-medium">
               Page {page} of {uploads.total_pages}
             </span>
             <Button
@@ -312,9 +312,9 @@ function AdminBulkUploadPage() {
       ) : (
         <Card static>
           <div className="text-center py-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-slate-100 mb-4 rounded-sm">
+            <div className="inline-flex items-center justify-center w-16 h-16 bg-bg-elevated mb-4 rounded-sm">
               <svg
-                className="w-8 h-8 text-slate-400"
+                className="w-8 h-8 text-text-muted"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -327,7 +327,7 @@ function AdminBulkUploadPage() {
                 />
               </svg>
             </div>
-            <p className="text-slate-600">No uploads yet</p>
+            <p className="text-text-secondary">No uploads yet</p>
             <p className="text-slate-500 text-sm mt-1">
               Start by uploading a CSV file above
             </p>

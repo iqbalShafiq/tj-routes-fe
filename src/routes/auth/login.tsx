@@ -209,20 +209,30 @@ function LoginPage() {
             }}
           >
             {(field) => (
-              <Input
-                label="Password"
-                type="password"
-                value={field.state.value}
-                onChange={(e) => field.handleChange(e.target.value)}
-                onBlur={field.handleBlur}
-                error={
-                  (field.state.meta.error as string) ||
-                  (typeof field.state.meta.errors[0] === "string"
-                    ? field.state.meta.errors[0]
-                    : undefined)
-                }
-                placeholder="••••••••"
-              />
+              <div>
+                <Input
+                  label="Password"
+                  type="password"
+                  value={field.state.value}
+                  onChange={(e) => field.handleChange(e.target.value)}
+                  onBlur={field.handleBlur}
+                  error={
+                    (field.state.meta.error as string) ||
+                    (typeof field.state.meta.errors[0] === "string"
+                      ? field.state.meta.errors[0]
+                      : undefined)
+                  }
+                  placeholder="••••••••"
+                />
+                <div className="text-right mt-1">
+                  <a
+                    href="/auth/forgot-password"
+                    className="text-sm text-accent hover:text-accent-hover transition-colors"
+                  >
+                    Forgot password?
+                  </a>
+                </div>
+              </div>
             )}
           </form.Field>
 
