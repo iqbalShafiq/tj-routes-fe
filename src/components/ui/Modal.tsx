@@ -65,7 +65,7 @@ export const Modal = ({
         onKeyDown={handleKeyDown}
         className={`
           relative w-full ${sizeClasses[size]} max-h-[90vh]
-          bg-white rounded-md overflow-hidden
+          bg-bg-surface rounded-md overflow-hidden
           shadow-2xl animate-in fade-in zoom-in-95 duration-200
         `}
       >
@@ -93,7 +93,7 @@ export const Modal = ({
         </div>
 
         {/* Content */}
-        <div className="overflow-y-auto max-h-[calc(90vh-120px)]">
+        <div className="overflow-y-auto max-h-[calc(90vh-120px)] scrollbar-thin">
           <div className="p-6">{children}</div>
         </div>
       </div>
