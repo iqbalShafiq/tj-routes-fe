@@ -34,6 +34,26 @@ export interface AuthResponse {
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  new_password: string;
+}
+
+export interface ChangePasswordRequest {
+  current_password: string;
+  new_password: string;
+}
+
+export interface PasswordActionResponse {
+  success: boolean;
+  message: string;
+  error?: string;
+}
+
 export const authApi = {
   login: async (data: LoginRequest): Promise<AuthResponse> => {
     const response = await apiClient.post<AuthResponse>(API_ENDPOINTS.auth.login, data);
@@ -104,5 +124,41 @@ export const authApi = {
 
   initiateOAuth: (provider: string = 'google') => {
     window.location.href = `${import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080'}${API_ENDPOINTS.auth.oauth(provider)}`;
+  },
+
+  forgotPassword: async (data: ForgotPasswordRequest): Promise<PasswordActionResponse> => {
+    const response = await apiClient.post<PasswordActionResponse>(
+      API_ENDPOINTS.auth.forgotPassword,
+      data
+    );
+    if (!response.data.success) {
+      const errorMessage = response.data.error || 'Failed to send reset email. Please try again.';
+      throw new Error(errorMessage);
+    }
+    return response.data;
+  },
+
+  resetPassword: async (data: ResetPasswordRequest): Promise<PasswordActionResponse> => {
+    const response = await apiClient.post<PasswordActionResponse>(
+      API_ENDPOINTS.auth.resetPassword,
+      data
+    );
+    if (!response.data.success) {
+      const errorMessage = response.data.error || 'Failed to reset password. Please try again.';
+      throw new Error(errorMessage);
+    }
+    return response.data;
+  },
+
+  changePassword: async (data: ChangePasswordRequest): Promise<PasswordActionResponse> => {
+    const response = await apiClient.post<PasswordActionResponse>(
+      API_ENDPOINTS.auth.changePassword,
+      data
+    );
+    if (!response.data.success) {
+      const errorMessage = response.data.error || 'Failed to change password. Please try again.';
+      throw new Error(errorMessage);
+    }
+    return response.data;
   },
 };
