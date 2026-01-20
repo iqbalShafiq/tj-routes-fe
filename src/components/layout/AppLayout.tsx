@@ -2,6 +2,7 @@ import { type ReactNode, useState, useEffect } from 'react';
 import { Sidebar } from './Sidebar';
 import { MobileMenuButton } from './MobileMenuButton';
 import { BottomNavigationBar } from './BottomNavigationBar';
+import { useLocation } from '@tanstack/react-router';
 
 interface AppLayoutProps {
   children: ReactNode;
@@ -47,6 +48,7 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   // Persist sidebar state
   useEffect(() => {
     localStorage.setItem(SIDEBAR_STORAGE_KEY, String(isExpanded));
+    window.dispatchEvent(new CustomEvent('sidebar-toggle'));
   }, [isExpanded]);
 
   // Close mobile menu on route change
@@ -77,6 +79,10 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
   const handleCloseMobile = () => {
     setIsMobileOpen(false);
   };
+
+  const location = useLocation();
+  const isConversationDetail = location.pathname.includes('/chat/conversations/');
+  const isChatPage = location.pathname.startsWith('/chat');
 
   return (
     <div className="min-h-screen bg-bg-main">
@@ -114,13 +120,17 @@ export const AppLayout = ({ children }: AppLayoutProps) => {
           ${isSmallScreen ? 'pb-20' : ''}
         `}
       >
-        <div className="max-w-7xl mx-auto px-6 py-8">
-          {children}
-        </div>
+        {isChatPage ? (
+          children
+        ) : (
+          <div className="max-w-7xl mx-auto px-6 py-8">
+            {children}
+          </div>
+        )}
       </main>
 
-      {/* Bottom Navigation Bar - only on small screens (mobile) */}
-      {isSmallScreen && (
+      {/* Bottom Navigation Bar - only on small screens (mobile) and not on conversation detail */}
+      {isSmallScreen && !isConversationDetail && (
         <BottomNavigationBar
           onMenuToggle={handleMobileToggle}
           isMenuOpen={isMobileOpen}
