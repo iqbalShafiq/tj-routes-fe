@@ -1,5 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 export default {
+  darkMode: 'class',
   content: [
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
@@ -75,6 +76,13 @@ export default {
         'fade-in': 'fade-in 0.4s ease-out',
         'scale-in': 'scale-in 0.3s ease-out',
         'slide-in': 'slide-in 0.3s ease-out',
+        'shimmer': 'shimmer 2s ease-in-out infinite',
+      },
+      keyframes: {
+        shimmer: {
+          '0%': { backgroundPosition: '200% 0' },
+          '100%': { backgroundPosition: '-200% 0' },
+        },
       },
     },
   },

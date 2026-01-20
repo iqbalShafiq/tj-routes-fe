@@ -45,6 +45,40 @@
     --font-body: "Inter Variable", -apple-system, sans-serif;
   }
 
+  .dark {
+    /* Background Colors - Dark slate with blue tint */
+    --color-bg-main: 15 23 42; /* slate-900 */
+    --color-bg-surface: 30 41 59; /* slate-800 */
+    --color-bg-elevated: 51 65 85; /* slate-700 */
+
+    /* Text Colors - High contrast light text */
+    --color-text-primary: 248 250 252; /* slate-50 */
+    --color-text-secondary: 203 213 225; /* slate-300 */
+    --color-text-muted: 148 163 184; /* slate-400 */
+
+    /* Accent Color - Vibrant emerald for dark backgrounds */
+    --color-accent: 16 185 129; /* emerald-500 - more vibrant */
+    --color-accent-hover: 5 150 105; /* emerald-600 */
+    --color-accent-light: 6 78 59; /* emerald-900 */
+    --color-accent-muted: 52 211 153; /* emerald-400 */
+
+    /* Border Colors - Mid-tone slate */
+    --color-border: 71 85 105; /* slate-600 */
+    --color-border-focus: var(--color-accent);
+
+    /* Status Colors - Lighter variants for visibility */
+    --color-success: 74 222 128; /* green-400 */
+    --color-warning: 251 191 36; /* amber-400 */
+    --color-error: 248 113 113; /* red-400 */
+    --color-info: 96 165 250; /* blue-400 */
+
+    /* Tertiary Color - Warm orange for contrast */
+    --color-tertiary: 251 146 60; /* orange-400 */
+    --color-tertiary-hover: 249 115 22; /* orange-500 */
+    --color-tertiary-light: 67 20 7; /* orange-950 with transparency */
+    --color-tertiary-muted: 253 186 116; /* orange-300 */
+  }
+
   * {
     @apply border-border;
   }
@@ -243,6 +277,26 @@
     display: none;
   }
 
+  /* Thin scrollbar with dark mode support */
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(var(--color-border)) transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: rgb(var(--color-border));
+    border-radius: 3px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
+    background: rgb(var(--color-accent) / 0.6);
+  }
+
   /* Animations */
   @keyframes slide-in {
     from {
@@ -338,12 +392,25 @@
     }
   }
 
+  @keyframes shimmer {
+    0% {
+      background-position: 200% 0;
+    }
+    100% {
+      background-position: -200% 0;
+    }
+  }
+
   .animate-image-zoom-in {
     animation: image-zoom-in 0.3s ease-out;
   }
 
   .animate-image-fade-in {
     animation: image-fade-in 0.2s ease-out;
+  }
+
+  .animate-shimmer {
+    animation: shimmer 2s ease-in-out infinite;
   }
 
   /* Height transition utilities for bottom sheet */

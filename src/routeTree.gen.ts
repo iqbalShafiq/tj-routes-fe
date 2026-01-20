@@ -19,13 +19,16 @@ import { Route as RoutesIndexRouteImport } from './routes/routes/index'
 import { Route as ReportsIndexRouteImport } from './routes/reports/index'
 import { Route as LeaderboardIndexRouteImport } from './routes/leaderboard/index'
 import { Route as FeedIndexRouteImport } from './routes/feed/index'
+import { Route as ChatIndexRouteImport } from './routes/chat/index'
 import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as SavedRecentRouteImport } from './routes/saved/recent'
 import { Route as RoutesRouteIdRouteImport } from './routes/routes/$routeId'
 import { Route as ProfileUserIdRouteImport } from './routes/profile/$userId'
 import { Route as FeedReportIdRouteImport } from './routes/feed/$reportId'
+import { Route as AuthResetPasswordRouteImport } from './routes/auth/reset-password'
 import { Route as AuthRegisterRouteImport } from './routes/auth/register'
 import { Route as AuthLoginRouteImport } from './routes/auth/login'
+import { Route as AuthForgotPasswordRouteImport } from './routes/auth/forgot-password'
 import { Route as AdminVehiclesRouteImport } from './routes/admin/vehicles'
 import { Route as AdminUsersRouteImport } from './routes/admin/users'
 import { Route as AdminStopsRouteImport } from './routes/admin/stops'
@@ -86,6 +89,11 @@ const FeedIndexRoute = FeedIndexRouteImport.update({
   path: '/feed/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ChatIndexRoute = ChatIndexRouteImport.update({
+  id: '/chat/',
+  path: '/chat/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminIndexRoute = AdminIndexRouteImport.update({
   id: '/admin/',
   path: '/admin/',
@@ -111,6 +119,11 @@ const FeedReportIdRoute = FeedReportIdRouteImport.update({
   path: '/feed/$reportId',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthResetPasswordRoute = AuthResetPasswordRouteImport.update({
+  id: '/auth/reset-password',
+  path: '/auth/reset-password',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuthRegisterRoute = AuthRegisterRouteImport.update({
   id: '/auth/register',
   path: '/auth/register',
@@ -119,6 +132,11 @@ const AuthRegisterRoute = AuthRegisterRouteImport.update({
 const AuthLoginRoute = AuthLoginRouteImport.update({
   id: '/auth/login',
   path: '/auth/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthForgotPasswordRoute = AuthForgotPasswordRouteImport.update({
+  id: '/auth/forgot-password',
+  path: '/auth/forgot-password',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminVehiclesRoute = AdminVehiclesRouteImport.update({
@@ -179,13 +197,16 @@ export interface FileRoutesByFullPath {
   '/admin/stops': typeof AdminStopsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/saved/recent': typeof SavedRecentRoute
   '/admin': typeof AdminIndexRoute
+  '/chat': typeof ChatIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
@@ -207,13 +228,16 @@ export interface FileRoutesByTo {
   '/admin/stops': typeof AdminStopsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/saved/recent': typeof SavedRecentRoute
   '/admin': typeof AdminIndexRoute
+  '/chat': typeof ChatIndexRoute
   '/feed': typeof FeedIndexRoute
   '/leaderboard': typeof LeaderboardIndexRoute
   '/reports': typeof ReportsIndexRoute
@@ -236,13 +260,16 @@ export interface FileRoutesById {
   '/admin/stops': typeof AdminStopsRoute
   '/admin/users': typeof AdminUsersRoute
   '/admin/vehicles': typeof AdminVehiclesRoute
+  '/auth/forgot-password': typeof AuthForgotPasswordRoute
   '/auth/login': typeof AuthLoginRoute
   '/auth/register': typeof AuthRegisterRoute
+  '/auth/reset-password': typeof AuthResetPasswordRoute
   '/feed/$reportId': typeof FeedReportIdRoute
   '/profile/$userId': typeof ProfileUserIdRoute
   '/routes/$routeId': typeof RoutesRouteIdRouteWithChildren
   '/saved/recent': typeof SavedRecentRoute
   '/admin/': typeof AdminIndexRoute
+  '/chat/': typeof ChatIndexRoute
   '/feed/': typeof FeedIndexRoute
   '/leaderboard/': typeof LeaderboardIndexRoute
   '/reports/': typeof ReportsIndexRoute
@@ -266,13 +293,16 @@ export interface FileRouteTypes {
     | '/admin/stops'
     | '/admin/users'
     | '/admin/vehicles'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
     | '/saved/recent'
     | '/admin'
+    | '/chat'
     | '/feed'
     | '/leaderboard'
     | '/reports'
@@ -294,13 +324,16 @@ export interface FileRouteTypes {
     | '/admin/stops'
     | '/admin/users'
     | '/admin/vehicles'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
     | '/saved/recent'
     | '/admin'
+    | '/chat'
     | '/feed'
     | '/leaderboard'
     | '/reports'
@@ -322,13 +355,16 @@ export interface FileRouteTypes {
     | '/admin/stops'
     | '/admin/users'
     | '/admin/vehicles'
+    | '/auth/forgot-password'
     | '/auth/login'
     | '/auth/register'
+    | '/auth/reset-password'
     | '/feed/$reportId'
     | '/profile/$userId'
     | '/routes/$routeId'
     | '/saved/recent'
     | '/admin/'
+    | '/chat/'
     | '/feed/'
     | '/leaderboard/'
     | '/reports/'
@@ -351,13 +387,16 @@ export interface RootRouteChildren {
   AdminStopsRoute: typeof AdminStopsRoute
   AdminUsersRoute: typeof AdminUsersRoute
   AdminVehiclesRoute: typeof AdminVehiclesRoute
+  AuthForgotPasswordRoute: typeof AuthForgotPasswordRoute
   AuthLoginRoute: typeof AuthLoginRoute
   AuthRegisterRoute: typeof AuthRegisterRoute
+  AuthResetPasswordRoute: typeof AuthResetPasswordRoute
   FeedReportIdRoute: typeof FeedReportIdRoute
   ProfileUserIdRoute: typeof ProfileUserIdRoute
   RoutesRouteIdRoute: typeof RoutesRouteIdRouteWithChildren
   SavedRecentRoute: typeof SavedRecentRoute
   AdminIndexRoute: typeof AdminIndexRoute
+  ChatIndexRoute: typeof ChatIndexRoute
   FeedIndexRoute: typeof FeedIndexRoute
   LeaderboardIndexRoute: typeof LeaderboardIndexRoute
   ReportsIndexRoute: typeof ReportsIndexRoute
@@ -439,6 +478,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/chat/': {
+      id: '/chat/'
+      path: '/chat'
+      fullPath: '/chat'
+      preLoaderRoute: typeof ChatIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin/': {
       id: '/admin/'
       path: '/admin'
@@ -474,6 +520,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FeedReportIdRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/auth/reset-password': {
+      id: '/auth/reset-password'
+      path: '/auth/reset-password'
+      fullPath: '/auth/reset-password'
+      preLoaderRoute: typeof AuthResetPasswordRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/auth/register': {
       id: '/auth/register'
       path: '/auth/register'
@@ -486,6 +539,13 @@ declare module '@tanstack/react-router' {
       path: '/auth/login'
       fullPath: '/auth/login'
       preLoaderRoute: typeof AuthLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/auth/forgot-password': {
+      id: '/auth/forgot-password'
+      path: '/auth/forgot-password'
+      fullPath: '/auth/forgot-password'
+      preLoaderRoute: typeof AuthForgotPasswordRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin/vehicles': {
@@ -589,13 +649,16 @@ const rootRouteChildren: RootRouteChildren = {
   AdminStopsRoute: AdminStopsRoute,
   AdminUsersRoute: AdminUsersRoute,
   AdminVehiclesRoute: AdminVehiclesRoute,
+  AuthForgotPasswordRoute: AuthForgotPasswordRoute,
   AuthLoginRoute: AuthLoginRoute,
   AuthRegisterRoute: AuthRegisterRoute,
+  AuthResetPasswordRoute: AuthResetPasswordRoute,
   FeedReportIdRoute: FeedReportIdRoute,
   ProfileUserIdRoute: ProfileUserIdRoute,
   RoutesRouteIdRoute: RoutesRouteIdRouteWithChildren,
   SavedRecentRoute: SavedRecentRoute,
   AdminIndexRoute: AdminIndexRoute,
+  ChatIndexRoute: ChatIndexRoute,
   FeedIndexRoute: FeedIndexRoute,
   LeaderboardIndexRoute: LeaderboardIndexRoute,
   ReportsIndexRoute: ReportsIndexRoute,
