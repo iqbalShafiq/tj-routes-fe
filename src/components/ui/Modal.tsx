@@ -1,4 +1,5 @@
 import { useEffect, type ReactNode } from "react";
+import { createPortal } from "react-dom";
 import { useModalFocus } from "../../hooks/useModal";
 
 interface ModalProps {
@@ -43,9 +44,9 @@ export const Modal = ({
 
   if (!isOpen) return null;
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-[70] flex items-center justify-center p-4"
+      className="fixed inset-0 z-[90] flex items-center justify-center p-4"
       role="presentation"
     >
       {/* Overlay */}
@@ -97,6 +98,7 @@ export const Modal = ({
           <div className="p-6">{children}</div>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };

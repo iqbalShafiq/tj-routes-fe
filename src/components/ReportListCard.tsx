@@ -4,6 +4,7 @@ import { Chip } from './ui/Chip';
 import { formatDistanceToNow } from 'date-fns';
 import type { Report } from '../lib/api/reports';
 import { REPORT_TYPES, REPORT_STATUSES } from '../lib/utils/constants';
+import { ShareReportButton } from './ShareReportButton';
 
 interface ReportListCardProps {
   report: Report;
@@ -96,6 +97,9 @@ export const ReportListCard = ({ report }: ReportListCardProps) => {
                   </svg>
                   {report.comment_count}
                 </span>
+                <div onClick={(e) => e.stopPropagation()} title="Share report">
+                  <ShareReportButton report={report} variant="icon-only" />
+                </div>
               </div>
             </div>
           </div>

@@ -5,7 +5,7 @@ import { useReactToReport, useRemoveReportReaction, reportKeys } from '../lib/ho
 import { reportsApi } from '../lib/api/reports';
 import { Card } from './ui/Card';
 import { Chip } from './ui/Chip';
-import { ShareButton } from './ShareButton';
+import { ShareReportButton } from './ShareReportButton';
 import { FollowButton } from './FollowButton';
 import { ImageViewer } from './ui/ImageViewer';
 import { format, formatDistanceToNow } from 'date-fns';
@@ -68,8 +68,6 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
       default: return 'default';
     }
   };
-
-  const reportUrl = `${window.location.origin}/feed/${report.id}`;
 
   return (
     <>
@@ -319,7 +317,7 @@ export const EnhancedReportCard = ({ report }: EnhancedReportCardProps) => {
             </svg>
             <span className="text-sm font-medium">{report.comment_count}</span>
           </Link>
-          <ShareButton url={reportUrl} title={report.title} text={report.description} />
+          <ShareReportButton report={report} variant="with-label" />
         </div>
       </div>
       {/* Close Card */}

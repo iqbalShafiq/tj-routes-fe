@@ -19,6 +19,7 @@ import type { Comment } from '../../lib/api/comments';
 import { REPORT_TYPES, REPORT_STATUSES } from '../../lib/utils/constants';
 import { RouteErrorComponent } from '../../components/RouteErrorComponent';
 import { ReportDetailSidebar } from '../../components/feed/ReportDetailSidebar';
+import { ShareReportButton } from '../../components/ShareReportButton';
 
 export const Route = createFileRoute('/feed/$reportId')({
   beforeLoad: async () => {
@@ -440,6 +441,7 @@ function ReportDetailPage() {
             <span className="hidden sm:inline">{report.comment_count} Comments</span>
             <span className="sm:hidden">{report.comment_count}</span>
           </span>
+          <ShareReportButton report={report} variant="with-label" />
         </div>
       </Card>
 
