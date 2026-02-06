@@ -67,7 +67,7 @@ function LeaderboardRow({ entry, rank }: { entry: LeaderboardEntry; rank: number
         <div className={`
           w-12 h-12 flex items-center justify-center rounded-sm font-display font-bold text-lg
           ${rank === 1 ? 'bg-gradient-to-br from-accent/60 to-accent text-white' :
-            rank === 2 ? 'bg-gradient-to-br from-text-muted/40 to-text-muted/60 text-white' :
+            rank === 2 ? 'bg-gradient-to-br from-text-secondary/70 to-text-primary/80 text-bg-main' :
             rank === 3 ? 'bg-gradient-to-br from-accent/40 to-accent/60 text-white' :
             'bg-bg-elevated text-text-secondary'}
         `}>
@@ -184,4 +184,3 @@ function LeaderboardPage() {
     </div>
   );
 }
-
