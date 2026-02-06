@@ -13,10 +13,9 @@ import { Button } from './ui/Button';
 interface MessageUserButtonProps {
   userId: number;
   className?: string;
-  variant?: 'default' | 'minimal';
 }
 
-export const MessageUserButton = ({ userId, className, variant = 'default' }: MessageUserButtonProps) => {
+export const MessageUserButton = ({ userId, className }: MessageUserButtonProps) => {
   const navigate = useNavigate();
   const { user: currentUser } = useAuth();
 
@@ -43,7 +42,7 @@ export const MessageUserButton = ({ userId, className, variant = 'default' }: Me
   const handleClick = async () => {
     switch (buttonState.type) {
       case 'open_chat':
-        navigate({ to: '/chat', search: { conversation: buttonState.conversationId } });
+        navigate({ to: '/chat', search: { conversation: buttonState.conversationId, group: undefined } });
         break;
 
       case 'send_request':
@@ -62,10 +61,10 @@ export const MessageUserButton = ({ userId, className, variant = 'default' }: Me
 
   // Button text and styling based on state
   const buttonConfig = {
-    open_chat: { text: 'Open Chat', variant: 'primary', disabled: false },
-    send_request: { text: 'Message', variant: 'primary', disabled: false },
-    request_sent: { text: 'Request Sent', variant: 'outline', disabled: true },
-    request_received: { text: 'Accept Chat', variant: 'tertiary', disabled: false },
+    open_chat: { text: 'Open Chat', disabled: false },
+    send_request: { text: 'Message', disabled: false },
+    request_sent: { text: 'Request Sent', disabled: true },
+    request_received: { text: 'Accept Chat', disabled: false },
   };
 
   const config = buttonConfig[buttonState.type];
@@ -73,7 +72,8 @@ export const MessageUserButton = ({ userId, className, variant = 'default' }: Me
   return (
     <Button
       onClick={handleClick}
-      variant={config.variant as any}
+      variant="secondary"
+      size="sm"
       disabled={config.disabled || createRequest.isPending || acceptRequest.isPending}
       className={className}
     >

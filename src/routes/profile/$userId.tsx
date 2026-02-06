@@ -2,7 +2,7 @@ import { createFileRoute, Link, redirect } from '@tanstack/react-router';
 import { useUserProfile, useBadges, leaderboardKeys } from '../../lib/hooks/useLeaderboard';
 import { useAuth } from '../../lib/hooks/useAuth';
 import { useUserReports } from '../../lib/hooks/useReports';
-import { useCheckIns, useCheckInStats } from '../../lib/hooks/useCheckIn';
+import { useCheckInStats } from '../../lib/hooks/useCheckIn';
 import { authApi } from '../../lib/api/auth';
 import { leaderboardApi } from '../../lib/api/leaderboard';
 import { Card } from '../../components/ui/Card';
@@ -51,7 +51,7 @@ export const Route = createFileRoute('/profile/$userId')({
   ),
 });
 
-function getLevelColor(level: string) {
+function getLevelColor() {
   // Use theme accent color for all levels
   return 'bg-accent';
 }
@@ -190,7 +190,7 @@ function UserProfilePage() {
             {/* Avatar */}
             <div className={`
               w-28 h-28 rounded-full flex items-center justify-center text-white font-bold text-4xl
-              ${getLevelColor(profile.level)} shadow-xl
+              ${getLevelColor()} shadow-xl
             `}>
               {profile.user.username.charAt(0).toUpperCase()}
             </div>
@@ -209,7 +209,7 @@ function UserProfilePage() {
                 {!isOwnProfile && (
                   <div className="flex items-center gap-2">
                     <FollowButton userId={Number(userId)} variant="default" />
-                    <MessageUserButton userId={Number(userId)} variant="default" />
+                    <MessageUserButton userId={Number(userId)} />
                   </div>
                 )}
               </div>
@@ -217,7 +217,7 @@ function UserProfilePage() {
               <div className="flex flex-wrap justify-center md:justify-start gap-3 mb-4">
                 <span className={`
                   inline-flex items-center px-4 py-1.5 text-sm font-semibold rounded-full
-                  ${getLevelColor(profile.level)} text-white shadow
+                  ${getLevelColor()} text-white shadow
                 `}>
                   {currentLevel?.label || profile.level}
                 </span>
@@ -235,7 +235,7 @@ function UserProfilePage() {
                   </div>
                   <div className="h-2 bg-bg-elevated rounded-full overflow-hidden">
                     <div
-                      className={`h-full ${getLevelColor(profile.level)} transition-all duration-500`}
+                      className={`h-full ${getLevelColor()} transition-all duration-500`}
                       style={{ width: `${progressToNext}%` }}
                     />
                   </div>
@@ -503,4 +503,3 @@ function UserProfilePage() {
     </div>
   );
 }
-
